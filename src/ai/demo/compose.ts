@@ -126,7 +126,7 @@ async function sessionOpening(
     vorige: ctx.memory[0],
   });
   if (returning && ctx.topicHint) {
-    text += ` En je wilde het vandaag hebben over ${ctx.topicHint.replace(/[.!?]+$/, '')}. Vertel.`;
+    text += ` En voor vandaag schreef je: ‘${ctx.topicHint.trim().replace(/[.!?]+$/, '')}’. Vertel.`;
   }
   return text;
 }
@@ -242,7 +242,7 @@ async function lectureSegment(
         used.length ? used : rankBlocks(demo.lecture.blocks, ctx.topic).slice(0, 3)
       ).map((b) => b.lesson);
       const intro = fill(pick(rng, demo.lecture.conclusions) ?? '', vars);
-      const question = pick(rng, demo.lecture.thinkQuestions) ?? 'Wat neem je mee?';
+      const question = fill(pick(rng, demo.lecture.thinkQuestions) ?? 'Wat neem je mee?', vars);
       return [
         intro,
         '',

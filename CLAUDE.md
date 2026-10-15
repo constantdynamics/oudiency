@@ -21,7 +21,7 @@ npm run format:check   # Prettier (npm run format om te herstellen)
 npm run typecheck      # tsc -b
 npm test               # Vitest
 npm run validate:data  # rooster- en netwerkregels (§6.4), ook in CI
-npm run gen:figures    # na élke wijziging in src/data/figures/** (index.generated.ts)
+npm run gen:index      # na élke wijziging in denkers of voorbeeldcolleges (index.generated.ts)
 npm run gen:assets     # favicon/iconen/og-image opnieuw (vereist Playwright)
 npm run build          # typecheck + productiebuild (CSP-meta wordt ingevoegd)
 ```
@@ -72,7 +72,7 @@ GitHub Pages.
 - AI-tekst alleen via `RichText` (beperkte, veilige markdown); nooit `dangerouslySetInnerHTML`.
 - Logica met tests in `src/lib`, `src/services`, `src/ai/prompts`; UI dun houden.
 - Denkers: één bestand per denker in `src/data/figures/{core,network}/`, export-naam = id; daarna
-  `npm run gen:figures`. Volledige profielen laden lazy (eigen chunk per denker).
+  `npm run gen:index`. Volledige profielen laden lazy (eigen chunk per denker).
 - Houd de startbundel klein (Lighthouse mobiel ≥ 90): zware dingen (`@anthropic-ai/sdk`, klassiek
   `zod`, extra fonts, pagina's) alleen via dynamische imports.
 - Modellen per taak: `src/config/models.ts`. Zet nooit het model-ID van de bouwende sessie in

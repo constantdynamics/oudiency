@@ -65,7 +65,7 @@ export const seneca = networkFigure({
     {
       text: 'Terwijl het wordt uitgesteld, rent het leven voorbij.',
       original: 'Dum differtur vita transcurrit.',
-      source: 'Brieven aan Lucilius 1.3',
+      source: 'Brieven aan Lucilius 1.2',
       status: 'authentiek',
       translation: 'eigen',
       verified: true,

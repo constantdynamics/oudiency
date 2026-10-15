@@ -45,7 +45,7 @@ describe('denkersdata', () => {
     expect(sources.rousseau).toContain('Du contrat social I.1');
   });
 
-  it('de gegenereerde index is actueel (draai anders npm run gen:figures)', () => {
+  it('de gegenereerde index is actueel (draai anders npm run gen:index)', () => {
     const file = readFileSync(
       resolve(process.cwd(), 'src/data/figures/index.generated.ts'),
       'utf8',

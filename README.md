@@ -50,7 +50,7 @@ wisselen tussen demo en eigen key.
 | `npm run format`        | Prettier (opmaak herstellen); `format:check` controleert alleen      |
 | `npm test`              | unit-tests (Vitest)                                                  |
 | `npm run validate:data` | controleert rooster en netwerken (o.a. iedereen overleden vóór 1950) |
-| `npm run gen:figures`   | genereert de lichte denkersindex na het wijzigen van denkersdata     |
+| `npm run gen:index`     | genereert de lichte indexen na het wijzigen van denkers of colleges  |
 | `npm run gen:assets`    | genereert favicon, app-iconen en social-preview (vereist Playwright) |
 
 ## Publiceren op GitHub Pages
@@ -106,7 +106,7 @@ naar Anthropic om een antwoord te maken.
 ```
 .github/workflows/deploy.yml   CI + publicatie op GitHub Pages
 public/                        favicon, iconen, manifest, og-image
-scripts/                       validate-data, gen-figure-index, gen-assets
+scripts/                       validate-data, gen-index, gen-assets
 src/app/                       router, layout, foutafhandeling, dev-toegang
 src/config/                    app, limits, models
 src/i18n/nl.ts                 alle UI-teksten

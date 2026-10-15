@@ -34,7 +34,7 @@ export function genericDemoContent(figure: Figure): DemoFigureContent {
     {
       id: 'g-open-2',
       phase: 'opening',
-      text: `Goed dat je er bent{naam}. Je wilde het hebben over {onderwerp}. Vertel me eerst: waarom houdt juist dit je nu bezig?`,
+      text: `Goed dat je er bent{naam}. Bij je afspraak schreef je: ‘{onderwerp}’. Vertel me eerst: waarom houdt juist dit je nu bezig?`,
     },
     {
       id: 'g-terug-1',
@@ -131,7 +131,7 @@ export function genericDemoContent(figure: Figure): DemoFigureContent {
     sessionFragments: fragments,
     lecture: {
       openings: [
-        `Welkom bij dit college. Je vroeg mij, ${figure.name}, om iets te zeggen over {onderwerp}. Je hoofdvraag luidt: “{hoofdvraag}” Ik ben ${lowerFirst(stripPeriod(figure.epithet))}, en ik zal je vraag benaderen zoals ik dat in mijn eigen tijd deed: met de begrippen die mij lief waren. Laten we beginnen.`,
+        `Welkom bij dit college. Je vroeg mij, ${figure.name}, om iets te zeggen over ‘{onderwerp}’. Je hoofdvraag luidt: “{hoofdvraag}” Ik ben ${lowerFirst(stripPeriod(figure.epithet))}, en ik zal je vraag benaderen zoals ik dat in mijn eigen tijd deed: met de begrippen die mij lief waren. Laten we beginnen.`,
       ],
       blocks,
       answers: [

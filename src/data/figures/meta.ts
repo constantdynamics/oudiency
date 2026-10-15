@@ -1,7 +1,7 @@
 /**
  * Lichte metadata per denker: alles wat lijsten, avatars, thema's, netwerken en matching nodig
  * hebben. De volledige profielen (bio, citaten, persona) worden per denker lazy geladen.
- * De index (index.generated.ts) wordt gemaakt door `npm run gen:figures`.
+ * De index (index.generated.ts) wordt gemaakt door `npm run gen:index`.
  */
 import type { Figure, FigureTheme, NativeScript } from '../types';
 import type { ResolvedLink } from './network-resolve';

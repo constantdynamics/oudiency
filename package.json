@@ -18,8 +18,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate:data": "tsx --tsconfig tsconfig.node.json scripts/validate-data.ts",
-    "gen:figures": "tsx --tsconfig tsconfig.node.json scripts/gen-figure-index.ts",
-    "gen:assets": "tsx --tsconfig tsconfig.node.json scripts/gen-assets.ts"
+    "gen:assets": "tsx --tsconfig tsconfig.node.json scripts/gen-assets.ts",
+    "gen:index": "tsx --tsconfig tsconfig.node.json scripts/gen-index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.134.0",

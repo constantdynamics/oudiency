@@ -26,6 +26,43 @@ function sentenceCount(text: string): number {
     .filter(Boolean).length;
 }
 
+/* ---------- Citaten en plaatshouders in vaste teksten ---------- */
+
+const QUOTE_WITH_SOURCE_RE = /“([^”]+)”\s*\(([^)]*)\)/g;
+const PLACEHOLDER_RE = /\{([a-z]+)\}/g;
+const KNOWN_PLACEHOLDERS = new Set(['naam', 'onderwerp', 'woord', 'vorige', 'hoofdvraag', 'vraag']);
+
+function normalizeQuote(text: string): string {
+  return text
+    .replace(/[‘’'"“”„]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * Letterlijke citaten in vaste teksten: alles wat als “…” (bron) wordt gepresenteerd, moet
+ * woordelijk voorkomen in de geverifieerde citaten van die denker (§8.5). Geeft de afwijkende
+ * citaten terug (ingekort).
+ */
+export function findUnverifiedQuotes(text: string, figure: Figure): string[] {
+  const verified = new Set(
+    figure.quotes.filter((q) => q.verified).map((q) => normalizeQuote(q.text)),
+  );
+  const problems: string[] = [];
+  for (const match of text.matchAll(QUOTE_WITH_SOURCE_RE)) {
+    const quoted = match[1] ?? '';
+    if (quoted.includes('{')) continue;
+    if (!verified.has(normalizeQuote(quoted))) problems.push(quoted.slice(0, 60));
+  }
+  return problems;
+}
+
+/** Plaatshouders in een tekst ({naam}, {woord}, …). */
+export function placeholdersIn(text: string): string[] {
+  return [...text.matchAll(PLACEHOLDER_RE)].map((m) => m[1] ?? '');
+}
+
 export function validateFigures(figures: readonly Figure[]): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const error = (scope: string, message: string) => issues.push({ level: 'error', scope, message });
@@ -156,38 +193,54 @@ export function validateExampleLectures(
   figures: readonly Figure[],
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
+  const error = (scope: string, message: string) => issues.push({ level: 'error', scope, message });
   const ids = new Set<string>();
+  const perFigure = new Map<string, number>();
   for (const lecture of lectures) {
     const scope = `college ${lecture.id}`;
-    if (ids.has(lecture.id)) issues.push({ level: 'error', scope, message: 'dubbele id' });
+    if (ids.has(lecture.id)) error(scope, 'dubbele id');
     ids.add(lecture.id);
+    if (!/^vb-[a-z0-9-]+$/.test(lecture.id)) error(scope, "id moet beginnen met 'vb-'");
     const figure = figures.find((f) => f.id === lecture.figureId);
     if (!figure) {
-      issues.push({ level: 'error', scope, message: `onbekende docent ${lecture.figureId}` });
+      error(scope, `onbekende docent ${lecture.figureId}`);
       continue;
     }
-    if (lecture.topic.length > 80)
-      issues.push({ level: 'error', scope, message: 'onderwerp langer dan 80 tekens' });
-    if (lecture.mainQuestion.length > 200) {
-      issues.push({ level: 'error', scope, message: 'hoofdvraag langer dan 200 tekens' });
-    }
+    perFigure.set(figure.id, (perFigure.get(figure.id) ?? 0) + 1);
+    if (!lecture.topic.trim() || lecture.topic.length > 80)
+      error(scope, 'onderwerp ontbreekt of is langer dan 80 tekens');
+    if (!lecture.mainQuestion.trim() || lecture.mainQuestion.length > 200)
+      error(scope, 'hoofdvraag ontbreekt of is langer dan 200 tekens');
+    if (!lecture.mainQuestion.trim().endsWith('?')) error(scope, 'hoofdvraag eindigt niet op ?');
+    if (!lecture.title.trim()) error(scope, 'geen titel');
+    if (lecture.tags.length === 0) error(scope, 'geen tags');
+    if (Number.isNaN(Date.parse(lecture.publishedAt))) error(scope, 'ongeldige publicatiedatum');
+    if (lecture.furtherReading.length === 0) error(scope, 'geen "Verder lezen"');
     for (const index of lecture.furtherReading) {
-      if (!figure.keyWorks[index]) {
-        issues.push({
-          level: 'error',
-          scope,
-          message: `"Verder lezen" verwijst naar onbekend werk #${index}`,
-        });
-      }
+      if (!figure.keyWorks[index])
+        error(scope, `"Verder lezen" verwijst naar onbekend werk #${index}`);
     }
     const kinds = lecture.segments.map((s) => s.kind);
     if (kinds[0] !== 'opening' || kinds[kinds.length - 1] !== 'conclusie') {
-      issues.push({
-        level: 'error',
-        scope,
-        message: 'college moet beginnen met een opening en eindigen met een conclusie',
-      });
+      error(scope, 'college moet beginnen met een opening en eindigen met een conclusie');
     }
+    if (kinds.filter((k) => k === 'deel').length !== 3)
+      error(scope, 'college heeft niet precies 3 delen');
+    const conclusion = lecture.segments[lecture.segments.length - 1]?.text ?? '';
+    if (!conclusion.includes('**Kernlessen**') || !conclusion.includes('**Denkvraag**'))
+      error(scope, 'conclusie mist **Kernlessen** of **Denkvraag**');
+    for (const segment of lecture.segments) {
+      if (!segment.heading.trim() || !segment.text.trim())
+        error(scope, `leeg segment (${segment.kind})`);
+      if (placeholdersIn(segment.text).length)
+        error(scope, `plaatshouder in vaste tekst (${segment.heading})`);
+      for (const quote of findUnverifiedQuotes(segment.text, figure))
+        error(scope, `citaat niet in de geverifieerde lijst: “${quote}…”`);
+    }
+  }
+  for (const figure of figures.filter((f) => f.tier === 'kern')) {
+    if (!perFigure.get(figure.id))
+      error(`colleges ${figure.id}`, 'kerndenker heeft geen voorbeeldcollege');
   }
   return issues;
 }
@@ -222,7 +275,21 @@ export function validateDailyQuestions(
       issues.push({ level: 'error', scope, message: `${q.id}: geen vervolgvraag` });
   }
   if (kinds.size < 7)
-    issues.push({ level: 'warning', scope, message: `slechts ${kinds.size} soorten vragen` });
+    issues.push({
+      level: 'error',
+      scope,
+      message: `slechts ${kinds.size} soorten vragen (7 nodig)`,
+    });
+  for (const q of questions) {
+    if (q.askers.length === 0)
+      issues.push({ level: 'error', scope, message: `${q.id}: geen vragensteller` });
+    if (!q.text.trim().endsWith('?'))
+      issues.push({ level: 'error', scope, message: `${q.id}: vraag eindigt niet op ?` });
+    if (!q.followUp.trim().endsWith('?'))
+      issues.push({ level: 'error', scope, message: `${q.id}: vervolgvraag eindigt niet op ?` });
+    if (q.text.length > 220)
+      issues.push({ level: 'warning', scope, message: `${q.id}: vraag is erg lang` });
+  }
   return issues;
 }
 
@@ -233,37 +300,100 @@ export function validateDemoContent(
   const issues: ValidationIssue[] = [];
   for (const figure of figures.filter((f) => f.tier === 'kern')) {
     const scope = `demo ${figure.id}`;
+    const error = (message: string) => issues.push({ level: 'error', scope, message });
     const demo = content.find((c) => c.figureId === figure.id);
     if (!demo) {
-      issues.push({ level: 'error', scope, message: 'geen demo-inhoud voor kerndenker' });
+      error('geen demo-inhoud voor kerndenker');
       continue;
     }
-    if (demo.sessionFragments.length < 15) {
-      issues.push({
-        level: 'error',
-        scope,
-        message: `${demo.sessionFragments.length} sessiefragmenten (minimaal 15)`,
-      });
+    const fragments = demo.sessionFragments;
+    if (fragments.length < 15) error(`${fragments.length} sessiefragmenten (minimaal 15)`);
+    for (const phase of [
+      'opening',
+      'terugkeer',
+      'doorvragen',
+      'verdiepen',
+      'afronden',
+      'slot',
+    ] as const) {
+      if (!fragments.some((f) => f.phase === phase))
+        error(`geen sessiefragment voor fase "${phase}"`);
     }
-    for (const phase of ['opening', 'doorvragen', 'verdiepen', 'afronden', 'slot'] as const) {
-      if (!demo.sessionFragments.some((f) => f.phase === phase)) {
-        issues.push({ level: 'error', scope, message: `geen sessiefragment voor fase "${phase}"` });
+    const openings = fragments.filter((f) => f.phase === 'opening');
+    if (!openings.some((f) => f.text.includes('{onderwerp}')))
+      error('geen opening die het opgegeven onderwerp gebruikt');
+    if (!openings.some((f) => !f.text.includes('{onderwerp}')))
+      error('geen opening zonder onderwerp');
+    const fragmentIds = new Set<string>();
+    for (const fragment of fragments) {
+      if (fragmentIds.has(fragment.id)) error(`dubbele fragment-id ${fragment.id}`);
+      fragmentIds.add(fragment.id);
+      for (const name of placeholdersIn(fragment.text)) {
+        if (!KNOWN_PLACEHOLDERS.has(name))
+          error(`${fragment.id}: onbekende plaatshouder {${name}}`);
+        if (name === 'vorige' && fragment.phase !== 'terugkeer')
+          error(`${fragment.id}: {vorige} hoort alleen in een terugkeer-fragment`);
+        if (name === 'onderwerp' && fragment.phase !== 'opening')
+          error(`${fragment.id}: {onderwerp} hoort alleen in een opening`);
+        if (name === 'hoofdvraag' || name === 'vraag')
+          error(`${fragment.id}: {${name}} hoort alleen in colleges`);
       }
     }
-    if (demo.timelineReactions.length < 10) {
-      issues.push({
-        level: 'error',
-        scope,
-        message: `${demo.timelineReactions.length} timeline-reacties (minimaal 10)`,
-      });
+    if (!fragments.some((f) => f.phase === 'terugkeer' && f.text.includes('{vorige}')))
+      error('geen terugkeer-fragment dat de vorige sessie noemt');
+
+    const { lecture } = demo;
+    if (lecture.blocks.length < 3) error('minder dan 3 lesblokken');
+    if (!lecture.openings.length || !lecture.answers.length || !lecture.conclusions.length)
+      error('college mist openingen, antwoorden of conclusies');
+    if (!lecture.thinkQuestions.length) error('geen denkvragen');
+    const blockIds = new Set<string>();
+    for (const block of lecture.blocks) {
+      if (blockIds.has(block.id)) error(`dubbele lesblok-id ${block.id}`);
+      blockIds.add(block.id);
+      if (!block.lesson.trim() || !block.heading.trim() || block.keywords.length === 0)
+        error(`${block.id}: kop, kernles of trefwoorden ontbreken`);
     }
-    if (demo.lecture.blocks.length < 3)
-      issues.push({ level: 'error', scope, message: 'minder dan 3 lesblokken' });
-    const fragmentIds = new Set<string>();
-    for (const fragment of demo.sessionFragments) {
-      if (fragmentIds.has(fragment.id))
-        issues.push({ level: 'error', scope, message: `dubbele fragment-id ${fragment.id}` });
-      fragmentIds.add(fragment.id);
+    const lectureTexts: [string, string[]][] = [
+      ['opening', lecture.openings],
+      ['lesblok', lecture.blocks.map((b) => b.text)],
+      ['antwoord', lecture.answers],
+      ['conclusie', lecture.conclusions],
+      ['denkvraag', lecture.thinkQuestions],
+    ];
+    const allowed: Record<string, string[]> = {
+      opening: ['onderwerp', 'hoofdvraag'],
+      lesblok: ['onderwerp', 'hoofdvraag'],
+      antwoord: ['vraag', 'woord', 'onderwerp'],
+      conclusie: ['hoofdvraag', 'onderwerp'],
+      denkvraag: ['onderwerp'],
+    };
+    for (const [kind, texts] of lectureTexts) {
+      for (const text of texts) {
+        for (const name of placeholdersIn(text)) {
+          if (!allowed[kind]?.includes(name))
+            error(`${kind}: plaatshouder {${name}} niet toegestaan`);
+        }
+      }
+    }
+
+    if (demo.timelineReactions.length < 10)
+      error(`${demo.timelineReactions.length} timeline-reacties (minimaal 10)`);
+    if (!demo.timelineReactions.some((r) => r.keywords.length === 0))
+      error('geen algemene timeline-reactie (zonder trefwoorden) als vangnet');
+    if (demo.reflectionQuestions.length < 3) error('minder dan 3 reflectievragen');
+    if (demo.thoughts.length < 5) error('minder dan 5 gedachten van de dag');
+
+    const everything = [
+      ...fragments.map((f) => f.text),
+      ...lectureTexts.flatMap(([, texts]) => texts),
+      ...demo.timelineReactions.map((r) => r.text),
+      ...demo.reflectionQuestions,
+      ...demo.thoughts,
+    ];
+    for (const text of everything) {
+      for (const quote of findUnverifiedQuotes(text, figure))
+        error(`citaat niet in de geverifieerde lijst: “${quote}…”`);
     }
   }
   return issues;

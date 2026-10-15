@@ -26,9 +26,22 @@ const CRISIS_PATTERNS: RegExp[] = [
   /\b(zelfbeschadiging|automutilatie)\b/,
   /\b(geen|niets\s+meer\s+om\s+voor\s+te)\s+leven\b/,
   /\bliever\s+dood\b/,
+  /\bik\s+wil\s+(er|hier)\s+niet\s+meer\s+zijn\b/,
+  /\bik\s+wil\s+(gewoon\s+)?verdwijnen\b/,
+  /\b(wou|wilde|zou\s+willen)\s+(ik\s+)?dat\s+ik\s+(er\s+niet\s+(meer\s+)?was|dood\s+was|nooit\s+geboren\s+was|niet\s+bestond)\b/,
+  /\bwas\s+ik\s+maar\s+(dood|nooit\s+geboren)\b/,
+  /\bnooit\s+meer\s+wakker\s+(te\s+)?worden\b/,
+  /\b(beter\s+af\s+zonder\s+mij|zonder\s+mij\s+beter\s+af)\b/,
+  /\bmijn\s+leven\s+(heeft\s+)?(geen|niet\s+langer)\s+zin\b/,
+  /\bgeen\s+zin\s+meer\s+in\s+(het|mijn)\s+leven\b/,
+  /\bhet\s+leven\s+heeft\s+voor\s+mij\s+geen\s+zin\b/,
+  /\bik\s+kan\s+(het\s+)?(echt\s+)?niet\s+meer\s+(aan|verder)\b/,
+  /\been\s+punt\s+achter\s+mijn\s+leven\s+zetten\b/,
   /\bkill\s+myself\b/,
   /\bend\s+(it\s+all|my\s+life)\b/,
   /\bwant\s+to\s+die\b/,
+  /\b(don\s*t|do\s+not)\s+want\s+to\s+(live|be\s+here)\b/,
+  /\bno\s+reason\s+to\s+live\b/,
 ];
 
 export function detectCrisisSignals(text: string): boolean {

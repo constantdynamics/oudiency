@@ -10,6 +10,13 @@ describe('crisisroute (app-side vangnet)', () => {
     'Ik wil mezelf iets aandoen',
     'Ik wil niet meer leven',
     'I want to die',
+    'Ik wil er niet meer zijn.',
+    'Soms wou ik dat ik er niet meer was',
+    'Iedereen is beter af zonder mij',
+    'Ik wil gaan slapen en nooit meer wakker worden',
+    'Mijn leven heeft geen zin meer',
+    'Ik kan het echt niet meer aan',
+    'I don’t want to live anymore',
   ])('herkent "%s"', (text) => {
     expect(detectCrisisSignals(text)).toBe(true);
   });
@@ -20,6 +27,11 @@ describe('crisisroute (app-side vangnet)', () => {
     'Mijn opa ging vorig jaar dood en ik mis hem',
     'Ik ben doodmoe van mijn werk',
     'Hoe leef ik een goed leven?',
+    'Ik wou dat ik er vorige week bij was',
+    'Heeft het leven zin, volgens Camus?',
+    'Ik kan niet meer wachten tot de vakantie',
+    'Ik wil er een punt achter zetten met mijn oude baan',
+    'Ik wil niet meer zo hard werken',
   ])('laat "%s" met rust', (text) => {
     expect(detectCrisisSignals(text)).toBe(false);
   });
