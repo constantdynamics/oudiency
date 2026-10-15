@@ -18,7 +18,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate:data": "tsx --tsconfig tsconfig.node.json scripts/validate-data.ts",
-    "gen:figures": "tsx --tsconfig tsconfig.node.json scripts/gen-figure-index.ts"
+    "gen:figures": "tsx --tsconfig tsconfig.node.json scripts/gen-figure-index.ts",
+    "gen:assets": "tsx --tsconfig tsconfig.node.json scripts/gen-assets.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.134.0",
@@ -30,7 +31,6 @@
     "@fontsource-variable/noto-serif-gujarati": "^5.3.0",
     "@fontsource/im-fell-english": "^5.3.0",
     "@fontsource/noto-serif-sc": "^5.3.1",
-    "date-fns": "^4.4.0",
     "lucide-react": "^1.57.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

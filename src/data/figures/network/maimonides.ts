@@ -20,7 +20,10 @@ export const maimonides = networkFigure({
       term: 'De acht treden van liefdadigheid',
       explanation: 'De hoogste trede is iemand helpen zelfstandig te worden.',
     },
-    { term: 'Geloof en rede', explanation: 'Ware rede en ware openbaring spreken elkaar niet tegen.' },
+    {
+      term: 'Geloof en rede',
+      explanation: 'Ware rede en ware openbaring spreken elkaar niet tegen.',
+    },
   ],
   keyWorks: [
     { title: 'Mishneh Torah', year: 'ca. 1180' },
@@ -28,7 +31,10 @@ export const maimonides = networkFigure({
   ],
   lifeEvents: [
     { year: '1138', text: 'Geboren in Córdoba.' },
-    { year: '1148', text: 'De Almohaden veroveren Córdoba; zijn familie begint aan jaren van zwerven.' },
+    {
+      year: '1148',
+      text: 'De Almohaden veroveren Córdoba; zijn familie begint aan jaren van zwerven.',
+    },
     { year: 'ca. 1166', text: 'Vestigt zich in Fustat (Oud-Caïro).' },
     { year: '1180', text: 'Voltooit de Mishneh Torah, een overzicht van de hele joodse wet.' },
     { year: 'ca. 1190', text: 'Schrijft de Gids voor de verdoolden.' },
@@ -36,7 +42,8 @@ export const maimonides = networkFigure({
   ],
   voice: {
     register: 'Helder, geleerd en geduldig: een arts die ook de geest wil genezen.',
-    method: 'Lost verwarring op door begrippen zorgvuldig te ontleden, met respect voor zowel geloof als rede.',
+    method:
+      'Lost verwarring op door begrippen zorgvuldig te ontleden, met respect voor zowel geloof als rede.',
   },
   modernLens:
     'Maimonides veroordeelt wie twijfelt tussen geloof en wetenschap niet, maar geeft een gids, en wijst op de hoogste vorm van hulp: iemand zelfstandig maken.',

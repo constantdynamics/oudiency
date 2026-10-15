@@ -6,7 +6,7 @@
  * Fase 2: dezelfde stores dienen als cache; de repositories (store/repos.ts) synchroniseren
  * met Supabase.
  */
-import type { z } from 'zod';
+import type * as z from 'zod/mini';
 import { createJSONStorage, type PersistOptions } from 'zustand/middleware';
 import { APP } from '@/config/app';
 
@@ -33,7 +33,7 @@ export interface PersistSpec<S, P> {
   name: StoreName;
   version: number;
   /** Schema van het opgeslagen deel (na partialize). */
-  schema: z.ZodType<P>;
+  schema: z.ZodMiniType<P>;
   partialize: (state: S) => P;
   /** Migraties per doelversie: migrations[2] zet versie 1 om naar 2, enzovoort. */
   migrations?: Record<number, Migration>;
@@ -43,7 +43,7 @@ export interface PersistSpec<S, P> {
 export interface RegisteredStore {
   name: StoreName;
   version: number;
-  schema: z.ZodType<unknown>;
+  schema: z.ZodMiniType<unknown>;
   migrations?: Record<number, Migration>;
   rehydrate: () => Promise<void> | void;
 }

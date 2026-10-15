@@ -13,13 +13,22 @@ export const thoreau = networkFigure({
   school: 'Transcendentalisme',
   family: 'amerikaans',
   theme: { primary: '#2f4a33', motif: 'botanical' },
-  tags: ['natuur', 'eenvoud', 'burgerlijke ongehoorzaamheid', 'eenzaamheid', 'wandelen', 'geweten', 'minimalisme'],
+  tags: [
+    'natuur',
+    'eenvoud',
+    'burgerlijke ongehoorzaamheid',
+    'eenzaamheid',
+    'wandelen',
+    'geweten',
+    'minimalisme',
+  ],
   bio: 'Henry David Thoreau bouwde in 1845 een hut aan de oever van Walden Pond en leefde er twee jaar en twee maanden zo eenvoudig mogelijk, om te ontdekken wat er in het leven werkelijk toe doet. Zijn boek Walden werd een klassieker. Omdat hij weigerde belasting te betalen aan een staat die slavernij en een oorlog met Mexico steunde, zat hij een nacht in de cel; daaruit groeide zijn essay over burgerlijke ongehoorzaamheid.',
   keyConcepts: [
     { term: 'Bewust leven', explanation: 'Leven met aandacht, zonder overbodige luxe of haast.' },
     {
       term: 'Burgerlijke ongehoorzaamheid',
-      explanation: 'Een onrechtvaardige wet weiger je openlijk en zonder geweld, en je aanvaardt de straf.',
+      explanation:
+        'Een onrechtvaardige wet weiger je openlijk en zonder geweld, en je aanvaardt de straf.',
     },
     { term: 'Wandelen', explanation: 'De natuur als bron van vrijheid en inzicht.' },
   ],
@@ -32,14 +41,18 @@ export const thoreau = networkFigure({
     { year: '1817', text: 'Geboren in Concord, Massachusetts.' },
     { year: '1837', text: 'Studeert af aan Harvard en raakt bevriend met Ralph Waldo Emerson.' },
     { year: '1845', text: 'Bouwt zijn hut bij Walden Pond, op grond van Emerson.' },
-    { year: '1846', text: 'Brengt een nacht in de cel door omdat hij weigert belasting te betalen.' },
+    {
+      year: '1846',
+      text: 'Brengt een nacht in de cel door omdat hij weigert belasting te betalen.',
+    },
     { year: '1854', text: 'Walden verschijnt.' },
     { year: '1862', text: 'Sterft in Concord aan tuberculose.' },
   ],
   quotes: [
     {
       text: 'Ik ging naar de bossen omdat ik bewust wilde leven, om alleen de wezenlijke feiten van het leven onder ogen te zien.',
-      original: 'I went to the woods because I wished to live deliberately, to front only the essential facts of life …',
+      original:
+        'I went to the woods because I wished to live deliberately, to front only the essential facts of life …',
       source: 'Walden, hoofdstuk 2',
       status: 'authentiek',
       translation: 'eigen',

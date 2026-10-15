@@ -14,12 +14,21 @@ export const plutarchus = networkFigure({
   school: 'Platonisme',
   family: 'grieks',
   theme: { primary: '#43504a', motif: 'scroll' },
-  tags: ['karakter', 'geschiedenis', 'leiderschap', 'opvoeding', 'luisteren', 'vriendschap', 'woede'],
+  tags: [
+    'karakter',
+    'geschiedenis',
+    'leiderschap',
+    'opvoeding',
+    'luisteren',
+    'vriendschap',
+    'woede',
+  ],
   bio: 'Plutarchus was een Griekse schrijver en priester van Apollo in Delphi, in de tijd van het Romeinse rijk. Zijn Parallelle levens zetten telkens een Griekse en een Romeinse beroemdheid naast elkaar, om te laten zien hoe karakter het verschil maakt. Zijn morele essays, de Moralia, gaan over alledaagse deugden: luisteren, vriendschap, woede beheersen. Eeuwenlang was hij een van de meest gelezen schrijvers van Europa.',
   keyConcepts: [
     {
       term: 'Karakter in kleine dingen',
-      explanation: 'Een grap of een terloops woord zegt soms meer over iemand dan een gewonnen veldslag.',
+      explanation:
+        'Een grap of een terloops woord zegt soms meer over iemand dan een gewonnen veldslag.',
     },
     {
       term: 'Vergelijkende levens',

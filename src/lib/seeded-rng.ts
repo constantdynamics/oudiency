@@ -65,7 +65,11 @@ export function sample<T>(rng: Rng, items: readonly T[], n: number): T[] {
 }
 
 /** Kies met gewichten (gewicht ≤ 0 telt niet mee). */
-export function weightedPick<T>(rng: Rng, items: readonly T[], weight: (item: T) => number): T | undefined {
+export function weightedPick<T>(
+  rng: Rng,
+  items: readonly T[],
+  weight: (item: T) => number,
+): T | undefined {
   const total = items.reduce((sum, item) => sum + Math.max(0, weight(item)), 0);
   if (total <= 0) return undefined;
   let r = rng() * total;

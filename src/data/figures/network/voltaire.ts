@@ -15,9 +15,15 @@ export const voltaire = networkFigure({
   tags: ['tolerantie', 'vrijheid', 'religie', 'humor', 'kritiek', 'optimisme', 'rechtvaardigheid'],
   bio: 'François-Marie Arouet, beter bekend als Voltaire, was de scherpste pen van de Verlichting. Hij zat twee keer in de Bastille, leefde jaren in ballingschap en schreef toneel, poëzie, geschiedenis en tienduizenden brieven. In Candide dreef hij de spot met het optimisme van Leibniz. Met de zaak-Calas streed hij tegen religieuze onverdraagzaamheid: "Écrasez l’infâme!"',
   keyConcepts: [
-    { term: 'Tolerantie', explanation: 'Verdraagzaamheid tussen geloven; vervolging om een overtuiging is barbaars.' },
+    {
+      term: 'Tolerantie',
+      explanation: 'Verdraagzaamheid tussen geloven; vervolging om een overtuiging is barbaars.',
+    },
     { term: 'Spot als wapen', explanation: 'Satire legt dwaasheid en machtsmisbruik bloot.' },
-    { term: 'Onze tuin bewerken', explanation: 'Na alle grote theorieën: doe wat binnen je bereik ligt.' },
+    {
+      term: 'Onze tuin bewerken',
+      explanation: 'Na alle grote theorieën: doe wat binnen je bereik ligt.',
+    },
   ],
   keyWorks: [
     { title: 'Lettres philosophiques', year: '1734' },
@@ -29,10 +35,19 @@ export const voltaire = networkFigure({
   lifeEvents: [
     { year: '1694', text: 'Geboren in Parijs.' },
     { year: '1717', text: 'Zit bijna een jaar in de Bastille vanwege spotverzen.' },
-    { year: '1726–1728', text: 'Woont in ballingschap in Engeland en raakt onder de indruk van Locke en Newton.' },
+    {
+      year: '1726–1728',
+      text: 'Woont in ballingschap in Engeland en raakt onder de indruk van Locke en Newton.',
+    },
     { year: '1759', text: 'Candide verschijnt en wordt meteen verboden en verslonden.' },
-    { year: '1762–1765', text: 'Voert campagne voor eerherstel van Jean Calas, een protestant die onterecht was terechtgesteld.' },
-    { year: '1778', text: 'Keert triomfantelijk terug in Parijs, ontmoet daar Franklin, en sterft een paar maanden later.' },
+    {
+      year: '1762–1765',
+      text: 'Voert campagne voor eerherstel van Jean Calas, een protestant die onterecht was terechtgesteld.',
+    },
+    {
+      year: '1778',
+      text: 'Keert triomfantelijk terug in Parijs, ontmoet daar Franklin, en sterft een paar maanden later.',
+    },
   ],
   quotes: [
     {

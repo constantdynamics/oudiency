@@ -10,7 +10,15 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   counter?: boolean;
 }
 
-export function TextField({ label, hint, counter, className, maxLength, value, ...rest }: TextFieldProps) {
+export function TextField({
+  label,
+  hint,
+  counter,
+  className,
+  maxLength,
+  value,
+  ...rest
+}: TextFieldProps) {
   const id = useId();
   const hintId = useId();
   const length = typeof value === 'string' ? value.length : 0;
@@ -26,7 +34,14 @@ export function TextField({ label, hint, counter, className, maxLength, value, .
           </span>
         )}
       </div>
-      <input id={id} aria-describedby={hint ? hintId : undefined} className={CONTROL} maxLength={maxLength} value={value} {...rest} />
+      <input
+        id={id}
+        aria-describedby={hint ? hintId : undefined}
+        className={CONTROL}
+        maxLength={maxLength}
+        value={value}
+        {...rest}
+      />
       {hint && (
         <p id={hintId} className="mt-1 text-sm text-ink-3">
           {hint}
@@ -43,7 +58,16 @@ interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   counter?: boolean;
 }
 
-export function TextArea({ label, hideLabel, hint, counter, className, maxLength, value, ...rest }: TextAreaProps) {
+export function TextArea({
+  label,
+  hideLabel,
+  hint,
+  counter,
+  className,
+  maxLength,
+  value,
+  ...rest
+}: TextAreaProps) {
   const id = useId();
   const hintId = useId();
   const length = typeof value === 'string' ? value.length : 0;

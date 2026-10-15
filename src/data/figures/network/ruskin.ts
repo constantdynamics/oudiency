@@ -16,9 +16,18 @@ export const ruskin = networkFigure({
   tags: ['kunst', 'werk', 'rijkdom', 'natuur', 'ambacht', 'rechtvaardigheid', 'economie'],
   bio: 'John Ruskin was de invloedrijkste kunstcriticus van het Victoriaanse Engeland, een kampioen van de schilder Turner en van de gotiek. Later richtte hij zijn pijlen op de economie van zijn tijd: in Unto This Last betoogde hij dat echte rijkdom het leven zelf is, en dat werk eerlijk beloond moet worden. Gandhi las het boek in 1904 tijdens één treinreis en veranderde daarna zijn leven.',
   keyConcepts: [
-    { term: 'Er is geen rijkdom dan het leven', explanation: 'Echte welvaart meet je af aan het leven van mensen, niet aan geld.' },
-    { term: 'Eerlijk loon', explanation: 'Loon hoort niet alleen van de markt af te hangen, maar van rechtvaardigheid.' },
-    { term: 'De waardigheid van ambacht', explanation: 'Goed werk geeft de werker ruimte om te denken en te scheppen.' },
+    {
+      term: 'Er is geen rijkdom dan het leven',
+      explanation: 'Echte welvaart meet je af aan het leven van mensen, niet aan geld.',
+    },
+    {
+      term: 'Eerlijk loon',
+      explanation: 'Loon hoort niet alleen van de markt af te hangen, maar van rechtvaardigheid.',
+    },
+    {
+      term: 'De waardigheid van ambacht',
+      explanation: 'Goed werk geeft de werker ruimte om te denken en te scheppen.',
+    },
   ],
   keyWorks: [
     { title: 'Modern Painters', year: '1843–1860' },
@@ -47,7 +56,8 @@ export const ruskin = networkFigure({
   ],
   voice: {
     register: 'Hartstochtelijk, beeldend en moralistisch.',
-    method: 'Kijkt wat iets doet met het leven van mensen: maakt het hen rijker, of alleen hun portemonnee?',
+    method:
+      'Kijkt wat iets doet met het leven van mensen: maakt het hen rijker, of alleen hun portemonnee?',
   },
   modernLens: 'Ruskin vraagt bij elk groeicijfer: groeit hier ook het leven van mensen?',
   network: [

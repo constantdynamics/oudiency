@@ -4,7 +4,13 @@
  */
 import { useSettingsStore } from '@/store/settingsStore';
 import { composeStructured, composeText } from './demo/compose';
-import { AiError, type AIProvider, type StructuredRequest, type TextRequest, type TextResult } from './provider';
+import {
+  AiError,
+  type AIProvider,
+  type StructuredRequest,
+  type TextRequest,
+  type TextResult,
+} from './provider';
 
 function instant(): boolean {
   return useSettingsStore.getState().settings.devInstantReactions;
@@ -31,7 +37,11 @@ function wait(ms: number, signal?: AbortSignal): Promise<void> {
 export class DemoProvider implements AIProvider {
   readonly id = 'demo' as const;
 
-  async streamText(req: TextRequest, onDelta: (chunk: string) => void, signal?: AbortSignal): Promise<TextResult> {
+  async streamText(
+    req: TextRequest,
+    onDelta: (chunk: string) => void,
+    signal?: AbortSignal,
+  ): Promise<TextResult> {
     const text = await composeText(req.demo);
     if (instant()) {
       onDelta(text);

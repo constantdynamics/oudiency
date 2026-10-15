@@ -13,13 +13,25 @@ export const mendelssohn = networkFigure({
   school: 'Verlichting; joodse Verlichting (Haskala)',
   family: 'verlichting',
   theme: { primary: '#36435e', motif: 'lens' },
-  tags: ['tolerantie', 'religie', 'vrijheid', 'vriendschap', 'opvoeding', 'identiteit', 'onsterfelijkheid'],
+  tags: [
+    'tolerantie',
+    'religie',
+    'vrijheid',
+    'vriendschap',
+    'opvoeding',
+    'identiteit',
+    'onsterfelijkheid',
+  ],
   bio: 'Moses Mendelssohn kwam als arme joodse jongen naar Berlijn, leerde zichzelf Duits, Latijn en filosofie en werd een van de beroemdste denkers van de Verlichting: "de Duitse Socrates". Hij was bevriend met de schrijver Lessing, die hem vereeuwigde als de wijze Nathan. Mendelssohn pleitte voor scheiding van kerk en staat en voor gelijke rechten voor joden, en vertaalde de Thora in het Duits.',
   keyConcepts: [
-    { term: 'Godsdienstvrijheid', explanation: 'De staat mag geloof niet afdwingen; het geweten is vrij.' },
+    {
+      term: 'Godsdienstvrijheid',
+      explanation: 'De staat mag geloof niet afdwingen; het geweten is vrij.',
+    },
     {
       term: 'De Duitse Socrates',
-      explanation: 'Zijn Phädon (1767) verdedigde in de geest van Plato de onsterfelijkheid van de ziel en maakte hem beroemd.',
+      explanation:
+        'Zijn Phädon (1767) verdedigde in de geest van Plato de onsterfelijkheid van de ziel en maakte hem beroemd.',
     },
   ],
   keyWorks: [
@@ -38,7 +50,8 @@ export const mendelssohn = networkFigure({
   ],
   voice: {
     register: 'Bescheiden, warm en helder; een tolerante gesprekspartner.',
-    method: 'Zoekt het redelijke gesprek tussen geloof en rede, en vraagt respect voor wie anders gelooft.',
+    method:
+      'Zoekt het redelijke gesprek tussen geloof en rede, en vraagt respect voor wie anders gelooft.',
   },
   modernLens:
     'Mendelssohn pleit in debatten over religie en identiteit voor wat hij in Jerusalem schreef: de staat moet het geweten niet dwingen, en verschil mag er zijn.',
@@ -47,7 +60,11 @@ export const mendelssohn = networkFigure({
     { id: 'leibniz', relation: 'invloed' },
     { id: 'wolff', relation: 'invloed' },
     { id: 'maimonides', relation: 'voorbeeld' },
-    { id: 'spinoza', relation: 'gesprekspartner', note: 'de pantheïsmestrijd van 1785 draaide om hem' },
+    {
+      id: 'spinoza',
+      relation: 'gesprekspartner',
+      note: 'de pantheïsmestrijd van 1785 draaide om hem',
+    },
     { id: 'rousseau', relation: 'invloed', note: 'vertaalde zijn tweede Discours in het Duits' },
     { id: 'herder', relation: 'tijdgenoot' },
   ],

@@ -16,7 +16,16 @@ export const diogenes = networkFigure({
   school: 'Cynisme',
   family: 'grieks',
   theme: { primary: '#5a4632', motif: 'wave' },
-  tags: ['eenvoud', 'vrijheid', 'humor', 'kritiek', 'wereldburger', 'schaamte', 'consumptie', 'spullen'],
+  tags: [
+    'eenvoud',
+    'vrijheid',
+    'humor',
+    'kritiek',
+    'wereldburger',
+    'schaamte',
+    'consumptie',
+    'spullen',
+  ],
   bio: 'Diogenes werd uit Sinope verbannen, volgens de overlevering omdat hij of zijn vader munten had vervalst. In Athene leefde hij als een hond (kyon, vandaar "cynicus") in een grote aardewerken voorraadkruik, bezat vrijwel niets en prikte met grappen en provocaties door het fatsoen en de hypocrisie van zijn tijd heen. Hij wilde laten zien hoe weinig een mens nodig heeft om vrij te zijn.',
   keyConcepts: [
     {
@@ -27,7 +36,8 @@ export const diogenes = networkFigure({
     {
       term: 'De munt omslaan',
       native: 'παραχαράττειν τὸ νόμισμα',
-      explanation: 'De gangbare waarden omwerken: wat iedereen normaal vindt, ter discussie stellen.',
+      explanation:
+        'De gangbare waarden omwerken: wat iedereen normaal vindt, ter discussie stellen.',
     },
     {
       term: 'Wereldburger',
@@ -43,10 +53,19 @@ export const diogenes = networkFigure({
   ],
   lifeEvents: [
     { year: 'ca. 410 v.Chr.', text: 'Geboren in Sinope.' },
-    { year: 'onbekend', text: 'Wordt verbannen, komt naar Athene en volgt volgens de overlevering Antisthenes.' },
+    {
+      year: 'onbekend',
+      text: 'Wordt verbannen, komt naar Athene en volgt volgens de overlevering Antisthenes.',
+    },
     { year: 'onbekend', text: 'Leeft in een grote aardewerken voorraadkruik op de markt.' },
-    { year: 'anekdote', text: 'Zou door piraten zijn gevangen en in Korinthe als slaaf zijn verkocht.' },
-    { year: 'ca. 323 v.Chr.', text: 'Sterft in Korinthe, volgens de overlevering op dezelfde dag als Alexander de Grote.' },
+    {
+      year: 'anekdote',
+      text: 'Zou door piraten zijn gevangen en in Korinthe als slaaf zijn verkocht.',
+    },
+    {
+      year: 'ca. 323 v.Chr.',
+      text: 'Sterft in Korinthe, volgens de overlevering op dezelfde dag als Alexander de Grote.',
+    },
   ],
   quotes: [
     {
@@ -80,7 +99,9 @@ export const diogenes = networkFigure({
   },
   modernLens:
     'Diogenes zou door een winkelcentrum lopen en hardop verbaasd zijn over hoeveel dingen hij niet nodig heeft. Influencers zou hij uitlachen, en daarna vragen waarom wij ze volgen.',
-  controversies: ['Zijn provocaties waren vaak grof en schaamteloos: hij deed in het openbaar wat anderen alleen privé deden.'],
+  controversies: [
+    'Zijn provocaties waren vaak grof en schaamteloos: hij deed in het openbaar wat anderen alleen privé deden.',
+  ],
   network: [
     { id: 'socrates', relation: 'voorbeeld' },
     { id: 'plato', relation: 'rivaal' },

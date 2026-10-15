@@ -9,7 +9,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ReactNode;
 }
 
-export function Button({ variant = 'primary', size = 'md', icon, className, children, type, ...rest }: ButtonProps) {
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  icon,
+  className,
+  children,
+  type,
+  ...rest
+}: ButtonProps) {
   return (
     <button type={type ?? 'button'} className={buttonClasses(variant, size, className)} {...rest}>
       {icon}
@@ -24,9 +32,23 @@ interface ButtonLinkProps extends LinkProps {
   icon?: ReactNode;
 }
 
-export function ButtonLink({ variant = 'primary', size = 'md', icon, className, children, ...rest }: ButtonLinkProps) {
+export function ButtonLink({
+  variant = 'primary',
+  size = 'md',
+  icon,
+  className,
+  children,
+  ...rest
+}: ButtonLinkProps) {
   return (
-    <Link className={buttonClasses(variant, size, typeof className === 'string' ? className : undefined)} {...rest}>
+    <Link
+      className={buttonClasses(
+        variant,
+        size,
+        typeof className === 'string' ? className : undefined,
+      )}
+      {...rest}
+    >
       {icon}
       {children}
     </Link>

@@ -1,6 +1,7 @@
 import { cx } from '@/lib/cx';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'figure' | 'figure-outline' | 'danger';
+export type ButtonVariant =
+  'primary' | 'secondary' | 'ghost' | 'figure' | 'figure-outline' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const BASE =
@@ -21,7 +22,10 @@ const SIZES: Record<ButtonSize, string> = {
   lg: 'min-h-12 px-6 text-base',
 };
 
-export function buttonClasses(variant: ButtonVariant = 'primary', size: ButtonSize = 'md', extra?: string) {
+export function buttonClasses(
+  variant: ButtonVariant = 'primary',
+  size: ButtonSize = 'md',
+  extra?: string,
+) {
   return cx(BASE, VARIANTS[variant], SIZES[size], extra);
 }
-

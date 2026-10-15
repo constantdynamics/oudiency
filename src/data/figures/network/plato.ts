@@ -13,13 +13,23 @@ export const plato = networkFigure({
   origin: 'Athene',
   school: 'Platonisme',
   family: 'grieks',
-  tags: ['ideeën', 'rechtvaardigheid', 'politiek', 'onderwijs', 'liefde', 'ziel', 'waarheid', 'schijn'],
+  tags: [
+    'ideeën',
+    'rechtvaardigheid',
+    'politiek',
+    'onderwijs',
+    'liefde',
+    'ziel',
+    'waarheid',
+    'schijn',
+  ],
   bio: 'Plato was de leerling van Socrates en schreef de dialogen waarin zijn leraar de hoofdrol speelt. Na de terechtstelling van Socrates reisde hij rond en stichtte hij rond 387 v.Chr. de Academie in Athene, een van de eerste scholen voor hoger onderwijs in Europa. In werken als de Staat en het Symposion ontwikkelde hij de ideeënleer: achter de veranderlijke wereld die we zien, ligt een wereld van onveranderlijke vormen.',
   keyConcepts: [
     {
       term: 'Ideeënleer',
       native: 'ἰδέα',
-      explanation: 'De ware werkelijkheid bestaat uit onveranderlijke vormen, zoals het Goede en het Schone.',
+      explanation:
+        'De ware werkelijkheid bestaat uit onveranderlijke vormen, zoals het Goede en het Schone.',
     },
     {
       term: 'De grot',
@@ -28,12 +38,14 @@ export const plato = networkFigure({
     },
     {
       term: 'De filosoof-koning',
-      explanation: 'Een staat wordt pas rechtvaardig als filosofen regeren of regeerders gaan filosoferen.',
+      explanation:
+        'Een staat wordt pas rechtvaardig als filosofen regeren of regeerders gaan filosoferen.',
     },
     {
       term: 'Leren is herinneren',
       native: 'ἀνάμνησις',
-      explanation: 'De ziel kent de waarheid al; leren is haar weer naar boven halen (Menon, Faidon).',
+      explanation:
+        'De ziel kent de waarheid al; leren is haar weer naar boven halen (Menon, Faidon).',
     },
   ],
   keyWorks: [
@@ -46,9 +58,15 @@ export const plato = networkFigure({
   ],
   lifeEvents: [
     { year: 'ca. 428 v.Chr.', text: 'Geboren in een aristocratische Atheense familie.' },
-    { year: '399 v.Chr.', text: 'Maakt mee hoe zijn leraar Socrates wordt veroordeeld; schrijft later diens verdediging, de Apologie.' },
+    {
+      year: '399 v.Chr.',
+      text: 'Maakt mee hoe zijn leraar Socrates wordt veroordeeld; schrijft later diens verdediging, de Apologie.',
+    },
     { year: 'ca. 387 v.Chr.', text: 'Sticht de Academie, bij een heilig bos net buiten Athene.' },
-    { year: '367 en 361 v.Chr.', text: 'Reist naar Syracuse om de tiran Dionysios II te adviseren; het loopt op niets uit.' },
+    {
+      year: '367 en 361 v.Chr.',
+      text: 'Reist naar Syracuse om de tiran Dionysios II te adviseren; het loopt op niets uit.',
+    },
     { year: 'ca. 348 v.Chr.', text: 'Sterft in Athene.' },
   ],
   quotes: [
@@ -76,8 +94,10 @@ export const plato = networkFigure({
     },
   ],
   voice: {
-    register: 'Literair en speels-ernstig; vertelt graag mythen en beelden, zoals de grot en de wagenmenner.',
-    method: 'Dialoog en mythe: laat stemmen tegen elkaar ingaan en eindigt met een beeld dat blijft hangen.',
+    register:
+      'Literair en speels-ernstig; vertelt graag mythen en beelden, zoals de grot en de wagenmenner.',
+    method:
+      'Dialoog en mythe: laat stemmen tegen elkaar ingaan en eindigt met een beeld dat blijft hangen.',
   },
   modernLens:
     'Plato zou in onze schermen een nieuwe grot zien: we kijken naar schaduwen op de wand en houden ze voor de werkelijkheid. Hij vraagt wie de beelden maakt, en wat je zou zien als je je omdraait.',

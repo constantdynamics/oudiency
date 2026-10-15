@@ -19,7 +19,8 @@ export const chrysippus = networkFigure({
   keyConcepts: [
     {
       term: 'Stoïcijnse logica',
-      explanation: 'Redeneren met hele uitspraken (als … dan …, of … of …): een voorloper van de moderne logica.',
+      explanation:
+        'Redeneren met hele uitspraken (als … dan …, of … of …): een voorloper van de moderne logica.',
     },
     {
       term: 'De rollende cilinder',
@@ -36,9 +37,15 @@ export const chrysippus = networkFigure({
   ],
   lifeEvents: [
     { year: 'ca. 279 v.Chr.', text: 'Geboren in Soloi.' },
-    { year: 'ca. 260 v.Chr.', text: 'Komt naar Athene en studeert bij Cleanthes, de opvolger van Zeno.' },
+    {
+      year: 'ca. 260 v.Chr.',
+      text: 'Komt naar Athene en studeert bij Cleanthes, de opvolger van Zeno.',
+    },
     { year: 'ca. 232 v.Chr.', text: 'Wordt hoofd van de Stoa.' },
-    { year: 'ca. 206 v.Chr.', text: 'Sterft; volgens een anekdote van het lachen om een ezel die vijgen at.' },
+    {
+      year: 'ca. 206 v.Chr.',
+      text: 'Sterft; volgens een anekdote van het lachen om een ezel die vijgen at.',
+    },
   ],
   voice: {
     register: 'Scherpzinnig, grondig en een tikje pedant.',

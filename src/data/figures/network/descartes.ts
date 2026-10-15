@@ -16,9 +16,19 @@ export const descartes = networkFigure({
   tags: ['twijfel', 'zekerheid', 'rede', 'methode', 'lichaam en geest', 'wiskunde'],
   bio: 'René Descartes woonde ruim twintig jaar in de Republiek, waar hij in alle rust kon denken en publiceren. Hij besloot te twijfelen aan alles wat maar te betwijfelen viel, tot hij één zekerheid vond: als ik twijfel, denk ik, en als ik denk, besta ik. Hij legde de basis voor de moderne filosofie en, met het coördinatenstelsel, voor de analytische meetkunde.',
   keyConcepts: [
-    { term: 'Methodische twijfel', explanation: 'Aan alles twijfelen tot je iets vindt wat onbetwijfelbaar is.' },
-    { term: 'Cogito', native: 'cogito, ergo sum', explanation: 'Ik denk, dus ik ben: de eerste zekerheid.' },
-    { term: 'Lichaam en geest', explanation: 'Twee verschillende substanties: het uitgebreide en het denkende.' },
+    {
+      term: 'Methodische twijfel',
+      explanation: 'Aan alles twijfelen tot je iets vindt wat onbetwijfelbaar is.',
+    },
+    {
+      term: 'Cogito',
+      native: 'cogito, ergo sum',
+      explanation: 'Ik denk, dus ik ben: de eerste zekerheid.',
+    },
+    {
+      term: 'Lichaam en geest',
+      explanation: 'Twee verschillende substanties: het uitgebreide en het denkende.',
+    },
   ],
   keyWorks: [
     { title: 'Discours de la méthode', year: '1637', note: 'Verschenen in Leiden.' },
@@ -28,11 +38,20 @@ export const descartes = networkFigure({
   ],
   lifeEvents: [
     { year: '1596', text: 'Geboren in La Haye in Touraine.' },
-    { year: '1618', text: 'Neemt dienst in het leger van Maurits van Nassau en ontmoet in Breda de wiskundige Isaac Beeckman.' },
-    { year: '1619', text: 'Heeft in een verwarmde kamer in Duitsland zijn beroemde dromen over een nieuwe wetenschap.' },
+    {
+      year: '1618',
+      text: 'Neemt dienst in het leger van Maurits van Nassau en ontmoet in Breda de wiskundige Isaac Beeckman.',
+    },
+    {
+      year: '1619',
+      text: 'Heeft in een verwarmde kamer in Duitsland zijn beroemde dromen over een nieuwe wetenschap.',
+    },
     { year: '1628', text: 'Vestigt zich in de Republiek, waar hij ruim twintig jaar blijft.' },
     { year: '1637', text: 'Het Discours de la méthode verschijnt in Leiden.' },
-    { year: '1650', text: 'Sterft in Stockholm, waar hij koningin Christina ’s ochtends vroeg les moest geven.' },
+    {
+      year: '1650',
+      text: 'Sterft in Stockholm, waar hij koningin Christina ’s ochtends vroeg les moest geven.',
+    },
   ],
   quotes: [
     {

@@ -20,7 +20,10 @@ export const seneca = networkFigure({
       term: 'De kortheid van het leven',
       explanation: 'We krijgen niet te weinig tijd, maar verspillen er veel van.',
     },
-    { term: 'Woede beteugelen', explanation: 'Woede is een tijdelijke waanzin; uitstel is het beste medicijn.' },
+    {
+      term: 'Woede beteugelen',
+      explanation: 'Woede is een tijdelijke waanzin; uitstel is het beste medicijn.',
+    },
     {
       term: 'Avondreflectie',
       explanation: 'Elke avond je dag doornemen: wat ging goed, wat kan beter? (Over woede III.36)',

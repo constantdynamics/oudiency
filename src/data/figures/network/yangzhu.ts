@@ -30,7 +30,10 @@ export const yangzhu = networkFigure({
     },
   ],
   keyWorks: [
-    { title: 'Liezi, hoofdstuk 7 ("Yang Zhu")', note: 'Een later hoofdstuk dat zijn ideeën (mogelijk vrij) weergeeft.' },
+    {
+      title: 'Liezi, hoofdstuk 7 ("Yang Zhu")',
+      note: 'Een later hoofdstuk dat zijn ideeën (mogelijk vrij) weergeeft.',
+    },
     { title: 'Mencius 7A26', note: 'De beroemde kritiek van Mencius.' },
   ],
   lifeEvents: [

@@ -32,7 +32,11 @@ export const laozi: Figure = {
   ],
   bio: 'Over Laozi, "de oude meester", is weinig met zekerheid bekend. Volgens de geschiedschrijver Sima Qian was hij archivaris aan het hof van Zhou. Toen hij het verval van het rijk zag, vertrok hij naar het westen. Bij de grenspas vroeg de wachter hem zijn wijsheid op te schrijven, en zo zou de Daodejing zijn ontstaan: 81 korte hoofdstukken over de Weg, over zachtheid die het harde overwint en over handelen zonder te forceren. Veel onderzoekers zien het boek als het werk van meerdere generaties.',
   keyConcepts: [
-    { term: 'Dao', native: '道', explanation: 'De Weg: de onnoembare bron en loop van alle dingen.' },
+    {
+      term: 'Dao',
+      native: '道',
+      explanation: 'De Weg: de onnoembare bron en loop van alle dingen.',
+    },
     {
       term: 'De',
       native: '德',
@@ -51,12 +55,14 @@ export const laozi: Figure = {
     {
       term: 'Pu',
       native: '樸',
-      explanation: 'Het onbewerkte blok hout: eenvoud vóór de vervorming door verlangen en conventie.',
+      explanation:
+        'Het onbewerkte blok hout: eenvoud vóór de vervorming door verlangen en conventie.',
     },
     {
       term: 'Het zachte overwint het harde',
       native: '柔弱勝剛強',
-      explanation: 'Water is zacht en meegaand, en toch slijt het de hardste steen (Daodejing 36 en 78).',
+      explanation:
+        'Water is zacht en meegaand, en toch slijt het de hardste steen (Daodejing 36 en 78).',
     },
   ],
   keyWorks: [
@@ -136,10 +142,19 @@ export const laozi: Figure = {
     },
   ],
   specs: [
-    { label: 'Naam', value: 'Laozi betekent "oude meester"; volgens Sima Qian heette hij Li Er (李耳)' },
+    {
+      label: 'Naam',
+      value: 'Laozi betekent "oude meester"; volgens Sima Qian heette hij Li Er (李耳)',
+    },
     { label: 'Werk', value: 'Daodejing: ongeveer vijfduizend karakters in 81 hoofdstukken' },
-    { label: 'Historiciteit', value: 'Onzeker; mogelijk een legendarische figuur rond wie teksten werden verzameld' },
-    { label: 'Nawerking', value: 'Grondtekst van het taoïsme en een van de meest vertaalde boeken ter wereld' },
+    {
+      label: 'Historiciteit',
+      value: 'Onzeker; mogelijk een legendarische figuur rond wie teksten werden verzameld',
+    },
+    {
+      label: 'Nawerking',
+      value: 'Grondtekst van het taoïsme en een van de meest vertaalde boeken ter wereld',
+    },
   ],
   voice: {
     register:
@@ -157,7 +172,10 @@ export const laozi: Figure = {
       { phrase: '無為 (wu wei)', translation: 'niet-forcerend handelen' },
       { phrase: '道 (dao)', translation: 'de Weg' },
       { phrase: '知足 (zhi zu)', translation: 'weten wanneer het genoeg is' },
-      { phrase: '上善若水 (shang shan ruo shui)', translation: 'het hoogste goede is als water (hoofdstuk 8)' },
+      {
+        phrase: '上善若水 (shang shan ruo shui)',
+        translation: 'het hoogste goede is als water (hoofdstuk 8)',
+      },
     ],
     avoid: [
       'Lange redeneringen en opsommingen',

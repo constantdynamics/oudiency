@@ -1,6 +1,14 @@
-import { BookOpenText, CalendarClock, Compass, Landmark, MessagesSquare, ShieldCheck, UserRound } from 'lucide-react';
+import {
+  BookOpenText,
+  CalendarClock,
+  Compass,
+  Landmark,
+  MessagesSquare,
+  ShieldCheck,
+  UserRound,
+} from 'lucide-react';
 import { lazy, Suspense, useEffect, useRef } from 'react';
-import { Link, NavLink, Outlet, ScrollRestoration, useLocation } from 'react-router';
+import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { Toasts } from '@/components/Toasts';
 import { APP } from '@/config/app';
 import { useBackgroundTasks } from '@/services/background';
@@ -11,8 +19,10 @@ import { useNow } from '@/hooks/useNow';
 import { useProfileStore } from '@/store/profileStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { DemoBanner } from './DemoBanner';
+import { ErrorBoundary } from './ErrorBoundary';
 import { NotificationBell } from './NotificationBell';
 import { isDevPanelAllowed } from './devAccess';
+import { useScrollRestoration } from './scroll';
 
 const DevPanel = lazy(() => import('@/features/dev/DevPanel'));
 
@@ -26,7 +36,11 @@ const NAV_ITEMS = [
 
 function Logo() {
   return (
-    <Link to="/" className="group flex items-center gap-2.5 rounded-full pr-2" aria-label={`${APP.name}, naar Ontdekken`}>
+    <Link
+      to="/"
+      className="group flex items-center gap-2.5 rounded-full pr-2"
+      aria-label={`${APP.name}, naar Ontdekken`}
+    >
       <svg viewBox="0 0 40 40" className="size-9 shrink-0" aria-hidden>
         <circle cx="20" cy="20" r="19" className="fill-gold" />
         <circle cx="20" cy="20" r="17" className="fill-paper" />
@@ -34,7 +48,9 @@ function Logo() {
         <path d="M20 7.5v25M7.5 20h25" className="stroke-gold" strokeWidth="1" />
         <circle cx="20" cy="20" r="3" className="fill-ink" />
       </svg>
-      <span className="font-display text-[1.65rem] leading-none font-semibold tracking-tight">{APP.name}</span>
+      <span className="font-display text-[1.65rem] leading-none font-semibold tracking-tight">
+        {APP.name}
+      </span>
     </Link>
   );
 }
@@ -50,12 +66,24 @@ function ProfileLink() {
       className={({ isActive }) =>
         cx(
           'inline-flex size-11 items-center justify-center rounded-full border-2 font-display text-lg font-semibold transition-colors',
-          isActive ? 'border-ink bg-ink text-paper' : 'border-line-strong bg-card text-ink hover:border-ink-2',
+          isActive
+            ? 'border-ink bg-ink text-paper'
+            : 'border-line-strong bg-card text-ink hover:border-ink-2',
         )
       }
     >
       {initial || <UserRound aria-hidden className="size-5" />}
     </NavLink>
+  );
+}
+
+/** Terwijl een pagina-chunk laadt (alleen zichtbaar bij een trage verbinding). */
+function PageFallback() {
+  return (
+    <div className="flex justify-center py-24" role="status" aria-live="polite">
+      <span className="size-8 animate-spin rounded-full border-2 border-line-strong border-t-ink motion-reduce:animate-none" />
+      <span className="sr-only">{t.app.loading}</span>
+    </div>
   );
 }
 
@@ -84,6 +112,7 @@ export function AppLayout() {
   const showDev = isDevPanelAllowed() || devPanelEnabled;
 
   useBackgroundTasks();
+  useScrollRestoration();
 
   // Focus naar de hoofdinhoud bij navigatie (schermlezers horen de nieuwe pagina).
   useEffect(() => {
@@ -117,7 +146,9 @@ export function AppLayout() {
                     className={({ isActive }) =>
                       cx(
                         'rounded-full px-3.5 py-2 text-[0.95rem] font-medium transition-colors',
-                        isActive ? 'bg-ink text-paper' : 'text-ink-2 hover:bg-paper-2 hover:text-ink',
+                        isActive
+                          ? 'bg-ink text-paper'
+                          : 'text-ink-2 hover:bg-paper-2 hover:text-ink',
                       )
                     }
                   >
@@ -166,7 +197,11 @@ export function AppLayout() {
         tabIndex={-1}
         className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 outline-none sm:px-6 md:pb-12"
       >
-        <Outlet />
+        <ErrorBoundary resetKey={location.pathname}>
+          <Suspense fallback={<PageFallback />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
       </main>
 
       <footer className="hidden border-t border-line bg-paper-2/60 md:block">
@@ -216,7 +251,11 @@ export function AppLayout() {
                         isActive && 'bg-gold-soft',
                       )}
                     >
-                      <item.icon aria-hidden className="size-5" strokeWidth={isActive ? 2.3 : 1.8} />
+                      <item.icon
+                        aria-hidden
+                        className="size-5"
+                        strokeWidth={isActive ? 2.3 : 1.8}
+                      />
                     </span>
                     {item.label}
                   </>
@@ -233,7 +272,6 @@ export function AppLayout() {
           <DevPanel />
         </Suspense>
       )}
-      <ScrollRestoration />
     </div>
   );
 }

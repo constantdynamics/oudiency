@@ -16,8 +16,14 @@ export const vandenenden = networkFigure({
   tags: ['democratie', 'gelijkheid', 'onderwijs', 'vrijheid', 'radicalisme', 'toneel'],
   bio: 'Franciscus van den Enden was een voormalig jezuïet die in Amsterdam een kunsthandel en een Latijnse school dreef. Hij leerde de jonge Spinoza Latijn en liet zijn leerlingen klassiek toneel spelen. In zijn Vrye Politijke Stellingen (1665) bepleitte hij een radicale democratie van gelijken. In 1674 werd hij in Parijs opgehangen wegens betrokkenheid bij een samenzwering tegen Lodewijk XIV.',
   keyConcepts: [
-    { term: 'Democratie van gelijken', explanation: 'De staat hoort de vrijheid en gelijkheid van alle burgers te dienen.' },
-    { term: 'Onderwijs voor vrijheid', explanation: 'Wie leert denken, kan zich niet zomaar laten onderdrukken.' },
+    {
+      term: 'Democratie van gelijken',
+      explanation: 'De staat hoort de vrijheid en gelijkheid van alle burgers te dienen.',
+    },
+    {
+      term: 'Onderwijs voor vrijheid',
+      explanation: 'Wie leert denken, kan zich niet zomaar laten onderdrukken.',
+    },
   ],
   keyWorks: [
     { title: 'Kort Verhael van Nieuw-Nederlants', year: '1662' },
@@ -29,13 +35,17 @@ export const vandenenden = networkFigure({
     { year: 'ca. 1657', text: 'Leert de jonge Spinoza Latijn.' },
     { year: '1665', text: 'Publiceert de Vrye Politijke Stellingen.' },
     { year: '1671', text: 'Verhuist naar Parijs en opent er een school.' },
-    { year: '1674', text: 'Wordt in Parijs opgehangen na een mislukte samenzwering tegen Lodewijk XIV.' },
+    {
+      year: '1674',
+      text: 'Wordt in Parijs opgehangen na een mislukte samenzwering tegen Lodewijk XIV.',
+    },
   ],
   voice: {
     register: 'Bevlogen, eigenzinnig en radicaal.',
     method: 'Vraagt of een staat werkelijk de vrijheid en gelijkheid van alle burgers dient.',
   },
-  modernLens: 'Van den Enden ziet in burgerberaden en directe democratie iets van zijn radicale ideeën terug.',
+  modernLens:
+    'Van den Enden ziet in burgerberaden en directe democratie iets van zijn radicale ideeën terug.',
   network: [
     { id: 'spinoza', relation: 'leerling' },
     { id: 'dewitt', relation: 'tijdgenoot' },

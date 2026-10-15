@@ -18,13 +18,20 @@ export const nagarjuna = networkFigure({
   tags: ['leegte', 'boeddhisme', 'middenweg', 'logica', 'loslaten', 'verbondenheid'],
   bio: 'Nagarjuna is een van de invloedrijkste boeddhistische filosofen. Hij leefde waarschijnlijk in de tweede of derde eeuw in Zuid-India, maar over zijn leven is weinig zeker. In zijn Fundamentele verzen over de middenweg laat hij met scherpe logica zien dat niets op zichzelf bestaat: alles ontstaat in afhankelijkheid van iets anders. Dat noemt hij leegte.',
   keyConcepts: [
-    { term: 'Leegte', native: 'शून्यता', explanation: 'Niets heeft een eigen, onafhankelijk bestaan.' },
+    {
+      term: 'Leegte',
+      native: 'शून्यता',
+      explanation: 'Niets heeft een eigen, onafhankelijk bestaan.',
+    },
     {
       term: 'Afhankelijk ontstaan',
       native: 'प्रतीत्यसमुत्पाद',
       explanation: 'Alles bestaat in relatie tot iets anders.',
     },
-    { term: 'Twee waarheden', explanation: 'Een conventionele, alledaagse waarheid en een uiteindelijke waarheid.' },
+    {
+      term: 'Twee waarheden',
+      explanation: 'Een conventionele, alledaagse waarheid en een uiteindelijke waarheid.',
+    },
   ],
   keyWorks: [
     { title: 'Mūlamadhyamakakārikā (Fundamentele verzen over de middenweg)' },
@@ -35,7 +42,10 @@ export const nagarjuna = networkFigure({
       year: '2e–3e eeuw',
       text: 'Leeft waarschijnlijk in Zuid-India, mogelijk in het rijk van de Satavahana’s.',
     },
-    { year: 'onbekend', text: 'Schrijft volgens de overlevering een brief met raad aan een koning, de Brief aan een vriend.' },
+    {
+      year: 'onbekend',
+      text: 'Schrijft volgens de overlevering een brief met raad aan een koning, de Brief aan een vriend.',
+    },
     { year: 'latere eeuwen', text: 'Zijn denken verspreidt zich naar Tibet, China en Japan.' },
   ],
   quotes: [
@@ -49,7 +59,8 @@ export const nagarjuna = networkFigure({
   ],
   voice: {
     register: 'Rustig en messcherp; ontmantelt elke vaste overtuiging, ook zijn eigen.',
-    method: 'Laat zien dat elk standpunt, tot het uiterste doorgedacht, zichzelf opheft, en wijst dan op de middenweg.',
+    method:
+      'Laat zien dat elk standpunt, tot het uiterste doorgedacht, zichzelf opheft, en wijst dan op de middenweg.',
   },
   modernLens:
     'Nagarjuna herkent in netwerken en ecosystemen zijn afhankelijk ontstaan, en herinnert ons eraan dat ook ons "ik" geen eiland is.',

@@ -16,7 +16,10 @@ export const besant = networkFigure({
   tags: ['vrouwenrechten', 'onderwijs', 'arbeid', 'vrijheid', 'religie', 'activisme', 'india'],
   bio: 'Annie Besant was een Britse vrijdenker, socialist en vrouwenrechtenactivist, die in 1877 terechtstond omdat ze een boekje over geboortebeperking verspreidde. In 1888 steunde ze de staking van de Londense luciferfabriekmeisjes. Later werd ze theosoof, verhuisde ze naar India en streed ze voor Indiaas zelfbestuur; in 1917 werd ze voorzitter van het Indian National Congress.',
   keyConcepts: [
-    { term: 'Recht op kennis', explanation: 'Ook kennis over je eigen lichaam mag niet verboden worden.' },
+    {
+      term: 'Recht op kennis',
+      explanation: 'Ook kennis over je eigen lichaam mag niet verboden worden.',
+    },
     { term: 'Home Rule', explanation: 'Zelfbestuur voor India, binnen of buiten het rijk.' },
   ],
   keyWorks: [

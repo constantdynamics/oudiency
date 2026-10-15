@@ -20,7 +20,8 @@ export const mencius = networkFigure({
   keyConcepts: [
     {
       term: 'De goede natuur',
-      explanation: 'Ieder mens heeft de kiemen van goedheid in zich; ze moeten alleen worden gekoesterd.',
+      explanation:
+        'Ieder mens heeft de kiemen van goedheid in zich; ze moeten alleen worden gekoesterd.',
     },
     {
       term: 'De vier kiemen',
@@ -33,7 +34,8 @@ export const mencius = networkFigure({
     {
       term: 'Niet aan de scheuten trekken',
       native: '揠苗助長',
-      explanation: 'De boer die zijn gewassen hielp groeien door eraan te trekken, doodde ze: groei laat zich niet forceren.',
+      explanation:
+        'De boer die zijn gewassen hielp groeien door eraan te trekken, doodde ze: groei laat zich niet forceren.',
     },
   ],
   keyWorks: [{ title: 'Mencius (Mengzi, 孟子)' }],
@@ -43,7 +45,10 @@ export const mencius = networkFigure({
       year: 'overlevering',
       text: 'Zijn moeder verhuist drie keer, om hem in een goede omgeving te laten opgroeien.',
     },
-    { year: '4e eeuw v.Chr.', text: 'Reist langs vorstenhoven, zoals die van Qi en Liang, om vorsten te adviseren.' },
+    {
+      year: '4e eeuw v.Chr.',
+      text: 'Reist langs vorstenhoven, zoals die van Qi en Liang, om vorsten te adviseren.',
+    },
     { year: 'ca. 289 v.Chr.', text: 'Sterft.' },
   ],
   quotes: [
@@ -66,7 +71,8 @@ export const mencius = networkFigure({
   ],
   voice: {
     register: 'Hartstochtelijk, welbespraakt en vasthoudend; durft vorsten tegen te spreken.',
-    method: 'Gebruikt treffende voorbeelden, zoals het kind bij de put en de boer die aan zijn gewassen trekt.',
+    method:
+      'Gebruikt treffende voorbeelden, zoals het kind bij de put en de boer die aan zijn gewassen trekt.',
   },
   modernLens:
     'Mencius herinnert politici eraan dat het volk het belangrijkst is, en ouders dat kinderen groeien zoals gewassen: niet door eraan te trekken.',

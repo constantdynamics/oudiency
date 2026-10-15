@@ -75,15 +75,25 @@ export default function DevPanel() {
         >
           <div className="mb-2 flex items-center justify-between">
             <h2 className="font-display text-xl">Dev-paneel</h2>
-            <button type="button" onClick={() => setOpen(false)} aria-label="Sluiten" className="rounded-full p-1 hover:bg-paper-2">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Sluiten"
+              className="rounded-full p-1 hover:bg-paper-2"
+            >
               <X aria-hidden className="size-4" />
             </button>
           </div>
           <p className="text-xs text-ink-3">
-            {new Date(now).toLocaleString('nl-NL')} · <span className={cx(clock.offset() !== 0 && 'font-semibold text-warn')}>{offsetLabel(clock.offset())}</span>
+            {new Date(now).toLocaleString('nl-NL')} ·{' '}
+            <span className={cx(clock.offset() !== 0 && 'font-semibold text-warn')}>
+              {offsetLabel(clock.offset())}
+            </span>
           </p>
 
-          <h3 className="mt-3 mb-1 text-xs font-semibold tracking-wide text-ink-3 uppercase">Tijd</h3>
+          <h3 className="mt-3 mb-1 text-xs font-semibold tracking-wide text-ink-3 uppercase">
+            Tijd
+          </h3>
           <div className="flex flex-wrap gap-1.5">
             <DevButton onClick={() => shift(-HOUR)}>−1 uur</DevButton>
             <DevButton onClick={() => shift(5 * MINUTE)}>+5 min</DevButton>
@@ -92,23 +102,39 @@ export default function DevPanel() {
             <DevButton onClick={() => shift(DAY)}>+1 dag</DevButton>
             <DevButton onClick={() => clock.reset()}>Echte tijd</DevButton>
             {upcoming && upcoming.status === 'gepland' && (
-              <DevButton onClick={() => clock.travelTo(bookingStart(upcoming) + 5_000)}>Naar volgende afspraak</DevButton>
+              <DevButton onClick={() => clock.travelTo(bookingStart(upcoming) + 5_000)}>
+                Naar volgende afspraak
+              </DevButton>
             )}
             {active && (
-              <DevButton onClick={() => clock.travelTo(Date.parse(active.endsAt) - 3 * MINUTE + 2_000)}>
+              <DevButton
+                onClick={() => clock.travelTo(Date.parse(active.endsAt) - 3 * MINUTE + 2_000)}
+              >
                 Sessie: naar 3 min resterend
               </DevButton>
             )}
             {active && (
-              <DevButton onClick={() => clock.travelTo(Date.parse(active.endsAt) - 15_000)}>Sessie: bijna voorbij</DevButton>
+              <DevButton onClick={() => clock.travelTo(Date.parse(active.endsAt) - 15_000)}>
+                Sessie: bijna voorbij
+              </DevButton>
             )}
           </div>
 
-          <h3 className="mt-3 mb-1 text-xs font-semibold tracking-wide text-ink-3 uppercase">Limieten &amp; status</h3>
+          <h3 className="mt-3 mb-1 text-xs font-semibold tracking-wide text-ink-3 uppercase">
+            Limieten &amp; status
+          </h3>
           <div className="flex flex-wrap gap-1.5">
-            <DevButton onClick={() => useProfileStore.getState().resetUsageDay(localDateKey(now))}>Daglimieten vandaag resetten</DevButton>
-            <DevButton onClick={() => useProfileStore.getState().addCredits(5)}>+5 credits</DevButton>
-            <DevButton onClick={() => useProfileStore.getState().setTier(profile.tier === 'premium' ? 'basis' : 'premium')}>
+            <DevButton onClick={() => useProfileStore.getState().resetUsageDay(localDateKey(now))}>
+              Daglimieten vandaag resetten
+            </DevButton>
+            <DevButton onClick={() => useProfileStore.getState().addCredits(5)}>
+              +5 credits
+            </DevButton>
+            <DevButton
+              onClick={() =>
+                useProfileStore.getState().setTier(profile.tier === 'premium' ? 'basis' : 'premium')
+              }
+            >
               {profile.tier === 'premium' ? 'Premium uit' : 'Premium aan'}
             </DevButton>
             <DevButton
@@ -117,12 +143,16 @@ export default function DevPanel() {
                 usePostStore.setState((s) => ({
                   posts: s.posts.map((p) => ({
                     ...p,
-                    reactions: p.reactions.map((r) => (Date.parse(r.visibleAt) > now ? { ...r, visibleAt: iso } : r)),
+                    reactions: p.reactions.map((r) =>
+                      Date.parse(r.visibleAt) > now ? { ...r, visibleAt: iso } : r,
+                    ),
                   })),
                 }));
                 useNotificationStore.setState((s) => ({
                   notifications: s.notifications.map((n) =>
-                    Date.parse(n.visibleAt) > now && n.kind !== 'afspraak' ? { ...n, visibleAt: iso } : n,
+                    Date.parse(n.visibleAt) > now && n.kind !== 'afspraak'
+                      ? { ...n, visibleAt: iso }
+                      : n,
                   ),
                 }));
                 void runBackgroundTasks();
@@ -144,7 +174,11 @@ export default function DevPanel() {
             />
             <Toggle
               label="Eigen API-key gebruiken"
-              description={apiKeyStorage.get() ? `Nu: ${mode === 'demo' ? 'demomodus' : 'eigen key'}` : 'Stel eerst een key in via Profiel.'}
+              description={
+                apiKeyStorage.get()
+                  ? `Nu: ${mode === 'demo' ? 'demomodus' : 'eigen key'}`
+                  : 'Stel eerst een key in via Profiel.'
+              }
               checked={settings.aiSource === 'anthropic-browser'}
               disabled={!apiKeyStorage.get()}
               onChange={(value) => update({ aiSource: value ? 'anthropic-browser' : 'demo' })}

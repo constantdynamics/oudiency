@@ -11,7 +11,13 @@ interface ThemeFrameProps {
   as?: 'div' | 'section' | 'article' | 'header' | 'li';
 }
 
-export function ThemeFrame({ figure, motif = false, className, children, as: Tag = 'div' }: ThemeFrameProps) {
+export function ThemeFrame({
+  figure,
+  motif = false,
+  className,
+  children,
+  as: Tag = 'div',
+}: ThemeFrameProps) {
   useFigureFonts(figure);
   return (
     <Tag

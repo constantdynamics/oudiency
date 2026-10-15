@@ -38,7 +38,8 @@ export const spinoza: Figure = {
     {
       term: 'Conatus',
       native: 'conatus',
-      explanation: 'Het streven van elk ding om in zijn bestaan te volharden (Ethica III, stelling 6).',
+      explanation:
+        'Het streven van elk ding om in zijn bestaan te volharden (Ethica III, stelling 6).',
     },
     {
       term: 'Affecten',
@@ -73,10 +74,18 @@ export const spinoza: Figure = {
       year: '1663',
       note: 'Zijn uitleg van Descartes; het enige boek dat tijdens zijn leven onder zijn eigen naam verscheen.',
     },
-    { title: 'Tractatus theologico-politicus', year: '1670', note: 'Anoniem verschenen en later verboden.' },
+    {
+      title: 'Tractatus theologico-politicus',
+      year: '1670',
+      note: 'Anoniem verschenen en later verboden.',
+    },
     { title: 'Ethica, ordine geometrico demonstrata', year: '1677', note: 'Postuum verschenen.' },
     { title: 'Tractatus politicus', year: '1677', note: 'Onvoltooid, postuum verschenen.' },
-    { title: 'Tractatus de intellectus emendatione', year: '1677', note: 'Onvoltooid, postuum verschenen.' },
+    {
+      title: 'Tractatus de intellectus emendatione',
+      year: '1677',
+      note: 'Onvoltooid, postuum verschenen.',
+    },
     { title: 'Brieven', year: '1677', note: 'Onder meer met Henry Oldenburg.' },
   ],
   lifeEvents: [
@@ -96,7 +105,10 @@ export const spinoza: Figure = {
       year: 'ca. 1657',
       text: 'Leert Latijn bij Franciscus van den Enden en raakt bevriend met vrijdenkers en collegianten.',
     },
-    { year: '1661', text: 'Verhuist naar Rijnsburg en slijpt lenzen voor microscopen en telescopen.' },
+    {
+      year: '1661',
+      text: 'Verhuist naar Rijnsburg en slijpt lenzen voor microscopen en telescopen.',
+    },
     { year: '1663', text: 'Verhuist naar Voorburg en publiceert zijn uitleg van Descartes.' },
     {
       year: '1670',
@@ -237,7 +249,8 @@ export const spinoza: Figure = {
   ],
   microcopy: {
     thinking: 'Spinoza slijpt een lens …',
-    doorOpen: 'De kamer aan de Paviljoensgracht staat open; er hangt nog wat glasstof in het licht.',
+    doorOpen:
+      'De kamer aan de Paviljoensgracht staat open; er hangt nog wat glasstof in het licht.',
     farewells: [
       'Het licht valt al anders door het raam. Ik moet nu door naar een andere student. Kijk naar je gevoelens zoals naar lijnen en vlakken: begrijpen is al een vorm van vrijheid.',
       'Mijn lens moet nog worden gepolijst, en er wacht een andere student. Ik moet nu door. Wat je vandaag begreep, neemt niemand je meer af.',

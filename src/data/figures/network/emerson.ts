@@ -16,8 +16,16 @@ export const emerson = networkFigure({
   tags: ['zelfvertrouwen', 'natuur', 'individualiteit', 'intuitie', 'vriendschap', 'conformisme'],
   bio: 'Ralph Waldo Emerson legde zijn ambt als predikant neer en werd de spil van het Amerikaanse transcendentalisme. In essays als Nature en Self-Reliance riep hij op tot vertrouwen in de eigen intuïtie en tot direct contact met de natuur, los van traditie en conformisme. Hij was de mentor van Thoreau en werd in heel Europa gelezen, ook door Nietzsche.',
   keyConcepts: [
-    { term: 'Zelfvertrouwen', native: 'Self-Reliance', explanation: 'Vertrouw op je eigen inzicht, ook tegen de mening van de massa in.' },
-    { term: 'De overziel', native: 'Over-Soul', explanation: 'Een universele geest die alle mensen en de natuur verbindt.' },
+    {
+      term: 'Zelfvertrouwen',
+      native: 'Self-Reliance',
+      explanation: 'Vertrouw op je eigen inzicht, ook tegen de mening van de massa in.',
+    },
+    {
+      term: 'De overziel',
+      native: 'Over-Soul',
+      explanation: 'Een universele geest die alle mensen en de natuur verbindt.',
+    },
     { term: 'Natuur als leraar', explanation: 'In de natuur kom je jezelf en het geheel tegen.' },
   ],
   keyWorks: [

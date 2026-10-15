@@ -29,7 +29,8 @@ function sentenceCount(text: string): number {
 export function validateFigures(figures: readonly Figure[]): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const error = (scope: string, message: string) => issues.push({ level: 'error', scope, message });
-  const warn = (scope: string, message: string) => issues.push({ level: 'warning', scope, message });
+  const warn = (scope: string, message: string) =>
+    issues.push({ level: 'warning', scope, message });
 
   const ids = new Set<string>();
   for (const figure of figures) {
@@ -52,7 +53,8 @@ export function validateFigures(figures: readonly Figure[]): ValidationIssue[] {
       ['voice.method', f.voice?.method],
     ];
     for (const [field, value] of required) {
-      if (typeof value !== 'string' || value.trim() === '') error(scope, `verplicht veld ontbreekt: ${field}`);
+      if (typeof value !== 'string' || value.trim() === '')
+        error(scope, `verplicht veld ontbreekt: ${field}`);
     }
     if (!/^[a-z]+$/.test(f.id)) error(scope, 'id moet uit kleine letters bestaan (a–z)');
     if (f.tags.length === 0) error(scope, 'geen thema-tags');
@@ -63,7 +65,8 @@ export function validateFigures(figures: readonly Figure[]): ValidationIssue[] {
     if (f.microcopy.farewells.length === 0) error(scope, 'geen afscheidszinnen');
 
     // Rooster: alleen personen die vóór 1950 zijn overleden.
-    if (!Number.isFinite(f.died) || f.died >= 1950) error(scope, `sterfjaar ${f.died}: alleen vóór 1950 toegestaan`);
+    if (!Number.isFinite(f.died) || f.died >= 1950)
+      error(scope, `sterfjaar ${f.died}: alleen vóór 1950 toegestaan`);
     if (f.born >= f.died) error(scope, 'geboortejaar ligt niet vóór sterfjaar');
 
     // Citaten
@@ -78,12 +81,19 @@ export function validateFigures(figures: readonly Figure[]): ValidationIssue[] {
       if (!q.verified) warn(qs, 'citaat is (nog) niet geverifieerd');
     }
     if (f.tier === 'kern') {
-      const verifiedAuthentic = f.quotes.filter((q) => q.verified && q.status === 'authentiek').length;
-      if (verifiedAuthentic < 3) error(scope, `kerndenker heeft ${verifiedAuthentic} geverifieerde authentieke citaten (minimaal 3)`);
+      const verifiedAuthentic = f.quotes.filter(
+        (q) => q.verified && q.status === 'authentiek',
+      ).length;
+      if (verifiedAuthentic < 3)
+        error(
+          scope,
+          `kerndenker heeft ${verifiedAuthentic} geverifieerde authentieke citaten (minimaal 3)`,
+        );
       if (f.helpsWith.length < 3) warn(scope, 'kerndenker heeft weinig "helpsWith"');
     } else {
       const sentences = sentenceCount(f.bio);
-      if (sentences < 2 || sentences > 5) warn(scope, `bio heeft ${sentences} zinnen (richtlijn 2–4)`);
+      if (sentences < 2 || sentences > 5)
+        warn(scope, `bio heeft ${sentences} zinnen (richtlijn 2–4)`);
       if (f.lifeEvents.length < 3 || f.lifeEvents.length > 7) {
         warn(scope, `${f.lifeEvents.length} levensgebeurtenissen (richtlijn 3–5)`);
       }
@@ -91,11 +101,13 @@ export function validateFigures(figures: readonly Figure[]): ValidationIssue[] {
     }
 
     // Netwerk
-    if (f.network.length > MAX_NETWORK) error(scope, `netwerk heeft ${f.network.length} relaties (max. ${MAX_NETWORK})`);
+    if (f.network.length > MAX_NETWORK)
+      error(scope, `netwerk heeft ${f.network.length} relaties (max. ${MAX_NETWORK})`);
     const seen = new Set<string>();
     for (const link of f.network) {
       if (link.id === f.id) error(scope, 'netwerk verwijst naar zichzelf');
-      if (!figures.some((other) => other.id === link.id)) error(scope, `netwerk-id zonder profiel: ${link.id}`);
+      if (!figures.some((other) => other.id === link.id))
+        error(scope, `netwerk-id zonder profiel: ${link.id}`);
       if (seen.has(link.id)) error(scope, `dubbele relatie met ${link.id}`);
       seen.add(link.id);
     }
@@ -112,17 +124,22 @@ export function validateFigures(figures: readonly Figure[]): ValidationIssue[] {
     }
     if (parseHex(primary) && parseHex(surface)) {
       const onSurface = contrastRatio(primary, surface);
-      if (onSurface < MIN_CONTRAST) error(scope, `contrast primary/surface ${onSurface.toFixed(2)} < ${MIN_CONTRAST}`);
+      if (onSurface < MIN_CONTRAST)
+        error(scope, `contrast primary/surface ${onSurface.toFixed(2)} < ${MIN_CONTRAST}`);
       const onPrimary = contrastRatio('#ffffff', primary);
-      if (onPrimary < MIN_CONTRAST) error(scope, `contrast wit/primary ${onPrimary.toFixed(2)} < ${MIN_CONTRAST}`);
+      if (onPrimary < MIN_CONTRAST)
+        error(scope, `contrast wit/primary ${onPrimary.toFixed(2)} < ${MIN_CONTRAST}`);
       const onCard = contrastRatio(primary, '#fffcf5');
-      if (onCard < MIN_CONTRAST) error(scope, `contrast primary/kaart ${onCard.toFixed(2)} < ${MIN_CONTRAST}`);
+      if (onCard < MIN_CONTRAST)
+        error(scope, `contrast primary/kaart ${onCard.toFixed(2)} < ${MIN_CONTRAST}`);
     }
 
     // Spreekuur
-    if (f.availability.slots.length < 6) warn(scope, `slechts ${f.availability.slots.length} spreekuurtijden`);
+    if (f.availability.slots.length < 6)
+      warn(scope, `slechts ${f.availability.slots.length} spreekuurtijden`);
     for (const slot of f.availability.slots) {
-      if (!SLOT_RE.test(slot) || slot < '09:00' || slot > '21:00') error(scope, `ongeldige spreekuurtijd ${slot}`);
+      if (!SLOT_RE.test(slot) || slot < '09:00' || slot > '21:00')
+        error(scope, `ongeldige spreekuurtijd ${slot}`);
     }
   }
 
@@ -149,18 +166,27 @@ export function validateExampleLectures(
       issues.push({ level: 'error', scope, message: `onbekende docent ${lecture.figureId}` });
       continue;
     }
-    if (lecture.topic.length > 80) issues.push({ level: 'error', scope, message: 'onderwerp langer dan 80 tekens' });
+    if (lecture.topic.length > 80)
+      issues.push({ level: 'error', scope, message: 'onderwerp langer dan 80 tekens' });
     if (lecture.mainQuestion.length > 200) {
       issues.push({ level: 'error', scope, message: 'hoofdvraag langer dan 200 tekens' });
     }
     for (const index of lecture.furtherReading) {
       if (!figure.keyWorks[index]) {
-        issues.push({ level: 'error', scope, message: `"Verder lezen" verwijst naar onbekend werk #${index}` });
+        issues.push({
+          level: 'error',
+          scope,
+          message: `"Verder lezen" verwijst naar onbekend werk #${index}`,
+        });
       }
     }
     const kinds = lecture.segments.map((s) => s.kind);
     if (kinds[0] !== 'opening' || kinds[kinds.length - 1] !== 'conclusie') {
-      issues.push({ level: 'error', scope, message: 'college moet beginnen met een opening en eindigen met een conclusie' });
+      issues.push({
+        level: 'error',
+        scope,
+        message: 'college moet beginnen met een opening en eindigen met een conclusie',
+      });
     }
   }
   return issues;
@@ -172,7 +198,12 @@ export function validateDailyQuestions(
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const scope = 'dagvragen';
-  if (questions.length < 60) issues.push({ level: 'error', scope, message: `slechts ${questions.length} dagvragen (minimaal 60)` });
+  if (questions.length < 60)
+    issues.push({
+      level: 'error',
+      scope,
+      message: `slechts ${questions.length} dagvragen (minimaal 60)`,
+    });
   const ids = new Set<string>();
   const kinds = new Set<string>();
   for (const q of questions) {
@@ -180,11 +211,18 @@ export function validateDailyQuestions(
     ids.add(q.id);
     kinds.add(q.kind);
     for (const asker of q.askers) {
-      if (!figures.some((f) => f.id === asker)) issues.push({ level: 'error', scope, message: `${q.id}: onbekende vragensteller ${asker}` });
+      if (!figures.some((f) => f.id === asker))
+        issues.push({
+          level: 'error',
+          scope,
+          message: `${q.id}: onbekende vragensteller ${asker}`,
+        });
     }
-    if (!q.followUp.trim()) issues.push({ level: 'error', scope, message: `${q.id}: geen vervolgvraag` });
+    if (!q.followUp.trim())
+      issues.push({ level: 'error', scope, message: `${q.id}: geen vervolgvraag` });
   }
-  if (kinds.size < 7) issues.push({ level: 'warning', scope, message: `slechts ${kinds.size} soorten vragen` });
+  if (kinds.size < 7)
+    issues.push({ level: 'warning', scope, message: `slechts ${kinds.size} soorten vragen` });
   return issues;
 }
 
@@ -201,7 +239,11 @@ export function validateDemoContent(
       continue;
     }
     if (demo.sessionFragments.length < 15) {
-      issues.push({ level: 'error', scope, message: `${demo.sessionFragments.length} sessiefragmenten (minimaal 15)` });
+      issues.push({
+        level: 'error',
+        scope,
+        message: `${demo.sessionFragments.length} sessiefragmenten (minimaal 15)`,
+      });
     }
     for (const phase of ['opening', 'doorvragen', 'verdiepen', 'afronden', 'slot'] as const) {
       if (!demo.sessionFragments.some((f) => f.phase === phase)) {
@@ -209,12 +251,18 @@ export function validateDemoContent(
       }
     }
     if (demo.timelineReactions.length < 10) {
-      issues.push({ level: 'error', scope, message: `${demo.timelineReactions.length} timeline-reacties (minimaal 10)` });
+      issues.push({
+        level: 'error',
+        scope,
+        message: `${demo.timelineReactions.length} timeline-reacties (minimaal 10)`,
+      });
     }
-    if (demo.lecture.blocks.length < 3) issues.push({ level: 'error', scope, message: 'minder dan 3 lesblokken' });
+    if (demo.lecture.blocks.length < 3)
+      issues.push({ level: 'error', scope, message: 'minder dan 3 lesblokken' });
     const fragmentIds = new Set<string>();
     for (const fragment of demo.sessionFragments) {
-      if (fragmentIds.has(fragment.id)) issues.push({ level: 'error', scope, message: `dubbele fragment-id ${fragment.id}` });
+      if (fragmentIds.has(fragment.id))
+        issues.push({ level: 'error', scope, message: `dubbele fragment-id ${fragment.id}` });
       fragmentIds.add(fragment.id);
     }
   }
@@ -222,5 +270,7 @@ export function validateDemoContent(
 }
 
 export function formatIssues(issues: readonly ValidationIssue[]): string {
-  return issues.map((i) => `${i.level === 'error' ? '✗' : '!'} [${i.scope}] ${i.message}`).join('\n');
+  return issues
+    .map((i) => `${i.level === 'error' ? '✗' : '!'} [${i.scope}] ${i.message}`)
+    .join('\n');
 }

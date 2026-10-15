@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as z from 'zod/mini';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { type AiTask, DEFAULT_TASK_MODELS, type TaskModelConfig } from '@/config/models';

@@ -16,9 +16,19 @@ export const pestalozzi = networkFigure({
   tags: ['onderwijs', 'opvoeding', 'kinderen', 'armoede', 'liefde', 'zorg'],
   bio: 'Johann Heinrich Pestalozzi was een Zwitserse onderwijsvernieuwer die, geïnspireerd door Rousseaus Émile, zijn leven wijdde aan de opvoeding van arme kinderen. Hij zag hoofd, hart en hand als één geheel: kinderen leren door te doen en door liefdevolle aandacht, niet door alleen uit het hoofd te leren. Zijn scholen in Burgdorf en Yverdon trokken bezoekers uit heel Europa.',
   keyConcepts: [
-    { term: 'Hoofd, hart en hand', explanation: 'De opvoeding van het hele kind: denken, voelen en doen.' },
-    { term: 'Aanschouwing', native: 'Anschauung', explanation: 'Leren begint bij zien, voelen en zelf ervaren.' },
-    { term: 'Liefde als basis', explanation: 'Een kind leert pas als het zich veilig en gezien voelt.' },
+    {
+      term: 'Hoofd, hart en hand',
+      explanation: 'De opvoeding van het hele kind: denken, voelen en doen.',
+    },
+    {
+      term: 'Aanschouwing',
+      native: 'Anschauung',
+      explanation: 'Leren begint bij zien, voelen en zelf ervaren.',
+    },
+    {
+      term: 'Liefde als basis',
+      explanation: 'Een kind leert pas als het zich veilig en gezien voelt.',
+    },
   ],
   keyWorks: [
     { title: 'Lienhard und Gertrud', year: '1781–1787' },
@@ -44,7 +54,8 @@ export const pestalozzi = networkFigure({
   ],
   voice: {
     register: 'Hartelijk, bevlogen en geduldig.',
-    method: 'Kijkt naar het hele kind en vraagt: wat ervaart het, wat voelt het, wat kan het zelf doen?',
+    method:
+      'Kijkt naar het hele kind en vraagt: wat ervaart het, wat voelt het, wat kan het zelf doen?',
   },
   modernLens:
     'Pestalozzi ziet zijn ideeën terug in ervaringsgericht onderwijs, en vraagt of elk kind ook liefde en aandacht krijgt.',

@@ -1,5 +1,5 @@
-import '@fontsource-variable/literata/opsz.css';
-import '@fontsource-variable/literata/opsz-italic.css';
+import '@fontsource-variable/literata/wght.css';
+import '@fontsource-variable/literata/wght-italic.css';
 import '@fontsource-variable/cormorant-garamond/wght.css';
 import './styles/index.css';
 import { StrictMode } from 'react';

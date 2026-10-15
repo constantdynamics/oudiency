@@ -13,12 +13,29 @@ export const newton = networkFigure({
   school: 'Natuurfilosofie',
   family: 'brits',
   theme: { primary: '#283f52', motif: 'stars' },
-  tags: ['wetenschap', 'natuur', 'wiskunde', 'zwaartekracht', 'licht', 'nieuwsgierigheid', 'rivaliteit'],
+  tags: [
+    'wetenschap',
+    'natuur',
+    'wiskunde',
+    'zwaartekracht',
+    'licht',
+    'nieuwsgierigheid',
+    'rivaliteit',
+  ],
   bio: 'Isaac Newton beschreef de zwaartekracht en de bewegingswetten die een appel en de maan op dezelfde manier laten vallen. Hij ontwikkelde de calculus, ontleedde licht met een prisma in kleuren en bouwde de eerste werkende spiegeltelescoop. Zijn Principia (1687) veranderde het wereldbeeld blijvend. Minder bekend: hij besteedde ook veel tijd aan alchemie en bijbelstudie, en kon bitter strijden met rivalen.',
   keyConcepts: [
-    { term: 'Universele zwaartekracht', explanation: 'Dezelfde kracht laat een appel vallen en houdt de maan in haar baan.' },
-    { term: 'Bewegingswetten', explanation: 'Drie wetten die beschrijven hoe krachten beweging veranderen.' },
-    { term: 'Experiment boven speculatie', explanation: 'Geen hypothesen verzinnen, maar afleiden uit metingen.' },
+    {
+      term: 'Universele zwaartekracht',
+      explanation: 'Dezelfde kracht laat een appel vallen en houdt de maan in haar baan.',
+    },
+    {
+      term: 'Bewegingswetten',
+      explanation: 'Drie wetten die beschrijven hoe krachten beweging veranderen.',
+    },
+    {
+      term: 'Experiment boven speculatie',
+      explanation: 'Geen hypothesen verzinnen, maar afleiden uit metingen.',
+    },
   ],
   keyWorks: [
     { title: 'Philosophiae Naturalis Principia Mathematica', year: '1687' },

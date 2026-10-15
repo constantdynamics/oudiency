@@ -30,7 +30,10 @@ export const wangbi = networkFigure({
   ],
   lifeEvents: [
     { year: '226', text: 'Geboren.' },
-    { year: 'jaren 240', text: 'Maakt aan het hof van Wei indruk met zijn gesprekken over het niet-zijn.' },
+    {
+      year: 'jaren 240',
+      text: 'Maakt aan het hof van Wei indruk met zijn gesprekken over het niet-zijn.',
+    },
     { year: '249', text: 'Sterft aan een ziekte, 23 jaar oud.' },
   ],
   quotes: [

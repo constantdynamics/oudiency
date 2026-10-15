@@ -15,12 +15,23 @@ export const zhuangzi = networkFigure({
   school: 'Taoïsme',
   family: 'chinees',
   theme: { primary: '#2c4a3e' },
-  tags: ['vrijheid', 'relativiteit', 'humor', 'dromen', 'natuur', 'spontaniteit', 'nut', 'dood', 'loslaten'],
+  tags: [
+    'vrijheid',
+    'relativiteit',
+    'humor',
+    'dromen',
+    'natuur',
+    'spontaniteit',
+    'nut',
+    'dood',
+    'loslaten',
+  ],
   bio: 'Zhuangzi was een taoïstische denker en verteller. Volgens Sima Qian was hij een tijd opzichter van een lakboomgaard en weigerde hij een hoge functie aan het hof, omdat hij liever vrij in de modder speelde. Het boek dat zijn naam draagt, staat vol absurde en geestige verhalen: over een man die droomt dat hij een vlinder is, over een kok die een os uitbeent zonder dat zijn mes bot wordt, over bomen die oud worden omdat ze nutteloos zijn.',
   keyConcepts: [
     {
       term: 'De vlinderdroom',
-      explanation: 'Is hij een man die droomde een vlinder te zijn, of een vlinder die droomt een man te zijn?',
+      explanation:
+        'Is hij een man die droomde een vlinder te zijn, of een vlinder die droomt een man te zijn?',
     },
     {
       term: 'Het nut van het nutteloze',
@@ -30,14 +41,21 @@ export const zhuangzi = networkFigure({
     {
       term: 'Vrij zwerven',
       native: '逍遙遊',
-      explanation: 'Door het leven gaan zonder vast te zitten aan nut, status of één enkel standpunt.',
+      explanation:
+        'Door het leven gaan zonder vast te zitten aan nut, status of één enkel standpunt.',
     },
     {
       term: 'Kok Ding',
-      explanation: 'Wie de natuurlijke lijnen volgt, werkt moeiteloos: zijn mes bleef negentien jaar scherp.',
+      explanation:
+        'Wie de natuurlijke lijnen volgt, werkt moeiteloos: zijn mes bleef negentien jaar scherp.',
     },
   ],
-  keyWorks: [{ title: 'Zhuangzi (莊子)', note: 'De "binnenhoofdstukken" (1–7) worden het meest aan hem zelf toegeschreven.' }],
+  keyWorks: [
+    {
+      title: 'Zhuangzi (莊子)',
+      note: 'De "binnenhoofdstukken" (1–7) worden het meest aan hem zelf toegeschreven.',
+    },
+  ],
   lifeEvents: [
     { year: 'ca. 369 v.Chr.', text: 'Geboren in Meng, in de staat Song.' },
     { year: 'onbekend', text: 'Werkt volgens Sima Qian als opzichter van een lakboomgaard.' },
@@ -69,7 +87,8 @@ export const zhuangzi = networkFigure({
   ],
   voice: {
     register: 'Speels, absurd en geestig; vertelt liever een verhaal dan een stelling.',
-    method: 'Relativeert door van perspectief te wisselen: kijk eens vanuit de vis, de boom, de vlinder. Ontwapent met humor.',
+    method:
+      'Relativeert door van perspectief te wisselen: kijk eens vanuit de vis, de boom, de vlinder. Ontwapent met humor.',
   },
   modernLens:
     'Zhuangzi lacht om onze obsessie met nut en productiviteit, en vertelt over de kromme boom die juist door zijn nutteloosheid oud mocht worden.',
@@ -82,5 +101,9 @@ export const zhuangzi = networkFigure({
     { id: 'mozi', relation: 'andere school' },
     { id: 'nagarjuna', relation: 'geestverwant', note: 'vergelijkende filosofie' },
   ],
-  helpsWith: ['minder serieus nemen wat er niet toe doet', 'vrijheid en spontaniteit', 'omgaan met verlies'],
+  helpsWith: [
+    'minder serieus nemen wat er niet toe doet',
+    'vrijheid en spontaniteit',
+    'omgaan met verlies',
+  ],
 });

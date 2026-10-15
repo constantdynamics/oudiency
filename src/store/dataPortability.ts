@@ -2,7 +2,7 @@
  * Profiel → Mijn data: exporteren (JSON), importeren en alles wissen.
  * De API-key gaat nooit mee in een export.
  */
-import { z } from 'zod';
+import * as z from 'zod/mini';
 import { APP } from '@/config/app';
 import { clock } from '@/lib/clock';
 import { runMigrations, storageKey, storeRegistry, type StoreName } from './persist';
@@ -11,13 +11,13 @@ import './allStores';
 
 const ExportFileSchema = z.object({
   app: z.literal('oudiency'),
-  formatVersion: z.number().int(),
+  formatVersion: z.int(),
   exportedAt: z.string(),
   stores: z.record(
     z.string(),
     z.object({
       state: z.unknown(),
-      version: z.number().int().min(0),
+      version: z.int().check(z.minimum(0)),
     }),
   ),
 });

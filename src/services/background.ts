@@ -72,7 +72,8 @@ export function revealDiscoveries(now: number): void {
   const profile = useProfileStore.getState();
   for (const post of posts) {
     for (const reaction of post.reactions) {
-      if (reaction.discovery && Date.parse(reaction.visibleAt) <= now) profile.discover(reaction.figureId);
+      if (reaction.discovery && Date.parse(reaction.visibleAt) <= now)
+        profile.discover(reaction.figureId);
     }
   }
 }
@@ -89,7 +90,10 @@ function pushBrowserNotifications(now: number): void {
       continue;
     }
     try {
-      new Notification(t.notifications.browserTitle, { body: notification.text, tag: notification.id });
+      new Notification(t.notifications.browserTitle, {
+        body: notification.text,
+        tag: notification.id,
+      });
     } catch {
       // sommige browsers staan dit alleen via een service worker toe
     }

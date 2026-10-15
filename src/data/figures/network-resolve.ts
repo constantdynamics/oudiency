@@ -86,7 +86,8 @@ export function resolveNetworks(figures: readonly Figure[]): Map<string, Resolve
     const room = MAX_NETWORK - current.length;
     if (room <= 0) continue;
     const sorted = [...extra].sort(
-      (a, b) => RELATION_WEIGHT[b.relation] - RELATION_WEIGHT[a.relation] || a.id.localeCompare(b.id),
+      (a, b) =>
+        RELATION_WEIGHT[b.relation] - RELATION_WEIGHT[a.relation] || a.id.localeCompare(b.id),
     );
     result.set(id, [...current, ...sorted.slice(0, room)]);
   }

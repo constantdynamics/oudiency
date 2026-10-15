@@ -12,12 +12,23 @@ export const hume = networkFigure({
   origin: 'Edinburgh, Schotland',
   school: 'Empirisme; Schotse Verlichting',
   family: 'brits',
-  tags: ['twijfel', 'empirisme', 'emoties', 'gewoonte', 'religie', 'oorzaak', 'geschiedenis', 'vriendschap', 'bewijs'],
+  tags: [
+    'twijfel',
+    'empirisme',
+    'emoties',
+    'gewoonte',
+    'religie',
+    'oorzaak',
+    'geschiedenis',
+    'vriendschap',
+    'bewijs',
+  ],
   bio: 'David Hume was een Schotse filosoof, historicus en essayist, beroemd om zijn scherpe twijfel en zijn goede humeur. Op zijn achtentwintigste publiceerde hij A Treatise of Human Nature, dat volgens hemzelf doodgeboren van de pers viel. Hij betoogde dat ons idee van oorzaak en gevolg uit gewoonte voortkomt, niet uit de rede, en dat de rede de dienaar is van onze gevoelens. Zijn twijfel wekte Kant uit diens "dogmatische sluimer".',
   keyConcepts: [
     {
       term: 'Gewoonte',
-      explanation: 'We verwachten dat de zon morgen opkomt uit gewoonte; de rede kan het niet bewijzen.',
+      explanation:
+        'We verwachten dat de zon morgen opkomt uit gewoonte; de rede kan het niet bewijzen.',
     },
     {
       term: 'Van zijn naar moeten',
@@ -39,9 +50,18 @@ export const hume = networkFigure({
     { year: '1711', text: 'Geboren in Edinburgh.' },
     { year: '1734–1737', text: 'Woont in La Flèche in Frankrijk en schrijft daar zijn Treatise.' },
     { year: '1739', text: 'Het Treatise verschijnt en wordt nauwelijks opgemerkt.' },
-    { year: '1752', text: 'Wordt bibliothecaris in Edinburgh en begint aan zijn geschiedenis van Engeland.' },
-    { year: '1763–1765', text: 'Werkt op de Britse ambassade in Parijs, waar de salons hem "le bon David" noemen.' },
-    { year: '1766', text: 'Neemt Rousseau mee naar Engeland; hun vriendschap eindigt in een openbare ruzie.' },
+    {
+      year: '1752',
+      text: 'Wordt bibliothecaris in Edinburgh en begint aan zijn geschiedenis van Engeland.',
+    },
+    {
+      year: '1763–1765',
+      text: 'Werkt op de Britse ambassade in Parijs, waar de salons hem "le bon David" noemen.',
+    },
+    {
+      year: '1766',
+      text: 'Neemt Rousseau mee naar Engeland; hun vriendschap eindigt in een openbare ruzie.',
+    },
     { year: '1776', text: 'Sterft in Edinburgh, opgewekt tot het einde.' },
   ],
   quotes: [

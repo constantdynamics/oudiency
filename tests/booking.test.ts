@@ -45,7 +45,9 @@ describe('spreekuur', () => {
     expect(a).toEqual(b);
     // en verschillend per denker/dag (op zijn minst niet altijd gelijk)
     const days = ['2026-10-16', '2026-10-17', '2026-10-18', '2026-10-19', '2026-10-20'];
-    const patterns = new Set(days.map((d) => [...busyTimes(figure, d, offeredTimes(figure, d))].join(',')));
+    const patterns = new Set(
+      days.map((d) => [...busyTimes(figure, d, offeredTimes(figure, d))].join(',')),
+    );
     expect(patterns.size).toBeGreaterThan(1);
   });
 
@@ -78,8 +80,12 @@ describe('spreekuur', () => {
   it('toont een speciale notitie, zoals Kants wandeling', () => {
     const kant = {
       id: 'kant',
-      availability: { slots: ['09:00', '10:00', '11:00', '12:00', '14:00', '17:00', '18:00', '19:00'] },
-      microcopy: { unavailableNote: { time: '15:30', text: 'Kant maakt zijn dagelijkse wandeling.' } },
+      availability: {
+        slots: ['09:00', '10:00', '11:00', '12:00', '14:00', '17:00', '18:00', '19:00'],
+      },
+      microcopy: {
+        unavailableNote: { time: '15:30', text: 'Kant maakt zijn dagelijkse wandeling.' },
+      },
     };
     const slots = daySlots(kant, '2026-10-16', localDateTime('2026-10-15', '12:00'), []);
     const walk = slots.find((s) => s.time === '15:30');

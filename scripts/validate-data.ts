@@ -22,13 +22,15 @@ if (current !== renderFigureIndex(ALL_FIGURES)) {
   issues.push({
     level: 'error',
     scope: 'index',
-    message: 'src/data/figures/index.generated.ts is verouderd of ontbreekt — draai: npm run gen:figures',
+    message:
+      'src/data/figures/index.generated.ts is verouderd of ontbreekt — draai: npm run gen:figures',
   });
 }
 
 const errors = issues.filter((i) => i.level === 'error');
 const warnings = issues.filter((i) => i.level === 'warning');
-if (warnings.length) console.log(`Waarschuwingen (${warnings.length}):\n${formatIssues(warnings)}\n`);
+if (warnings.length)
+  console.log(`Waarschuwingen (${warnings.length}):\n${formatIssues(warnings)}\n`);
 if (errors.length) {
   console.error(`Fouten (${errors.length}):\n${formatIssues(errors)}`);
   process.exit(1);

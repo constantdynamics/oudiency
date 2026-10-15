@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { addDaysToKey, daysBetweenKeys, formatCountdown, formatLifespan, localDateKey } from '@/lib/dates';
+import {
+  addDaysToKey,
+  daysBetweenKeys,
+  formatCountdown,
+  formatLifespan,
+  formatLongDate,
+  formatTime,
+  localDateKey,
+  relativeDayLabel,
+  timeAgo,
+} from '@/lib/dates';
 import { buildIcs, escapeIcsText, foldLine } from '@/lib/ics';
 import { closeOpenMarkers, markdownToPlainText, parseInline, parseMarkdown } from '@/lib/markdown';
 import { rankTrending, topTerms, trendingScore } from '@/lib/ranking';
@@ -58,7 +68,9 @@ describe('ranking', () => {
 
 describe('markdown (veilig)', () => {
   it('parset alinea’s, vet, cursief en lijsten', () => {
-    const blocks = parseMarkdown('Een **vette** en *schuine* zin.\n\n- een\n- twee\n\n1. eerste\n2. tweede');
+    const blocks = parseMarkdown(
+      'Een **vette** en *schuine* zin.\n\n- een\n- twee\n\n1. eerste\n2. tweede',
+    );
     expect(blocks).toHaveLength(3);
     expect(blocks[0]).toEqual({
       type: 'paragraph',
@@ -104,7 +116,9 @@ describe('markdown (veilig)', () => {
   });
 
   it('maakt platte tekst', () => {
-    expect(markdownToPlainText('**Kern**: deugd\n\n- een\n- twee')).toBe('Kern: deugd\n\n• een\n• twee');
+    expect(markdownToPlainText('**Kern**: deugd\n\n- een\n- twee')).toBe(
+      'Kern: deugd\n\n• een\n• twee',
+    );
   });
 });
 
@@ -153,6 +167,24 @@ describe('dates', () => {
     expect(formatCountdown(-5)).toBe('00:00');
     expect(formatLifespan(-470, -399, true)).toBe('ca. 470–399 v.Chr.');
     expect(formatLifespan(1632, 1677)).toBe('1632–1677');
+  });
+
+  it('schrijft datums en tijden in het Nederlands', () => {
+    const ms = new Date(2026, 9, 15, 9, 5).getTime();
+    expect(formatLongDate(ms)).toBe('donderdag 15 oktober');
+    expect(formatTime(ms)).toBe('09:05');
+    expect(relativeDayLabel('2026-10-15', '2026-10-15')).toBe('vandaag');
+    expect(relativeDayLabel('2026-10-16', '2026-10-15')).toBe('morgen');
+    expect(relativeDayLabel('2026-10-20', '2026-10-15')).toBe('di 20 okt');
+  });
+
+  it('zegt hoe lang geleden iets was', () => {
+    const now = new Date(2026, 9, 15, 12, 0).getTime();
+    expect(timeAgo(now - 20_000, now)).toBe('zojuist');
+    expect(timeAgo(now - 60_000, now)).toBe('1 minuut geleden');
+    expect(timeAgo(now - 5 * 60_000, now)).toBe('5 minuten geleden');
+    expect(timeAgo(now - 3 * 3_600_000, now)).toBe('3 uur geleden');
+    expect(timeAgo(now - 2 * 86_400_000, now)).toBe('2 dagen geleden');
   });
 });
 

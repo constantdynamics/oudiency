@@ -14,10 +14,22 @@ export const tolstoj = networkFigure({
   school: 'Christelijk anarchisme; geweldloosheid',
   family: 'romantiek',
   theme: { primary: '#3b3048', motif: 'botanical' },
-  tags: ['geweldloosheid', 'eenvoud', 'geloof', 'zingeving', 'dood', 'liefde', 'familie', 'rijkdom'],
+  tags: [
+    'geweldloosheid',
+    'eenvoud',
+    'geloof',
+    'zingeving',
+    'dood',
+    'liefde',
+    'familie',
+    'rijkdom',
+  ],
   bio: 'Lev Tolstoj schreef met Oorlog en vrede en Anna Karenina twee van de grootste romans ooit. Rond zijn vijftigste raakte hij in een diepe crisis over de zin van het leven, en vond hij het antwoord in een eenvoudig, radicaal christendom zonder kerk: geweldloosheid, geen overbodig bezit, werken met je handen. Zijn ideeën over geweldloos verzet inspireerden de jonge Gandhi, met wie hij correspondeerde.',
   keyConcepts: [
-    { term: 'Geen geweld tegen het kwaad', explanation: 'Het kwaad niet met geweld beantwoorden, ook niet als het jou treft.' },
+    {
+      term: 'Geen geweld tegen het kwaad',
+      explanation: 'Het kwaad niet met geweld beantwoorden, ook niet als het jou treft.',
+    },
     { term: 'Eenvoud', explanation: 'Leven van eigen arbeid, zonder overbodig bezit.' },
     {
       term: 'Het koninkrijk Gods is in u',
@@ -38,7 +50,10 @@ export const tolstoj = networkFigure({
     { year: '1879–1882', text: 'Doorleeft een diepe levenscrisis en schrijft Een biecht.' },
     { year: '1901', text: 'Wordt door de Russisch-orthodoxe kerk geëxcommuniceerd.' },
     { year: '1909–1910', text: 'Correspondeert met Gandhi over geweldloos verzet.' },
-    { year: '1910', text: 'Vlucht op hoge leeftijd van huis en sterft op het stationnetje van Astapovo.' },
+    {
+      year: '1910',
+      text: 'Vlucht op hoge leeftijd van huis en sterft op het stationnetje van Astapovo.',
+    },
   ],
   quotes: [
     {

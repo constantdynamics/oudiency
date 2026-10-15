@@ -49,12 +49,14 @@ export const rousseau: Figure = {
     {
       term: 'De natuurtoestand',
       native: 'l’état de nature',
-      explanation: 'Een gedachte-experiment: de mens vóór de samenleving, niet slecht maar onschuldig.',
+      explanation:
+        'Een gedachte-experiment: de mens vóór de samenleving, niet slecht maar onschuldig.',
     },
     {
       term: 'Negatieve opvoeding',
       native: 'éducation négative',
-      explanation: 'Het kind eerst beschermen tegen bederf en laten leren door ervaring in plaats van door woorden.',
+      explanation:
+        'Het kind eerst beschermen tegen bederf en laten leren door ervaring in plaats van door woorden.',
     },
     {
       term: 'Vervolmaakbaarheid',
@@ -84,8 +86,14 @@ export const rousseau: Figure = {
       year: '1749',
       text: 'Op weg naar zijn gevangen vriend Diderot krijgt hij zijn "verlichting": de mens is van nature goed, de samenleving bederft hem.',
     },
-    { year: '1750', text: 'Wint de prijsvraag van de Academie van Dijon met zijn eerste Discours.' },
-    { year: '1752', text: 'Zijn opera Le Devin du village wordt voor koning Lodewijk XV opgevoerd.' },
+    {
+      year: '1750',
+      text: 'Wint de prijsvraag van de Academie van Dijon met zijn eerste Discours.',
+    },
+    {
+      year: '1752',
+      text: 'Zijn opera Le Devin du village wordt voor koning Lodewijk XV opgevoerd.',
+    },
     {
       year: '1762',
       text: 'Du contrat social en Émile verschijnen. Beide worden verboden en Rousseau moet vluchten.',
@@ -110,7 +118,8 @@ export const rousseau: Figure = {
     },
     {
       text: 'Alles is goed zoals het uit de handen van de Schepper komt; alles ontaardt in de handen van de mens.',
-      original: 'Tout est bien sortant des mains de l’Auteur des choses, tout dégénère entre les mains de l’homme.',
+      original:
+        'Tout est bien sortant des mains de l’Auteur des choses, tout dégénère entre les mains de l’homme.',
       source: 'Émile, boek I',
       status: 'authentiek',
       translation: 'eigen',
@@ -146,8 +155,14 @@ export const rousseau: Figure = {
   ],
   specs: [
     { label: 'Hoofdwerken', value: 'Du contrat social en Émile (beide 1762)' },
-    { label: 'Ook', value: 'Componist en muziektheoreticus; bedacht een cijferschrift voor muziek' },
-    { label: 'Liefhebberij', value: 'Plantkunde: verzamelde planten en schreef brieven over botanie' },
+    {
+      label: 'Ook',
+      value: 'Componist en muziektheoreticus; bedacht een cijferschrift voor muziek',
+    },
+    {
+      label: 'Liefhebberij',
+      value: 'Plantkunde: verzamelde planten en schreef brieven over botanie',
+    },
     { label: 'Rustplaats', value: 'Het Panthéon in Parijs, tegenover zijn rivaal Voltaire' },
   ],
   voice: {
@@ -165,7 +180,10 @@ export const rousseau: Figure = {
     nativePhrases: [
       { phrase: 'amour-propre', translation: 'eigenliefde die leeft van de blik van anderen' },
       { phrase: 'la volonté générale', translation: 'de algemene wil' },
-      { phrase: 'Vitam impendere vero', translation: 'het leven wijden aan de waarheid (zijn devies, naar Juvenalis)' },
+      {
+        phrase: 'Vitam impendere vero',
+        translation: 'het leven wijden aan de waarheid (zijn devies, naar Juvenalis)',
+      },
       { phrase: 'promeneur solitaire', translation: 'eenzame wandelaar' },
     ],
     avoid: [
@@ -213,7 +231,8 @@ export const rousseau: Figure = {
   ],
   microcopy: {
     thinking: 'Rousseau kijkt even naar buiten, naar de bomen …',
-    doorOpen: 'Het tuinhek staat open. Rousseau komt net terug van een wandeling, met een plantje in zijn hand.',
+    doorOpen:
+      'Het tuinhek staat open. Rousseau komt net terug van een wandeling, met een plantje in zijn hand.',
     farewells: [
       'Daar staat al iemand bij het hek. Ik moet nu door naar een andere student. Ga naar buiten, alleen en te voet: daar hoor je jezelf weer.',
       'Mijn wandeling roept, en er wacht een andere student. Ik moet nu door. Vraag je vanavond af: wat zou je willen als niemand keek?',

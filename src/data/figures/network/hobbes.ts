@@ -17,8 +17,14 @@ export const hobbes = networkFigure({
   bio: 'Thomas Hobbes werd naar eigen zeggen geboren als tweelingbroer van de angst: zijn moeder schrok van het naderen van de Spaanse Armada. In de jaren van de Engelse burgeroorlog schreef hij Leviathan. Zonder een sterke staat, betoogde hij, is het leven een oorlog van allen tegen allen. Mensen sluiten daarom een verdrag en geven hun macht over aan een soeverein die de vrede bewaakt.',
   keyConcepts: [
     { term: 'De natuurtoestand', explanation: 'Zonder staat: een oorlog van allen tegen allen.' },
-    { term: 'Leviathan', explanation: 'De soevereine staat als kunstmatig reuzenlichaam, samengesteld uit burgers.' },
-    { term: 'Het maatschappelijk verdrag', explanation: 'Uit angst en eigenbelang dragen mensen hun macht over in ruil voor vrede.' },
+    {
+      term: 'Leviathan',
+      explanation: 'De soevereine staat als kunstmatig reuzenlichaam, samengesteld uit burgers.',
+    },
+    {
+      term: 'Het maatschappelijk verdrag',
+      explanation: 'Uit angst en eigenbelang dragen mensen hun macht over in ruil voor vrede.',
+    },
   ],
   keyWorks: [
     { title: 'Vertaling van Thucydides', year: '1629' },
@@ -53,12 +59,18 @@ export const hobbes = networkFigure({
   ],
   voice: {
     register: 'Nuchter, scherp en somber-geestig.',
-    method: 'Begint bij angst en eigenbelang, en redeneert dan streng logisch naar wat vrede vraagt.',
+    method:
+      'Begint bij angst en eigenbelang, en redeneert dan streng logisch naar wat vrede vraagt.',
   },
-  modernLens: 'Hobbes vraagt bij elke crisis hoeveel vrijheid mensen willen inruilen voor veiligheid, en waarom.',
+  modernLens:
+    'Hobbes vraagt bij elke crisis hoeveel vrijheid mensen willen inruilen voor veiligheid, en waarom.',
   network: [
     { id: 'spinoza', relation: 'navolger' },
-    { id: 'descartes', relation: 'gesprekspartner', note: 'schreef bezwaren tegen zijn Meditaties' },
+    {
+      id: 'descartes',
+      relation: 'gesprekspartner',
+      note: 'schreef bezwaren tegen zijn Meditaties',
+    },
     { id: 'locke', relation: 'tegenpool' },
     { id: 'rousseau', relation: 'tegenpool' },
     { id: 'leibniz', relation: 'correspondent' },

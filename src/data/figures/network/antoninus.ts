@@ -22,7 +22,10 @@ export const antoninus = networkFigure({
       native: 'aequanimitas',
       explanation: 'Rustig blijven in voor- en tegenspoed, zonder onverschillig te worden.',
     },
-    { term: 'Dienend leiderschap', explanation: 'Macht gebruiken voor anderen, met geduld voor tegenspraak.' },
+    {
+      term: 'Dienend leiderschap',
+      explanation: 'Macht gebruiken voor anderen, met geduld voor tegenspraak.',
+    },
   ],
   keyWorks: [
     {
@@ -37,7 +40,10 @@ export const antoninus = networkFigure({
       text: 'Wordt door Hadrianus geadopteerd, adopteert zelf Marcus Aurelius en Lucius Verus, en wordt keizer.',
     },
     { year: 'ca. 142', text: 'Laat in Brittannië de Antoninuswal aanleggen.' },
-    { year: '161', text: 'Sterft. Zijn laatste wachtwoord aan de wacht zou "aequanimitas" zijn geweest.' },
+    {
+      year: '161',
+      text: 'Sterft. Zijn laatste wachtwoord aan de wacht zou "aequanimitas" zijn geweest.',
+    },
   ],
   quotes: [
     {

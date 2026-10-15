@@ -16,9 +16,19 @@ export const montesquieu = networkFigure({
   tags: ['machtenscheiding', 'vrijheid', 'wetten', 'cultuur', 'tolerantie', 'satire', 'democratie'],
   bio: 'Charles-Louis de Secondat, baron de Montesquieu, was rechter in Bordeaux en een scherp waarnemer van samenlevingen. In de Lettres persanes liet hij twee Perzische reizigers de Franse zeden beschrijven: een satire die Parijs aan het lachen bracht. In De l’esprit des lois zocht hij twintig jaar lang naar de geest achter wetten, en verdedigde hij de scheiding van wetgevende, uitvoerende en rechterlijke macht.',
   keyConcepts: [
-    { term: 'Machtenscheiding', explanation: 'Macht moet macht tegenhouden: wetgeving, bestuur en rechtspraak horen gescheiden.' },
-    { term: 'De geest van de wetten', explanation: 'Wetten passen bij het klimaat, de cultuur en de geschiedenis van een land.' },
-    { term: 'De blik van buiten', explanation: 'Je eigen cultuur zien door de ogen van een vreemdeling.' },
+    {
+      term: 'Machtenscheiding',
+      explanation:
+        'Macht moet macht tegenhouden: wetgeving, bestuur en rechtspraak horen gescheiden.',
+    },
+    {
+      term: 'De geest van de wetten',
+      explanation: 'Wetten passen bij het klimaat, de cultuur en de geschiedenis van een land.',
+    },
+    {
+      term: 'De blik van buiten',
+      explanation: 'Je eigen cultuur zien door de ogen van een vreemdeling.',
+    },
   ],
   keyWorks: [
     { title: 'Lettres persanes', year: '1721' },
@@ -39,7 +49,8 @@ export const montesquieu = networkFigure({
   quotes: [
     {
       text: 'Om te voorkomen dat men de macht misbruikt, moet de macht, door de inrichting van de dingen, de macht tegenhouden.',
-      original: 'Pour qu’on ne puisse abuser du pouvoir, il faut que, par la disposition des choses, le pouvoir arrête le pouvoir.',
+      original:
+        'Pour qu’on ne puisse abuser du pouvoir, il faut que, par la disposition des choses, le pouvoir arrête le pouvoir.',
       source: 'De l’esprit des lois XI.4',
       status: 'authentiek',
       translation: 'eigen',

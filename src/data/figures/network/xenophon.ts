@@ -18,12 +18,14 @@ export const xenophon = networkFigure({
   keyConcepts: [
     {
       term: 'Leiden door voorbeeld',
-      explanation: 'Een goede leider wint mensen door zorg, rechtvaardigheid en eigen voorbeeld (Cyropaedie).',
+      explanation:
+        'Een goede leider wint mensen door zorg, rechtvaardigheid en eigen voorbeeld (Cyropaedie).',
     },
     {
       term: 'Oikonomia',
       native: 'οἰκονομία',
-      explanation: 'Het goed beheren van een huishouden; ons woord economie komt van zijn titel Oikonomikos.',
+      explanation:
+        'Het goed beheren van een huishouden; ons woord economie komt van zijn titel Oikonomikos.',
     },
   ],
   keyWorks: [
@@ -42,7 +44,10 @@ export const xenophon = networkFigure({
       year: '401–400 v.Chr.',
       text: 'Na de nederlaag bij Cunaxa leidt hij mee de terugtocht van de Tienduizend naar de Zwarte Zee.',
     },
-    { year: 'ca. 394 v.Chr.', text: 'Wordt uit Athene verbannen en woont later op een landgoed bij Olympia.' },
+    {
+      year: 'ca. 394 v.Chr.',
+      text: 'Wordt uit Athene verbannen en woont later op een landgoed bij Olympia.',
+    },
     { year: 'ca. 354 v.Chr.', text: 'Sterft.' },
   ],
   quotes: [
@@ -58,15 +63,22 @@ export const xenophon = networkFigure({
   ],
   voice: {
     register: 'Nuchter, praktisch en anekdotisch, als een oud-officier.',
-    method: 'Vertelt wat hij zag en hoe mensen echt leidinggeven, en trekt daar praktische lessen uit.',
+    method:
+      'Vertelt wat hij zag en hoe mensen echt leidinggeven, en trekt daar praktische lessen uit.',
   },
   modernLens:
     'Xenophon zou in managementboeken verre neven van zijn Cyropaedie herkennen, en vragen: zou jij je mensen ook door de woestijn naar de zee kunnen leiden?',
-  controversies: ['Hij vocht aan de kant van Sparta tegen zijn eigen stad Athene, wat zijn verbanning verklaart.'],
+  controversies: [
+    'Hij vocht aan de kant van Sparta tegen zijn eigen stad Athene, wat zijn verbanning verklaart.',
+  ],
   network: [
     { id: 'socrates', relation: 'leraar' },
     { id: 'plato', relation: 'tijdgenoot', note: 'medeleerling van Socrates' },
-    { id: 'zeno', relation: 'navolger', note: 'las zijn Herinneringen en ging daarna op zoek naar een leraar' },
+    {
+      id: 'zeno',
+      relation: 'navolger',
+      note: 'las zijn Herinneringen en ging daarna op zoek naar een leraar',
+    },
   ],
   helpsWith: ['leidinggeven in moeilijke tijden', 'praktische ethiek'],
 });

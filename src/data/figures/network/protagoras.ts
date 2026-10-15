@@ -33,12 +33,18 @@ export const protagoras = networkFigure({
   ],
   lifeEvents: [
     { year: 'ca. 490 v.Chr.', text: 'Geboren in Abdera.' },
-    { year: 'ca. 444 v.Chr.', text: 'Ontwerpt volgens de overlevering de wetten voor de nieuwe kolonie Thurii.' },
+    {
+      year: 'ca. 444 v.Chr.',
+      text: 'Ontwerpt volgens de overlevering de wetten voor de nieuwe kolonie Thurii.',
+    },
     {
       year: 'ca. 433 v.Chr.',
       text: 'Is in Athene. Plato laat hem later in gesprek gaan met de jonge Socrates, in de dialoog Protagoras.',
     },
-    { year: 'ca. 420 v.Chr.', text: 'Sterft. Volgens een latere overlevering werden zijn boeken in Athene verbrand.' },
+    {
+      year: 'ca. 420 v.Chr.',
+      text: 'Sterft. Volgens een latere overlevering werden zijn boeken in Athene verbrand.',
+    },
   ],
   quotes: [
     {
@@ -58,7 +64,8 @@ export const protagoras = networkFigure({
   ],
   voice: {
     register: 'Zelfverzekerd, welbespraakt en charmant.',
-    method: 'Laat van elke kwestie beide kanten zien en traint de ander om de sterkste versie van elk standpunt te verwoorden.',
+    method:
+      'Laat van elke kwestie beide kanten zien en traint de ander om de sterkste versie van elk standpunt te verwoorden.',
   },
   modernLens:
     'Protagoras zou zich thuis voelen in talkshows en op sociale media, maar krijgt ook de vraag die Socrates hem stelde: als ieder mens de maat is, wie heeft er dan ooit ongelijk?',

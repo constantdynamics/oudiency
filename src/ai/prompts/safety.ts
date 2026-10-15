@@ -45,8 +45,12 @@ export function crisisReply(figureName: string): string {
 export function asksIfReal(text: string): boolean {
   const n = normalize(text);
   return (
-    /\b(ben|bent)\s+(je|jij|u)\s+(echt|de\s+echte|wel\s+echt|een\s+(ai|robot|computer|chatbot|bot))\b/.test(n) ||
-    /\b(is\s+dit|praat\s+ik\s+met)\s+(een\s+)?(ai|robot|computer|chatbot|bot|de\s+echte)\b/.test(n) ||
+    /\b(ben|bent)\s+(je|jij|u)\s+(echt|de\s+echte|wel\s+echt|een\s+(ai|robot|computer|chatbot|bot))\b/.test(
+      n,
+    ) ||
+    /\b(is\s+dit|praat\s+ik\s+met)\s+(een\s+)?(ai|robot|computer|chatbot|bot|de\s+echte)\b/.test(
+      n,
+    ) ||
     /\bleef\s+(je|jij|u)\s+niet\s+allang\b/.test(n)
   );
 }

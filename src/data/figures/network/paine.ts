@@ -16,9 +16,19 @@ export const paine = networkFigure({
   tags: ['vrijheid', 'mensenrechten', 'revolutie', 'religie', 'armoede', 'schrijven', 'moed'],
   bio: 'Thomas Paine was een Engelse korsettenmaker en belastingambtenaar die met een aanbevelingsbrief van Franklin naar Amerika vertrok. Zijn pamflet Common Sense (1776) overtuigde duizenden kolonisten van de onafhankelijkheid. Later verdedigde hij de Franse Revolutie in Rights of Man, zat hij in Parijs in de gevangenis, en maakte hij zich met The Age of Reason vijanden onder gelovigen.',
   keyConcepts: [
-    { term: 'Gezond verstand', explanation: 'Politiek in gewone taal, zodat iedereen kan meedenken.' },
-    { term: 'Rechten van de mens', explanation: 'Rechten die niet van koningen komen, maar bij ieder mens horen.' },
-    { term: 'Sociale zekerheid', explanation: 'In Agrarian Justice (1797) stelde hij een basisuitkering en ouderdomspensioen voor.' },
+    {
+      term: 'Gezond verstand',
+      explanation: 'Politiek in gewone taal, zodat iedereen kan meedenken.',
+    },
+    {
+      term: 'Rechten van de mens',
+      explanation: 'Rechten die niet van koningen komen, maar bij ieder mens horen.',
+    },
+    {
+      term: 'Sociale zekerheid',
+      explanation:
+        'In Agrarian Justice (1797) stelde hij een basisuitkering en ouderdomspensioen voor.',
+    },
   ],
   keyWorks: [
     { title: 'Common Sense', year: '1776' },
@@ -32,7 +42,10 @@ export const paine = networkFigure({
     { year: '1774', text: 'Vertrekt met een aanbevelingsbrief van Franklin naar Philadelphia.' },
     { year: '1776', text: 'Common Sense verschijnt en wordt een enorm succes.' },
     { year: '1792', text: 'Wordt gekozen in de Franse Nationale Conventie.' },
-    { year: '1793–1794', text: 'Zit tijdens de Terreur in Parijs gevangen en ontsnapt ternauwernood aan de guillotine.' },
+    {
+      year: '1793–1794',
+      text: 'Zit tijdens de Terreur in Parijs gevangen en ontsnapt ternauwernood aan de guillotine.',
+    },
     { year: '1809', text: 'Sterft arm en vergeten in New York.' },
   ],
   quotes: [
@@ -63,7 +76,11 @@ export const paine = networkFigure({
     { id: 'franklin', relation: 'mentor' },
     { id: 'jefferson', relation: 'vriend' },
     { id: 'adams', relation: 'criticus' },
-    { id: 'wollstonecraft', relation: 'tijdgenoot', note: 'beiden in de radicale kring rond uitgever Joseph Johnson' },
+    {
+      id: 'wollstonecraft',
+      relation: 'tijdgenoot',
+      note: 'beiden in de radicale kring rond uitgever Joseph Johnson',
+    },
     { id: 'locke', relation: 'invloed' },
   ],
   helpsWith: ['moed om je uit te spreken', 'helder schrijven over politiek'],

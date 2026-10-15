@@ -19,13 +19,24 @@ export const fronto = networkFigure({
   tags: ['taal', 'retorica', 'schrijven', 'vriendschap', 'onderwijs', 'stijl'],
   bio: 'Marcus Cornelius Fronto was de beroemdste redenaar van zijn tijd en leraar Latijnse welsprekendheid van de jonge Marcus Aurelius. Hun hartelijke briefwisseling werd pas in 1815 teruggevonden, onder de tekst van een later beschreven handschrift. Fronto hield van oude, zuivere woorden en had weinig op met de filosofie die zijn leerling steeds meer trok.',
   keyConcepts: [
-    { term: 'Het juiste woord', explanation: 'Zoek het precieze, onverwachte woord in plaats van het gemakkelijke.' },
-    { term: 'Welsprekendheid', explanation: 'Goed spreken is voor een leider geen versiering, maar een plicht.' },
+    {
+      term: 'Het juiste woord',
+      explanation: 'Zoek het precieze, onverwachte woord in plaats van het gemakkelijke.',
+    },
+    {
+      term: 'Welsprekendheid',
+      explanation: 'Goed spreken is voor een leider geen versiering, maar een plicht.',
+    },
   ],
-  keyWorks: [{ title: 'Brieven aan Marcus Aurelius', note: 'In 1815 teruggevonden in een palimpsest.' }],
+  keyWorks: [
+    { title: 'Brieven aan Marcus Aurelius', note: 'In 1815 teruggevonden in een palimpsest.' },
+  ],
   lifeEvents: [
     { year: 'ca. 100', text: 'Geboren in Cirta in Noord-Afrika.' },
-    { year: 'jaren 140', text: 'Wordt de leraar welsprekendheid van Marcus Aurelius en Lucius Verus.' },
+    {
+      year: 'jaren 140',
+      text: 'Wordt de leraar welsprekendheid van Marcus Aurelius en Lucius Verus.',
+    },
     { year: '143', text: 'Wordt consul.' },
     { year: 'ca. 170', text: 'Sterft.' },
   ],

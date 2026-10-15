@@ -4,7 +4,13 @@
  */
 import { findMeta, loadFigure } from '@/data/figures';
 import { loadDemoContent } from '@/data/demo';
-import type { DemoFigureContent, Figure, LectureBlock, SessionFragment, SessionPhase } from '@/data/types';
+import type {
+  DemoFigureContent,
+  Figure,
+  LectureBlock,
+  SessionFragment,
+  SessionPhase,
+} from '@/data/types';
 import { normalize, keywordScore, salientWord, tokenize } from '@/lib/text';
 import { pick, seededRng, type Rng } from '@/lib/seeded-rng';
 import type { DemoContext, DemoHistoryItem } from '../demoContext';
@@ -81,7 +87,12 @@ export function chooseFragment(
     return scored[0]?.fragment;
   }
   // Alles gebruikt: herhaal dan maar iets uit de fase.
-  return pick(rng, fragments.filter((f) => f.phase === phase)) ?? fragments[0];
+  return (
+    pick(
+      rng,
+      fragments.filter((f) => f.phase === phase),
+    ) ?? fragments[0]
+  );
 }
 
 function sessionPhase(turn: number, remainingMs: number, rng: Rng): SessionPhase {
@@ -93,13 +104,22 @@ function sessionPhase(turn: number, remainingMs: number, rng: Rng): SessionPhase
 
 /* ---------- Sessies ---------- */
 
-async function sessionOpening(ctx: Extract<DemoContext, { kind: 'session-opening' }>): Promise<string> {
+async function sessionOpening(
+  ctx: Extract<DemoContext, { kind: 'session-opening' }>,
+): Promise<string> {
   const { demo } = await loadAll(ctx.figureId);
   const rng = seededRng(`${ctx.sessionId}|opening`);
   const returning = ctx.memory.length > 0;
   const fragment = returning
     ? chooseFragment(demo.sessionFragments, 'terugkeer', ctx.topicHint ?? '', rng)
-    : chooseFragment(demo.sessionFragments, 'opening', ctx.topicHint ?? '', rng, [], Boolean(ctx.topicHint));
+    : chooseFragment(
+        demo.sessionFragments,
+        'opening',
+        ctx.topicHint ?? '',
+        rng,
+        [],
+        Boolean(ctx.topicHint),
+      );
   let text = fill(fragment?.text ?? 'Welkom{naam}. Waarover wil je praten?', {
     naam: nameVar(ctx.displayName),
     onderwerp: ctx.topicHint,
@@ -117,7 +137,13 @@ async function sessionTurn(ctx: Extract<DemoContext, { kind: 'session-turn' }>):
   if (asksIfReal(ctx.userText)) return authenticityReply(name);
   const rng = seededRng(`${ctx.sessionId}|${ctx.turn}`);
   const phase = sessionPhase(ctx.turn, ctx.remainingMs, rng);
-  const fragment = chooseFragment(demo.sessionFragments, phase, ctx.userText, rng, usedAnchors(ctx.history));
+  const fragment = chooseFragment(
+    demo.sessionFragments,
+    phase,
+    ctx.userText,
+    rng,
+    usedAnchors(ctx.history),
+  );
   const woord = salientWord(ctx.userText) ?? 'dat';
   return fill(fragment?.text ?? 'Vertel me meer.', {
     naam: nameVar(ctx.displayName),
@@ -126,7 +152,9 @@ async function sessionTurn(ctx: Extract<DemoContext, { kind: 'session-turn' }>):
   });
 }
 
-async function sessionSummary(ctx: Extract<DemoContext, { kind: 'session-summary' }>): Promise<SessionSummary> {
+async function sessionSummary(
+  ctx: Extract<DemoContext, { kind: 'session-summary' }>,
+): Promise<SessionSummary> {
   const { demo, name } = await loadAll(ctx.figureId);
   const rng = seededRng(`${ctx.sessionId}|samenvatting`);
   const userText = ctx.history
@@ -134,7 +162,8 @@ async function sessionSummary(ctx: Extract<DemoContext, { kind: 'session-summary
     .map((h) => h.text)
     .join(' ');
   const counts = new Map<string, number>();
-  for (const word of tokenize(userText)) if (word.length > 4) counts.set(word, (counts.get(word) ?? 0) + 1);
+  for (const word of tokenize(userText))
+    if (word.length > 4) counts.set(word, (counts.get(word) ?? 0) + 1);
   const topics = [...counts.entries()]
     .sort((a, b) => b[1] - a[1] || b[0].length - a[0].length)
     .slice(0, 3)
@@ -152,7 +181,8 @@ async function sessionSummary(ctx: Extract<DemoContext, { kind: 'session-summary
               ? `Je bent in ${turns} beurten een flink eind gekomen; de vraag is nu wat je ermee doet.`
               : `Het gesprek was kort, maar de vraag die bleef hangen is de moeite waard om mee te nemen.`),
         );
-  const reflectionQuestion = pick(rng, demo.reflectionQuestions) ?? 'Wat neem je mee uit dit gesprek?';
+  const reflectionQuestion =
+    pick(rng, demo.reflectionQuestions) ?? 'Wat neem je mee uit dit gesprek?';
   return { summary, reflectionQuestion, topics };
 }
 
@@ -168,7 +198,9 @@ function rankBlocks(blocks: readonly LectureBlock[], text: string): LectureBlock
     .map((entry) => entry.block);
 }
 
-async function lecturePlan(ctx: Extract<DemoContext, { kind: 'lecture-plan' }>): Promise<LecturePlanOutput> {
+async function lecturePlan(
+  ctx: Extract<DemoContext, { kind: 'lecture-plan' }>,
+): Promise<LecturePlanOutput> {
   const { demo } = await loadAll(ctx.figureId);
   const chosen = rankBlocks(demo.lecture.blocks, `${ctx.topic} ${ctx.mainQuestion}`).slice(0, 3);
   const title = ctx.topic.trim().replace(/[.!?]+$/, '');
@@ -178,7 +210,9 @@ async function lecturePlan(ctx: Extract<DemoContext, { kind: 'lecture-plan' }>):
   };
 }
 
-async function lectureSegment(ctx: Extract<DemoContext, { kind: 'lecture-segment' }>): Promise<string> {
+async function lectureSegment(
+  ctx: Extract<DemoContext, { kind: 'lecture-segment' }>,
+): Promise<string> {
   const { demo, name } = await loadAll(ctx.figureId);
   const rng = seededRng(`${ctx.lectureId}|${ctx.partIndex}|${ctx.segmentKind}`);
   const vars = {
@@ -204,9 +238,9 @@ async function lectureSegment(ctx: Extract<DemoContext, { kind: 'lecture-segment
       const used = (ctx.blockIds ?? [])
         .map((id) => demo.lecture.blocks.find((b) => b.id === id || b.heading === id))
         .filter((b): b is LectureBlock => Boolean(b));
-      const lessons = (used.length ? used : rankBlocks(demo.lecture.blocks, ctx.topic).slice(0, 3)).map(
-        (b) => b.lesson,
-      );
+      const lessons = (
+        used.length ? used : rankBlocks(demo.lecture.blocks, ctx.topic).slice(0, 3)
+      ).map((b) => b.lesson);
       const intro = fill(pick(rng, demo.lecture.conclusions) ?? '', vars);
       const question = pick(rng, demo.lecture.thinkQuestions) ?? 'Wat neem je mee?';
       return [
@@ -236,10 +270,24 @@ async function timelineReactions(
 
   // Niet elk bericht krijgt reacties.
   const roll = rng();
-  let count = relevant.length === 0 ? (roll < 0.35 ? 1 : 0) : roll < 0.12 ? 0 : roll < 0.6 ? 1 : roll < 0.88 ? 2 : 3;
+  let count =
+    relevant.length === 0
+      ? roll < 0.35
+        ? 1
+        : 0
+      : roll < 0.12
+        ? 0
+        : roll < 0.6
+          ? 1
+          : roll < 0.88
+            ? 2
+            : 3;
   count = Math.min(count, 3);
   const pool = relevant.length ? relevant : scored;
-  const chosen = pool.filter((s) => !ctx.undiscovered.includes(s.c.id)).slice(0, count).map((s) => s.c);
+  const chosen = pool
+    .filter((s) => !ctx.undiscovered.includes(s.c.id))
+    .slice(0, count)
+    .map((s) => s.c);
 
   if (ctx.allowDiscovery) {
     const newcomer = scored.find((s) => ctx.undiscovered.includes(s.c.id) && s.score >= 1)?.c;
@@ -275,18 +323,35 @@ async function timelineReactions(
 
 /* ---------- Overig ---------- */
 
-const RISKY_WORDS = ['kanker', 'tering', 'klootzak', 'kut', 'hoer', 'nazi', 'neuk', 'mongool', 'flikker'];
+const RISKY_WORDS = [
+  'kanker',
+  'tering',
+  'klootzak',
+  'kut',
+  'hoer',
+  'nazi',
+  'neuk',
+  'mongool',
+  'flikker',
+];
 
 function moderation(ctx: Extract<DemoContext, { kind: 'moderation' }>): ModerationOutput {
   const reasons: string[] = [];
-  if (/[\w.+-]+@[\w-]+\.[\w.]+/.test(ctx.text)) reasons.push('Bevat een e-mailadres (persoonsgegevens).');
-  if (/(\+31|\b0)[1-9](?:[\s-]?\d){8}\b/.test(ctx.text)) reasons.push('Bevat mogelijk een telefoonnummer.');
+  if (/[\w.+-]+@[\w-]+\.[\w.]+/.test(ctx.text))
+    reasons.push('Bevat een e-mailadres (persoonsgegevens).');
+  if (/(\+31|\b0)[1-9](?:[\s-]?\d){8}\b/.test(ctx.text))
+    reasons.push('Bevat mogelijk een telefoonnummer.');
   if (/\bhttps?:\/\//i.test(ctx.text)) reasons.push('Bevat een link; controleer of die gepast is.');
   const words = new Set(tokenize(ctx.text));
-  if (RISKY_WORDS.some((w) => words.has(w))) reasons.push('Bevat mogelijk kwetsend of grof taalgebruik.');
+  if (RISKY_WORDS.some((w) => words.has(w)))
+    reasons.push('Bevat mogelijk kwetsend of grof taalgebruik.');
   if (detectCrisisSignals(ctx.text)) reasons.push('Bevat signalen van een persoonlijke crisis.');
   const verdict: ModerationOutput['verdict'] =
-    reasons.length === 0 ? 'ok' : reasons.some((r) => r.includes('kwetsend')) ? 'afwijzen' : 'twijfel';
+    reasons.length === 0
+      ? 'ok'
+      : reasons.some((r) => r.includes('kwetsend'))
+        ? 'afwijzen'
+        : 'twijfel';
   return { verdict, reasons };
 }
 
@@ -306,7 +371,9 @@ function helper(ctx: Extract<DemoContext, { kind: 'helper' }>): HelperOutput {
       const match = helps.find((h) => keywordScore(ctx.query, tokenize(h)) > 0) ?? helps[0];
       return {
         figureId: c.id,
-        why: match ? `${c.name} denkt graag mee over ${match}.` : `${c.name} kijkt vanuit ${c.tags.slice(0, 2).join(' en ')} naar je vraag.`,
+        why: match
+          ? `${c.name} denkt graag mee over ${match}.`
+          : `${c.name} kijkt vanuit ${c.tags.slice(0, 2).join(' en ')} naar je vraag.`,
       };
     }),
   };

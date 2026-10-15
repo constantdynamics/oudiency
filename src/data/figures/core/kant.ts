@@ -43,22 +43,26 @@ export const kant: Figure = {
     {
       term: 'Autonomie',
       native: 'Autonomie',
-      explanation: 'Jezelf de wet stellen vanuit de rede, in plaats van je te laten leiden door neigingen of gezag.',
+      explanation:
+        'Jezelf de wet stellen vanuit de rede, in plaats van je te laten leiden door neigingen of gezag.',
     },
     {
       term: 'Plicht',
       native: 'Pflicht',
-      explanation: 'Handelen uit respect voor de morele wet, niet alleen toevallig in overeenstemming ermee.',
+      explanation:
+        'Handelen uit respect voor de morele wet, niet alleen toevallig in overeenstemming ermee.',
     },
     {
       term: 'Verschijning en ding op zich',
       native: 'Erscheinung / Ding an sich',
-      explanation: 'We kennen de dingen zoals ze aan ons verschijnen, niet zoals ze op zichzelf zijn.',
+      explanation:
+        'We kennen de dingen zoals ze aan ons verschijnen, niet zoals ze op zichzelf zijn.',
     },
     {
       term: 'Verlichting',
       native: 'Aufklärung',
-      explanation: 'Het uittreden van de mens uit zijn zelfverschuldigde onmondigheid: durf zelf te denken.',
+      explanation:
+        'Het uittreden van de mens uit zijn zelfverschuldigde onmondigheid: durf zelf te denken.',
     },
   ],
   keyWorks: [
@@ -94,7 +98,10 @@ export const kant: Figure = {
       year: '1794',
       text: 'Krijgt een berisping van de Pruisische koning vanwege zijn geschriften over religie.',
     },
-    { year: '1795', text: 'Publiceert Zum ewigen Frieden, een plan voor duurzame vrede tussen staten.' },
+    {
+      year: '1795',
+      text: 'Publiceert Zum ewigen Frieden, een plan voor duurzame vrede tussen staten.',
+    },
     {
       year: '1804',
       text: 'Sterft op 12 februari in Königsberg. Zijn laatste woorden zouden "Es ist gut" zijn geweest.',
@@ -111,7 +118,8 @@ export const kant: Figure = {
     },
     {
       text: 'Verlichting is het uittreden van de mens uit zijn zelfverschuldigde onmondigheid.',
-      original: 'Aufklärung ist der Ausgang des Menschen aus seiner selbstverschuldeten Unmündigkeit.',
+      original:
+        'Aufklärung ist der Ausgang des Menschen aus seiner selbstverschuldeten Unmündigkeit.',
       source: 'Beantwortung der Frage: Was ist Aufklärung? (1784)',
       status: 'authentiek',
       translation: 'eigen',
@@ -146,8 +154,10 @@ export const kant: Figure = {
     },
     {
       text: 'Uit zulk krom hout als waaruit de mens gemaakt is, kan niets volkomen rechts worden getimmerd.',
-      original: 'aus so krummem Holze, als woraus der Mensch gemacht ist, kann nichts ganz Gerades gezimmert werden',
-      source: 'Idee zu einer allgemeinen Geschichte in weltbürgerlicher Absicht (1784), zesde stelling',
+      original:
+        'aus so krummem Holze, als woraus der Mensch gemacht ist, kann nichts ganz Gerades gezimmert werden',
+      source:
+        'Idee zu einer allgemeinen Geschichte in weltbürgerlicher Absicht (1784), zesde stelling',
       status: 'authentiek',
       translation: 'eigen',
       verified: true,
@@ -159,7 +169,8 @@ export const kant: Figure = {
     { label: 'Drie vragen', value: 'Wat kan ik weten? Wat moet ik doen? Wat mag ik hopen?' },
     {
       label: 'Anekdote',
-      value: 'Volgens de overlevering zetten Königsbergers hun klok gelijk op zijn dagelijkse wandeling',
+      value:
+        'Volgens de overlevering zetten Königsbergers hun klok gelijk op zijn dagelijkse wandeling',
     },
   ],
   voice: {
@@ -226,7 +237,10 @@ export const kant: Figure = {
   microcopy: {
     thinking: 'Kant ordent zijn gedachten in drie punten …',
     doorOpen: 'Kant is precies op tijd. De studeerkamer aan de Prinzessinstraße staat open.',
-    unavailableNote: { time: '15:30', text: 'Kant maakt zijn dagelijkse wandeling, stipt als altijd.' },
+    unavailableNote: {
+      time: '15:30',
+      text: 'Kant maakt zijn dagelijkse wandeling, stipt als altijd.',
+    },
     farewells: [
       'Het is tijd; u weet hoe ik over stiptheid denk. Ik moet nu door naar een andere student. Durf zelf verder te denken: dat is de enige opdracht die ik u meegeef.',
       'Mijn horloge laat geen twijfel toe. Ik moet nu door naar een andere student. Toets uw volgende beslissing aan de vraag: kan dit een algemene wet worden?',

@@ -37,11 +37,13 @@ export const franklin: Figure = {
     },
     {
       term: 'Het deugdenschema',
-      explanation: 'Een tabelletje waarin hij elke avond per deugd zijn misstappen met een stip noteerde.',
+      explanation:
+        'Een tabelletje waarin hij elke avond per deugd zijn misstappen met een stip noteerde.',
     },
     {
       term: 'De Junto',
-      explanation: 'Een discussieclub voor wederzijdse verbetering, opgericht in 1727, met vaste vragen voor elke bijeenkomst.',
+      explanation:
+        'Een discussieclub voor wederzijdse verbetering, opgericht in 1727, met vaste vragen voor elke bijeenkomst.',
     },
     {
       term: 'Bescheiden formuleren',
@@ -50,11 +52,16 @@ export const franklin: Figure = {
     },
     {
       term: 'Burgerzin',
-      explanation: 'Praktische verbeteringen voor de stad: bibliotheek, brandweer, ziekenhuis, straatverlichting.',
+      explanation:
+        'Praktische verbeteringen voor de stad: bibliotheek, brandweer, ziekenhuis, straatverlichting.',
     },
   ],
   keyWorks: [
-    { title: 'Poor Richard’s Almanack', year: '1732–1758', note: 'Jaarlijkse almanak vol spreuken en weetjes.' },
+    {
+      title: 'Poor Richard’s Almanack',
+      year: '1732–1758',
+      note: 'Jaarlijkse almanak vol spreuken en weetjes.',
+    },
     { title: 'Advice to a Young Tradesman', year: '1748' },
     { title: 'Experiments and Observations on Electricity', year: '1751' },
     { title: 'The Way to Wealth', year: '1758' },
@@ -70,14 +77,20 @@ export const franklin: Figure = {
     { year: '1718', text: 'Gaat in de leer bij zijn broer James, die drukker is.' },
     { year: '1723', text: 'Loopt weg naar Philadelphia, met bijna niets op zak.' },
     { year: '1727', text: 'Richt de Junto op, een club voor wederzijdse verbetering.' },
-    { year: '1731', text: 'Sticht de Library Company of Philadelphia, een van de eerste uitleenbibliotheken.' },
+    {
+      year: '1731',
+      text: 'Sticht de Library Company of Philadelphia, een van de eerste uitleenbibliotheken.',
+    },
     { year: '1732', text: 'Begint Poor Richard’s Almanack.' },
     { year: '1752', text: 'Het vliegerexperiment: bliksem blijkt elektriciteit te zijn.' },
     {
       year: '1776',
       text: 'Helpt bij de Onafhankelijkheidsverklaring en reist daarna als gezant naar Frankrijk.',
     },
-    { year: '1787', text: 'Is met 81 jaar de oudste afgevaardigde bij de Constitutionele Conventie.' },
+    {
+      year: '1787',
+      text: 'Is met 81 jaar de oudste afgevaardigde bij de Constitutionele Conventie.',
+    },
     {
       year: '1790',
       text: 'Sterft op 17 april in Philadelphia. Een van zijn laatste openbare daden is een petitie tegen de slavernij.',
@@ -129,12 +142,19 @@ export const franklin: Figure = {
     },
   ],
   specs: [
-    { label: 'Uitvindingen', value: 'Bliksemafleider, Franklin-kachel, bifocale bril, glasharmonica' },
+    {
+      label: 'Uitvindingen',
+      value: 'Bliksemafleider, Franklin-kachel, bifocale bril, glasharmonica',
+    },
     {
       label: 'Opgericht',
-      value: 'Library Company (1731), een brandweervereniging (1736), de American Philosophical Society (1743)',
+      value:
+        'Library Company (1731), een brandweervereniging (1736), de American Philosophical Society (1743)',
     },
-    { label: 'Ondertekende', value: 'De Onafhankelijkheidsverklaring en de Grondwet van de Verenigde Staten' },
+    {
+      label: 'Ondertekende',
+      value: 'De Onafhankelijkheidsverklaring en de Grondwet van de Verenigde Staten',
+    },
   ],
   voice: {
     register:
@@ -149,8 +169,14 @@ export const franklin: Figure = {
       'Maakt grapjes over zijn eigen zwakheden, vooral over nederigheid',
     ],
     nativePhrases: [
-      { phrase: 'Well done is better than well said', translation: 'goed gedaan is beter dan goed gezegd' },
-      { phrase: 'Lost time is never found again', translation: 'verloren tijd vind je nooit meer terug' },
+      {
+        phrase: 'Well done is better than well said',
+        translation: 'goed gedaan is beter dan goed gezegd',
+      },
+      {
+        phrase: 'Lost time is never found again',
+        translation: 'verloren tijd vind je nooit meer terug',
+      },
       { phrase: 'Industry', translation: 'ijver, een van zijn dertien deugden' },
     ],
     avoid: [

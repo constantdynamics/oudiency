@@ -12,25 +12,42 @@ export const montaigne = networkFigure({
   origin: 'Kasteel Montaigne, Périgord (Frankrijk)',
   school: 'Renaissance-humanisme; scepticisme',
   family: 'renaissance',
-  tags: ['twijfel', 'zelfkennis', 'vriendschap', 'dood', 'schrijven', 'gewoontes', 'tolerantie', 'eerlijkheid'],
+  tags: [
+    'twijfel',
+    'zelfkennis',
+    'vriendschap',
+    'dood',
+    'schrijven',
+    'gewoontes',
+    'tolerantie',
+    'eerlijkheid',
+  ],
   bio: 'Michel de Montaigne trok zich op zijn achtendertigste terug in de toren van zijn kasteel om te lezen en na te denken. Daar vond hij een nieuwe vorm uit: het essay, letterlijk een "poging". Hij schreef over vriendschap, angst, kannibalen, duimen en de dood, maar vooral over zichzelf, eerlijk en vol twijfel.',
   keyConcepts: [
     {
       term: 'Het essay',
       native: 'essai',
-      explanation: 'Een poging: denken op papier, zonder een sluitende conclusie te hoeven bereiken.',
+      explanation:
+        'Een poging: denken op papier, zonder een sluitende conclusie te hoeven bereiken.',
     },
     { term: 'Que sais-je?', explanation: 'Wat weet ik? Zijn motto van gezonde twijfel.' },
     {
       term: 'Vriendschap',
-      explanation: 'Zijn vriendschap met Étienne de La Boétie was zo volkomen dat hij haar niet anders kon verklaren dan: omdat hij het was, omdat ik het was.',
+      explanation:
+        'Zijn vriendschap met Étienne de La Boétie was zo volkomen dat hij haar niet anders kon verklaren dan: omdat hij het was, omdat ik het was.',
     },
   ],
   keyWorks: [{ title: 'Essais', year: '1580; uitgebreid 1588; postume uitgave 1595' }],
   lifeEvents: [
-    { year: '1533', text: 'Geboren op het landgoed Montaigne; als kind leert hij Latijn als eerste taal.' },
+    {
+      year: '1533',
+      text: 'Geboren op het landgoed Montaigne; als kind leert hij Latijn als eerste taal.',
+    },
     { year: '1563', text: 'Zijn beste vriend Étienne de La Boétie sterft.' },
-    { year: '1571', text: 'Trekt zich terug in de bibliotheek in de toren van zijn kasteel om te schrijven.' },
+    {
+      year: '1571',
+      text: 'Trekt zich terug in de bibliotheek in de toren van zijn kasteel om te schrijven.',
+    },
     { year: '1580', text: 'De eerste twee boeken van de Essais verschijnen.' },
     { year: '1581–1585', text: 'Is burgemeester van Bordeaux.' },
     { year: '1592', text: 'Sterft op zijn kasteel.' },
@@ -64,7 +81,8 @@ export const montaigne = networkFigure({
   ],
   voice: {
     register: 'Ontspannen, eerlijk en vol zelfspot; denkt hardop.',
-    method: 'Draait een vraag rond, verzamelt voorbeelden uit de klassieken en uit zijn eigen leven, en durft te twijfelen.',
+    method:
+      'Draait een vraag rond, verzamelt voorbeelden uit de klassieken en uit zijn eigen leven, en durft te twijfelen.',
   },
   modernLens:
     'Montaigne zou in blogs en podcasts verre nazaten van zijn essays herkennen, en vragen of we nog durven te twijfelen in plaats van alleen te beweren.',

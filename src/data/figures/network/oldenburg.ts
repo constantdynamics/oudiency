@@ -18,8 +18,14 @@ export const oldenburg = networkFigure({
   tags: ['wetenschap', 'netwerken', 'kennis delen', 'brieven', 'nieuwsgierigheid'],
   bio: 'Henry Oldenburg kwam uit Bremen en werd de eerste secretaris van de Royal Society in Londen. Met zijn enorme briefwisseling bracht hij geleerden in heel Europa met elkaar in contact, en in 1665 richtte hij Philosophical Transactions op, een van de eerste wetenschappelijke tijdschriften. Hij bezocht Spinoza in Rijnsburg en bleef jarenlang met hem corresponderen.',
   keyConcepts: [
-    { term: 'Kennis delen', explanation: 'Wetenschap groeit door open briefwisseling en publicatie.' },
-    { term: 'Het wetenschappelijk tijdschrift', explanation: 'Ontdekkingen vastleggen, dateren en voor iedereen beschikbaar maken.' },
+    {
+      term: 'Kennis delen',
+      explanation: 'Wetenschap groeit door open briefwisseling en publicatie.',
+    },
+    {
+      term: 'Het wetenschappelijk tijdschrift',
+      explanation: 'Ontdekkingen vastleggen, dateren en voor iedereen beschikbaar maken.',
+    },
   ],
   keyWorks: [{ title: 'Philosophical Transactions', year: 'vanaf 1665' }],
   lifeEvents: [
@@ -27,14 +33,18 @@ export const oldenburg = networkFigure({
     { year: '1661', text: 'Bezoekt Spinoza in Rijnsburg.' },
     { year: '1663', text: 'Wordt secretaris van de Royal Society.' },
     { year: '1665', text: 'Richt Philosophical Transactions op.' },
-    { year: '1667', text: 'Zit enkele maanden in de Tower van Londen, verdacht van spionage vanwege zijn buitenlandse brieven.' },
+    {
+      year: '1667',
+      text: 'Zit enkele maanden in de Tower van Londen, verdacht van spionage vanwege zijn buitenlandse brieven.',
+    },
     { year: '1677', text: 'Sterft.' },
   ],
   voice: {
     register: 'Hoffelijk, nieuwsgierig en verbindend.',
     method: 'Vraagt wat je hebt ontdekt, en met wie je het kunt delen.',
   },
-  modernLens: 'Oldenburg ziet in open-access-tijdschriften en wetenschappelijke netwerken zijn erfenis.',
+  modernLens:
+    'Oldenburg ziet in open-access-tijdschriften en wetenschappelijke netwerken zijn erfenis.',
   network: [
     { id: 'spinoza', relation: 'correspondent' },
     { id: 'leibniz', relation: 'correspondent' },

@@ -21,15 +21,20 @@ export const rusticus = networkFigure({
   keyConcepts: [
     {
       term: 'Eenvoud in stijl en leven',
-      explanation: 'Geen retorische vuurwerk, maar helder schrijven en sober leven (Meditaties 1.7).',
+      explanation:
+        'Geen retorische vuurwerk, maar helder schrijven en sober leven (Meditaties 1.7).',
     },
     {
       term: 'Het juiste boek',
-      explanation: 'Een mentor geeft je het boek dat je op dat moment nodig hebt: voor Marcus waren dat de lessen van Epictetus.',
+      explanation:
+        'Een mentor geeft je het boek dat je op dat moment nodig hebt: voor Marcus waren dat de lessen van Epictetus.',
     },
   ],
   keyWorks: [
-    { title: 'Marcus Aurelius, Meditaties 1.7', note: 'Hier beschrijft Marcus wat hij van Rusticus leerde.' },
+    {
+      title: 'Marcus Aurelius, Meditaties 1.7',
+      note: 'Hier beschrijft Marcus wat hij van Rusticus leerde.',
+    },
   ],
   lifeEvents: [
     { year: 'ca. 100', text: 'Geboren.' },
@@ -43,10 +48,14 @@ export const rusticus = networkFigure({
   ],
   voice: {
     register: 'Ingetogen en ernstig; een mentor die weinig zegt en veel ziet.',
-    method: 'Wijst op karakterfouten zonder te vernederen, en geeft je het juiste boek op het juiste moment.',
+    method:
+      'Wijst op karakterfouten zonder te vernederen, en geeft je het juiste boek op het juiste moment.',
   },
-  modernLens: 'Rusticus zou mentorschap samenvatten als: iemand op het juiste moment het juiste boek geven.',
-  controversies: ['Als prefect van Rome veroordeelde hij de christelijke apologeet Justinus de Martelaar ter dood.'],
+  modernLens:
+    'Rusticus zou mentorschap samenvatten als: iemand op het juiste moment het juiste boek geven.',
+  controversies: [
+    'Als prefect van Rome veroordeelde hij de christelijke apologeet Justinus de Martelaar ter dood.',
+  ],
   network: [
     { id: 'aurelius', relation: 'leerling' },
     { id: 'epictetus', relation: 'invloed' },

@@ -45,12 +45,14 @@ export const aurelius: Figure = {
     {
       term: 'Het leidend beginsel',
       native: 'τὸ ἡγεμονικόν',
-      explanation: 'Het redelijke deel van de ziel dat oordeelt en kiest: het enige wat werkelijk van jou is.',
+      explanation:
+        'Het redelijke deel van de ziel dat oordeelt en kiest: het enige wat werkelijk van jou is.',
     },
     {
       term: 'Logos',
       native: 'λόγος',
-      explanation: 'De redelijke orde van de kosmos, waaraan alle mensen deel hebben. Daarom zijn we elkaars medeburgers.',
+      explanation:
+        'De redelijke orde van de kosmos, waaraan alle mensen deel hebben. Daarom zijn we elkaars medeburgers.',
     },
     {
       term: 'Vergankelijkheid',
@@ -82,7 +84,10 @@ export const aurelius: Figure = {
       year: '166–180',
       text: 'Voert de Marcomannenoorlogen aan de Donau. In deze jaren schrijft hij (een deel van) de Meditaties.',
     },
-    { year: '175', text: 'Slaat de opstand van Avidius Cassius neer. Faustina sterft in datzelfde jaar.' },
+    {
+      year: '175',
+      text: 'Slaat de opstand van Avidius Cassius neer. Faustina sterft in datzelfde jaar.',
+    },
     {
       year: '180',
       text: 'Sterft op 17 maart tijdens de veldtocht, waarschijnlijk in Vindobona (Wenen) of Sirmium. Zijn zoon Commodus volgt hem op.',
@@ -148,8 +153,14 @@ export const aurelius: Figure = {
     ],
     nativePhrases: [
       { phrase: 'τὰ ἐφ’ ἡμῖν (ta eph’ hēmin)', translation: 'wat in onze macht ligt' },
-      { phrase: 'ὁ κόσμος ἀλλοίωσις (ho kosmos alloiōsis)', translation: 'het heelal is verandering' },
-      { phrase: 'Aequanimitas', translation: 'gelijkmoedigheid — het laatste wachtwoord van zijn adoptievader' },
+      {
+        phrase: 'ὁ κόσμος ἀλλοίωσις (ho kosmos alloiōsis)',
+        translation: 'het heelal is verandering',
+      },
+      {
+        phrase: 'Aequanimitas',
+        translation: 'gelijkmoedigheid — het laatste wachtwoord van zijn adoptievader',
+      },
     ],
     avoid: [
       'Pathetiek of zelfmedelijden',

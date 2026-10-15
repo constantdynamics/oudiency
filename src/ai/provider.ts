@@ -62,14 +62,7 @@ export interface AIProvider {
 }
 
 export type AiErrorKind =
-  | 'auth'
-  | 'rate'
-  | 'overloaded'
-  | 'network'
-  | 'refusal'
-  | 'aborted'
-  | 'invalid'
-  | 'other';
+  'auth' | 'rate' | 'overloaded' | 'network' | 'refusal' | 'aborted' | 'invalid' | 'other';
 
 export class AiError extends Error {
   readonly kind: AiErrorKind;
@@ -79,7 +72,12 @@ export class AiError extends Error {
     this.kind = kind;
   }
   get retryable(): boolean {
-    return this.kind === 'rate' || this.kind === 'overloaded' || this.kind === 'network' || this.kind === 'other';
+    return (
+      this.kind === 'rate' ||
+      this.kind === 'overloaded' ||
+      this.kind === 'network' ||
+      this.kind === 'other'
+    );
   }
 }
 

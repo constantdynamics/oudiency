@@ -16,9 +16,18 @@ export const locke = networkFigure({
   tags: ['vrijheid', 'rechten', 'tolerantie', 'opvoeding', 'kennis', 'eigendom', 'democratie'],
   bio: 'John Locke wordt gezien als de vader van het liberalisme. Hij stelde dat de geest bij de geboorte een onbeschreven blad is dat door ervaring wordt gevuld, en dat een regering alleen gezag heeft met instemming van de burgers, om hun leven, vrijheid en bezit te beschermen. In de jaren 1680 leefde hij in ballingschap in de Republiek, waar hij aan zijn Brief over tolerantie werkte.',
   keyConcepts: [
-    { term: 'Onbeschreven blad', explanation: 'Alle kennis begint bij ervaring; niemand wordt met ideeën geboren.' },
-    { term: 'Natuurlijke rechten', explanation: 'Leven, vrijheid en bezit horen bij ieder mens, vóór elke regering.' },
-    { term: 'Instemming', explanation: 'Een regering heeft alleen gezag als de burgers haar steunen.' },
+    {
+      term: 'Onbeschreven blad',
+      explanation: 'Alle kennis begint bij ervaring; niemand wordt met ideeën geboren.',
+    },
+    {
+      term: 'Natuurlijke rechten',
+      explanation: 'Leven, vrijheid en bezit horen bij ieder mens, vóór elke regering.',
+    },
+    {
+      term: 'Instemming',
+      explanation: 'Een regering heeft alleen gezag als de burgers haar steunen.',
+    },
     { term: 'Tolerantie', explanation: 'De overheid mag zielen niet met dwang redden.' },
   ],
   keyWorks: [
@@ -30,7 +39,10 @@ export const locke = networkFigure({
   lifeEvents: [
     { year: '1632', text: 'Geboren in Wrington, in hetzelfde jaar als Spinoza.' },
     { year: '1667', text: 'Wordt arts en adviseur van de staatsman Lord Shaftesbury.' },
-    { year: '1683–1689', text: 'Leeft in ballingschap in de Republiek, onder meer in Amsterdam en Rotterdam.' },
+    {
+      year: '1683–1689',
+      text: 'Leeft in ballingschap in de Republiek, onder meer in Amsterdam en Rotterdam.',
+    },
     { year: '1689', text: 'Keert terug naar Engeland; zijn drie grote werken verschijnen.' },
     { year: '1704', text: 'Sterft in Oates, Essex.' },
   ],

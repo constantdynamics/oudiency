@@ -13,11 +13,21 @@ export const priestley = networkFigure({
   school: 'Verlichting; rationele dissenters',
   family: 'brits',
   theme: { primary: '#2d4545', motif: 'lens' },
-  tags: ['wetenschap', 'experiment', 'religievrijheid', 'onderwijs', 'nieuwsgierigheid', 'vervolging'],
+  tags: [
+    'wetenschap',
+    'experiment',
+    'religievrijheid',
+    'onderwijs',
+    'nieuwsgierigheid',
+    'vervolging',
+  ],
   bio: 'Joseph Priestley was dominee, leraar en een van de grote experimentatoren van zijn tijd. Hij isoleerde zuurstof, vond spuitwater uit en schreef op aanraden van Franklin een geschiedenis van de elektriciteit. Omdat hij de Franse Revolutie steunde, staken woedende menigten in 1791 zijn huis en laboratorium in Birmingham in brand. Hij emigreerde naar Amerika.',
   keyConcepts: [
     { term: 'Experiment', explanation: 'Kennis komt uit zorgvuldig proberen, meten en delen.' },
-    { term: 'Vrijheid van geweten', explanation: 'Andersdenkenden horen dezelfde rechten te hebben als de staatskerk.' },
+    {
+      term: 'Vrijheid van geweten',
+      explanation: 'Andersdenkenden horen dezelfde rechten te hebben als de staatskerk.',
+    },
   ],
   keyWorks: [
     { title: 'The History and Present State of Electricity', year: '1767' },
@@ -25,7 +35,10 @@ export const priestley = networkFigure({
   ],
   lifeEvents: [
     { year: '1733', text: 'Geboren in Birstall, Yorkshire.' },
-    { year: '1767', text: 'Publiceert zijn geschiedenis van de elektriciteit, aangemoedigd door Franklin.' },
+    {
+      year: '1767',
+      text: 'Publiceert zijn geschiedenis van de elektriciteit, aangemoedigd door Franklin.',
+    },
     { year: '1772', text: 'Beschrijft hoe je water met koolzuurgas maakt: spuitwater.' },
     { year: '1774', text: 'Isoleert zuurstof, die hij "gedeflogistonneerde lucht" noemt.' },
     { year: '1791', text: 'Een menigte verwoest zijn huis en laboratorium in Birmingham.' },

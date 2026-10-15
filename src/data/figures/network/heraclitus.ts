@@ -25,11 +25,17 @@ export const heraclitus = networkFigure({
     { term: 'Vuur', explanation: 'Het oerelement, altijd in beweging, altijd veranderend.' },
   ],
   keyWorks: [
-    { title: 'Fragmenten', note: 'Ongeveer 130 fragmenten, bewaard als citaten bij latere schrijvers.' },
+    {
+      title: 'Fragmenten',
+      note: 'Ongeveer 130 fragmenten, bewaard als citaten bij latere schrijvers.',
+    },
   ],
   lifeEvents: [
     { year: 'ca. 535 v.Chr.', text: 'Geboren in een aanzienlijke familie in Efeze.' },
-    { year: 'onbekend', text: 'Staat volgens de overlevering zijn erfelijke koningstitel af aan zijn broer.' },
+    {
+      year: 'onbekend',
+      text: 'Staat volgens de overlevering zijn erfelijke koningstitel af aan zijn broer.',
+    },
     { year: 'onbekend', text: 'Legt zijn boek neer in de tempel van Artemis in Efeze.' },
     { year: 'ca. 475 v.Chr.', text: 'Sterft.' },
   ],

@@ -15,7 +15,15 @@ export const mozi = networkFigure({
   school: 'Mohisme',
   family: 'chinees',
   theme: { primary: '#2f3b40', accent: '#9d4636', motif: 'compass' },
-  tags: ['onpartijdige zorg', 'vrede', 'rechtvaardigheid', 'nut', 'zuinigheid', 'oorlog', 'techniek'],
+  tags: [
+    'onpartijdige zorg',
+    'vrede',
+    'rechtvaardigheid',
+    'nut',
+    'zuinigheid',
+    'oorlog',
+    'techniek',
+  ],
   bio: 'Mo Di, bekend als Mozi, was een denker en ambachtsman die een strak georganiseerde beweging leidde. Hij predikte onpartijdige zorg: om iedereen geven alsof het je eigen familie is. Hij was tegen aanvalsoorlogen en verspillende rituelen, en zijn volgelingen trokken als experts in verdedigingswerken naar belegerde steden om ze te helpen.',
   keyConcepts: [
     {
@@ -23,11 +31,16 @@ export const mozi = networkFigure({
       native: '兼愛',
       explanation: 'Om iedereen evenveel geven, niet alleen om je eigen familie of staat.',
     },
-    { term: 'Tegen aanvalsoorlog', native: '非攻', explanation: 'Een aanvalsoorlog is diefstal en moord op grote schaal.' },
+    {
+      term: 'Tegen aanvalsoorlog',
+      native: '非攻',
+      explanation: 'Een aanvalsoorlog is diefstal en moord op grote schaal.',
+    },
     {
       term: 'Drie maatstaven',
       native: '三表',
-      explanation: 'Toets een leer aan de wijzen van vroeger, aan wat mensen zien en horen, en aan het nut voor het volk.',
+      explanation:
+        'Toets een leer aan de wijzen van vroeger, aan wat mensen zien en horen, en aan het nut voor het volk.',
     },
   ],
   keyWorks: [{ title: 'Mozi (墨子)' }],

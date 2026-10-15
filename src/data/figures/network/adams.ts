@@ -16,20 +16,36 @@ export const adams = networkFigure({
   tags: ['rechtsstaat', 'feiten', 'machtenscheiding', 'plicht', 'huwelijk', 'principes'],
   bio: 'John Adams was een advocaat uit Massachusetts die in 1770 de Britse soldaten van het bloedbad van Boston verdedigde, omdat ook zij recht hadden op een eerlijk proces. Hij werd een van de leiders van de onafhankelijkheid, gezant in Europa (onder meer in de Republiek, waar hij erkenning en leningen regelde) en de tweede president van de Verenigde Staten. Zijn briefwisseling met zijn vrouw Abigail is beroemd.',
   keyConcepts: [
-    { term: 'Een regering van wetten', explanation: 'Een regering van wetten, niet van mensen: niemand staat boven het recht.' },
-    { term: 'Machtenscheiding', explanation: 'Macht moet over instellingen verdeeld zijn, zodat ze elkaar in evenwicht houden.' },
+    {
+      term: 'Een regering van wetten',
+      explanation: 'Een regering van wetten, niet van mensen: niemand staat boven het recht.',
+    },
+    {
+      term: 'Machtenscheiding',
+      explanation:
+        'Macht moet over instellingen verdeeld zijn, zodat ze elkaar in evenwicht houden.',
+    },
   ],
   keyWorks: [
     { title: 'Thoughts on Government', year: '1776' },
     { title: 'Grondwet van Massachusetts', year: '1780', note: 'Grotendeels door hem opgesteld.' },
-    { title: 'A Defence of the Constitutions of Government of the United States of America', year: '1787–1788' },
+    {
+      title: 'A Defence of the Constitutions of Government of the United States of America',
+      year: '1787–1788',
+    },
   ],
   lifeEvents: [
     { year: '1735', text: 'Geboren in Braintree, Massachusetts.' },
     { year: '1770', text: 'Verdedigt de Britse soldaten na het bloedbad van Boston.' },
-    { year: '1782', text: 'Krijgt de Republiek der Nederlanden zover de Verenigde Staten te erkennen.' },
+    {
+      year: '1782',
+      text: 'Krijgt de Republiek der Nederlanden zover de Verenigde Staten te erkennen.',
+    },
     { year: '1797–1801', text: 'Is de tweede president van de Verenigde Staten.' },
-    { year: '1826', text: 'Sterft op 4 juli, op dezelfde dag als zijn rivaal en vriend Thomas Jefferson.' },
+    {
+      year: '1826',
+      text: 'Sterft op 4 juli, op dezelfde dag als zijn rivaal en vriend Thomas Jefferson.',
+    },
   ],
   quotes: [
     {
@@ -51,7 +67,8 @@ export const adams = networkFigure({
     register: 'Eerlijk, koppig en principieel; soms opvliegend, altijd recht door zee.',
     method: 'Stelt de feiten en de wet voorop, ook als die impopulair zijn.',
   },
-  modernLens: 'Adams zou in een tijd van "alternatieve feiten" vasthouden aan zijn pleidooi: feiten zijn koppige dingen.',
+  modernLens:
+    'Adams zou in een tijd van "alternatieve feiten" vasthouden aan zijn pleidooi: feiten zijn koppige dingen.',
   controversies: [
     'Als president ondertekende hij de Alien and Sedition Acts (1798), die kritiek op de regering strafbaar maakten.',
   ],

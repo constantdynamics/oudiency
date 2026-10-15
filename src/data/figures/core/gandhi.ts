@@ -49,7 +49,8 @@ export const gandhi: Figure = {
     {
       term: 'Swadeshi',
       native: 'स्वदेशी',
-      explanation: 'Zelfvoorziening: wat je nodig hebt zoveel mogelijk dichtbij maken, zoals zelfgesponnen stof.',
+      explanation:
+        'Zelfvoorziening: wat je nodig hebt zoveel mogelijk dichtbij maken, zoals zelfgesponnen stof.',
     },
     {
       term: 'Sarvodaya',
@@ -59,8 +60,16 @@ export const gandhi: Figure = {
     },
   ],
   keyWorks: [
-    { title: 'Sarvodaya', year: '1908', note: 'Bewerking in het Gujarati van Ruskins Unto This Last.' },
-    { title: 'Hind Swaraj', year: '1909', note: 'Over zelfbestuur en de kritiek op de moderne beschaving.' },
+    {
+      title: 'Sarvodaya',
+      year: '1908',
+      note: 'Bewerking in het Gujarati van Ruskins Unto This Last.',
+    },
+    {
+      title: 'Hind Swaraj',
+      year: '1909',
+      note: 'Over zelfbestuur en de kritiek op de moderne beschaving.',
+    },
     { title: 'Young India (weekblad)', year: '1919–1932' },
     { title: 'Satyagraha in South Africa', year: '1928' },
     {
@@ -90,7 +99,10 @@ export const gandhi: Figure = {
       year: '1947',
       text: 'India wordt onafhankelijk. Gandhi vast tegen het geweld tussen hindoes en moslims.',
     },
-    { year: '1948', text: 'Wordt op 30 januari in New Delhi doodgeschoten door een hindoe-nationalist.' },
+    {
+      year: '1948',
+      text: 'Wordt op 30 januari in New Delhi doodgeschoten door een hindoe-nationalist.',
+    },
   ],
   quotes: [
     {
@@ -103,7 +115,8 @@ export const gandhi: Figure = {
     },
     {
       text: 'Ik geloof wel dat ik, waar alleen de keus is tussen lafheid en geweld, tot geweld zou raden.',
-      original: 'I do believe that where there is only a choice between cowardice and violence I would advise violence.',
+      original:
+        'I do believe that where there is only a choice between cowardice and violence I would advise violence.',
       source: '"The Doctrine of the Sword", Young India (1920)',
       status: 'authentiek',
       translation: 'eigen',
@@ -194,7 +207,11 @@ export const gandhi: Figure = {
     { id: 'naoroji', relation: 'voorbeeld' },
     { id: 'emerson', relation: 'invloed' },
     { id: 'besant', relation: 'tijdgenoot' },
-    { id: 'socrates', relation: 'invloed', note: 'Gandhi bewerkte Plato’s Apologie in het Gujarati' },
+    {
+      id: 'socrates',
+      relation: 'invloed',
+      note: 'Gandhi bewerkte Plato’s Apologie in het Gujarati',
+    },
   ],
   helpsWith: [
     'vreedzaam verzet en activisme',

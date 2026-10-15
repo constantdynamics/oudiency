@@ -15,9 +15,20 @@ export const kierkegaard = networkFigure({
   tags: ['angst', 'keuze', 'geloof', 'individu', 'wanhoop', 'ironie', 'liefde', 'zingeving'],
   bio: 'Søren Kierkegaard was een Deense filosoof en schrijver die onder allerlei schuilnamen publiceerde. Hij verbrak zijn verloving met Regine Olsen en schreef daarna in hoog tempo boeken over angst, wanhoop, keuze en geloof. Tegen het grote systeem van Hegel in hield hij vol dat het om de enkeling gaat, die zelf moet kiezen hoe hij leeft. Hij geldt als voorloper van het existentialisme.',
   keyConcepts: [
-    { term: 'Angst', native: 'Angest', explanation: 'De duizeling van de vrijheid: het besef dat je kunt kiezen.' },
-    { term: 'De sprong', explanation: 'Geloof en echte keuzes zijn niet te bewijzen; je moet springen.' },
-    { term: 'Of/of', native: 'Enten – Eller', explanation: 'Esthetisch of ethisch leven: je moet kiezen wie je wilt zijn.' },
+    {
+      term: 'Angst',
+      native: 'Angest',
+      explanation: 'De duizeling van de vrijheid: het besef dat je kunt kiezen.',
+    },
+    {
+      term: 'De sprong',
+      explanation: 'Geloof en echte keuzes zijn niet te bewijzen; je moet springen.',
+    },
+    {
+      term: 'Of/of',
+      native: 'Enten – Eller',
+      explanation: 'Esthetisch of ethisch leven: je moet kiezen wie je wilt zijn.',
+    },
     {
       term: 'Indirecte mededeling',
       explanation: 'Door schuilnamen en verhalen de lezer zelf laten ontdekken en kiezen.',
@@ -32,8 +43,14 @@ export const kierkegaard = networkFigure({
   ],
   lifeEvents: [
     { year: '1813', text: 'Geboren in Kopenhagen als jongste zoon van een rijke koopman.' },
-    { year: '1840', text: 'Verlooft zich met Regine Olsen, en verbreekt de verloving een jaar later.' },
-    { year: '1841', text: 'Promoveert op het begrip ironie, met voortdurende verwijzing naar Socrates.' },
+    {
+      year: '1840',
+      text: 'Verlooft zich met Regine Olsen, en verbreekt de verloving een jaar later.',
+    },
+    {
+      year: '1841',
+      text: 'Promoveert op het begrip ironie, met voortdurende verwijzing naar Socrates.',
+    },
     { year: '1843', text: 'Of/of verschijnt, onder de schuilnaam Victor Eremita.' },
     { year: '1854–1855', text: 'Voert een felle campagne tegen de Deense staatskerk.' },
     { year: '1855', text: 'Sterft op 42-jarige leeftijd in Kopenhagen.' },
@@ -56,7 +73,8 @@ export const kierkegaard = networkFigure({
   ],
   voice: {
     register: 'Ironisch, hartstochtelijk en persoonlijk; afwisselend speels en diep ernstig.',
-    method: 'Spreekt de enkeling aan: niet wat "men" vindt, maar wat jij kiest. Gebruikt verhalen en paradoxen.',
+    method:
+      'Spreekt de enkeling aan: niet wat "men" vindt, maar wat jij kiest. Gebruikt verhalen en paradoxen.',
   },
   modernLens:
     'Kierkegaard herkent in onze eindeloze keuzemogelijkheden de duizeling van de vrijheid, en in de massa op sociale media het anonieme "publiek" dat hij wantrouwde.',

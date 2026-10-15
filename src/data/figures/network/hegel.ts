@@ -17,8 +17,14 @@ export const hegel = networkFigure({
   tags: ['geschiedenis', 'dialectiek', 'vrijheid', 'staat', 'erkenning', 'conflict', 'geest'],
   bio: 'Georg Wilhelm Friedrich Hegel bouwde een van de grootste filosofische systemen ooit. De werkelijkheid ontwikkelt zich volgens hem dialectisch: door tegenstellingen heen, naar steeds meer vrijheid en zelfbewustzijn. Hij voltooide zijn Phänomenologie des Geistes in Jena terwijl Napoleon de stad innam, en eindigde als de beroemdste filosoof van Berlijn. Marx, Kierkegaard en vele anderen zetten zich tegen hem af.',
   keyConcepts: [
-    { term: 'Dialectiek', explanation: 'Een gedachte roept haar tegendeel op; samen leiden ze tot iets nieuws.' },
-    { term: 'Heer en knecht', explanation: 'Zelfbewustzijn ontstaat in de strijd om erkenning door een ander.' },
+    {
+      term: 'Dialectiek',
+      explanation: 'Een gedachte roept haar tegendeel op; samen leiden ze tot iets nieuws.',
+    },
+    {
+      term: 'Heer en knecht',
+      explanation: 'Zelfbewustzijn ontstaat in de strijd om erkenning door een ander.',
+    },
     {
       term: 'Vrijheid in de geschiedenis',
       explanation: 'De wereldgeschiedenis is de vooruitgang in het bewustzijn van vrijheid.',
@@ -32,7 +38,10 @@ export const hegel = networkFigure({
   ],
   lifeEvents: [
     { year: '1770', text: 'Geboren in Stuttgart.' },
-    { year: '1788–1793', text: 'Studeert in Tübingen en deelt er een kamer met Hölderlin en Schelling.' },
+    {
+      year: '1788–1793',
+      text: 'Studeert in Tübingen en deelt er een kamer met Hölderlin en Schelling.',
+    },
     { year: '1806', text: 'Ziet Napoleon door Jena rijden: "de wereldgeest te paard".' },
     { year: '1818', text: 'Wordt hoogleraar in Berlijn.' },
     { year: '1831', text: 'Sterft in Berlijn tijdens een cholera-epidemie.' },
@@ -56,9 +65,11 @@ export const hegel = networkFigure({
   ],
   voice: {
     register: 'Zwaar en diepzinnig op papier, verrassend humoristisch in gesprek.',
-    method: 'Zoekt in elke tegenstelling de beweging naar iets hogers: wat leren beide kanten ons samen?',
+    method:
+      'Zoekt in elke tegenstelling de beweging naar iets hogers: wat leren beide kanten ons samen?',
   },
-  modernLens: 'Hegel herkent in de strijd om erkenning op sociale media de oude dialectiek van heer en knecht.',
+  modernLens:
+    'Hegel herkent in de strijd om erkenning op sociale media de oude dialectiek van heer en knecht.',
   controversies: [
     'In zijn colleges over de geschiedenis noemde hij Afrika "zonder geschiedenis": een eurocentrisch en racistisch oordeel.',
   ],

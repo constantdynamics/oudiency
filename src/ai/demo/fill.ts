@@ -10,10 +10,13 @@ export interface FillVars {
 }
 
 export function fill(template: string, vars: FillVars): string {
-  const out = template.replace(/\{(naam|onderwerp|woord|vorige|hoofdvraag|vraag)\}/g, (_, key: keyof FillVars) => {
-    const value = vars[key];
-    return value && value.trim() ? value.trim() : '';
-  });
+  const out = template.replace(
+    /\{(naam|onderwerp|woord|vorige|hoofdvraag|vraag)\}/g,
+    (_, key: keyof FillVars) => {
+      const value = vars[key];
+      return value && value.trim() ? value.trim() : '';
+    },
+  );
   return tidy(out);
 }
 

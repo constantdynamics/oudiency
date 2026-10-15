@@ -20,7 +20,8 @@ export const musonius = networkFigure({
     {
       term: 'Oefening',
       native: 'ἄσκησις',
-      explanation: 'Deugd leer je niet uit boeken alleen, maar door dagelijkse oefening van lichaam en geest.',
+      explanation:
+        'Deugd leer je niet uit boeken alleen, maar door dagelijkse oefening van lichaam en geest.',
     },
     {
       term: 'Gelijke opvoeding',
@@ -28,7 +29,10 @@ export const musonius = networkFigure({
     },
   ],
   keyWorks: [
-    { title: 'Diatriben (Lessen)', note: 'Opgetekend door zijn leerling Lucius, bewaard bij Stobaeus.' },
+    {
+      title: 'Diatriben (Lessen)',
+      note: 'Opgetekend door zijn leerling Lucius, bewaard bij Stobaeus.',
+    },
   ],
   lifeEvents: [
     { year: 'ca. 30', text: 'Geboren in Volsinii, als Romeins ridder.' },

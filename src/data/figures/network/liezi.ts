@@ -21,13 +21,22 @@ export const liezi = networkFigure({
     {
       term: 'De oude dwaas die bergen verzette',
       native: '愚公移山',
-      explanation: 'Volharding over generaties heen: wat één leven niet kan, kunnen kinderen en kleinkinderen.',
+      explanation:
+        'Volharding over generaties heen: wat één leven niet kan, kunnen kinderen en kleinkinderen.',
     },
     { term: 'Op de wind rijden', explanation: 'Volledige vrijheid, omdat je nergens aan vastzit.' },
   ],
-  keyWorks: [{ title: 'Liezi (列子)', note: 'In de huidige vorm samengesteld rond de 4e eeuw n.Chr., uit oudere stof.' }],
+  keyWorks: [
+    {
+      title: 'Liezi (列子)',
+      note: 'In de huidige vorm samengesteld rond de 4e eeuw n.Chr., uit oudere stof.',
+    },
+  ],
   lifeEvents: [
-    { year: 'traditioneel 5e eeuw v.Chr.', text: 'Leeft volgens de overlevering arm en teruggetrokken in de staat Zheng.' },
+    {
+      year: 'traditioneel 5e eeuw v.Chr.',
+      text: 'Leeft volgens de overlevering arm en teruggetrokken in de staat Zheng.',
+    },
     {
       year: 'overlevering',
       text: 'Weigert graan dat de premier van Zheng hem laat brengen; niet lang daarna wordt die premier vermoord.',

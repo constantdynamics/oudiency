@@ -3,7 +3,13 @@
  * Claude-key server-side bewaart en de limieten (limits.service) afdwingt.
  * In Fase 1 alleen een stub.
  */
-import { AiError, type AIProvider, type StructuredRequest, type TextRequest, type TextResult } from './provider';
+import {
+  AiError,
+  type AIProvider,
+  type StructuredRequest,
+  type TextRequest,
+  type TextResult,
+} from './provider';
 
 export class ProxyProvider implements AIProvider {
   readonly id = 'proxy' as const;

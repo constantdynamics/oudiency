@@ -1,4 +1,12 @@
-import { Bell, BellRing, CalendarClock, CheckCheck, MessageCircleHeart, ShieldCheck, Sparkles } from 'lucide-react';
+import {
+  Bell,
+  BellRing,
+  CalendarClock,
+  CheckCheck,
+  MessageCircleHeart,
+  ShieldCheck,
+  Sparkles,
+} from 'lucide-react';
 import { useId, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { Avatar } from '@/components/Avatar';
@@ -49,9 +57,16 @@ function NotificationItem({
         )}
         <span className="min-w-0 flex-1">
           <span className="block text-[0.95rem] leading-snug">{notification.text}</span>
-          <span className="mt-0.5 block text-xs text-ink-3">{timeAgo(Date.parse(notification.visibleAt), now)}</span>
+          <span className="mt-0.5 block text-xs text-ink-3">
+            {timeAgo(Date.parse(notification.visibleAt), now)}
+          </span>
         </span>
-        {!notification.read && <span aria-label="ongelezen" className="mt-2 size-2 shrink-0 rounded-full bg-terracotta" />}
+        {!notification.read && (
+          <span
+            aria-label="ongelezen"
+            className="mt-2 size-2 shrink-0 rounded-full bg-terracotta"
+          />
+        )}
       </button>
     </li>
   );
@@ -92,7 +107,11 @@ export function NotificationBell() {
         title={t.notifications.title}
         className="relative inline-flex size-11 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink"
       >
-        {unread > 0 ? <BellRing aria-hidden className="size-5" /> : <Bell aria-hidden className="size-5" />}
+        {unread > 0 ? (
+          <BellRing aria-hidden className="size-5" />
+        ) : (
+          <Bell aria-hidden className="size-5" />
+        )}
         {unread > 0 && (
           <span
             aria-hidden
@@ -127,7 +146,12 @@ export function NotificationBell() {
         ) : (
           <ul className="space-y-0.5">
             {visible.map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} now={now} onOpen={open} />
+              <NotificationItem
+                key={notification.id}
+                notification={notification}
+                now={now}
+                onOpen={open}
+              />
             ))}
           </ul>
         )}

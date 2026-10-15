@@ -22,7 +22,8 @@ export const zeno = networkFigure({
     {
       term: 'Leven in overeenstemming met de natuur',
       native: 'ὁμολογουμένως τῇ φύσει ζῆν',
-      explanation: 'Het doel van het leven: leven volgens de rede die in de natuur en in jezelf werkt.',
+      explanation:
+        'Het doel van het leven: leven volgens de rede die in de natuur en in jezelf werkt.',
     },
     {
       term: 'Deugd als enige goed',
@@ -31,10 +32,13 @@ export const zeno = networkFigure({
     {
       term: 'Onverschillige zaken',
       native: 'ἀδιάφορα',
-      explanation: 'Gezondheid, rijkdom en roem zijn op zich niet goed of slecht; het gaat om wat je ermee doet.',
+      explanation:
+        'Gezondheid, rijkdom en roem zijn op zich niet goed of slecht; het gaat om wat je ermee doet.',
     },
   ],
-  keyWorks: [{ title: 'Politeia (De staat)', note: 'Verloren; bekend uit citaten bij latere schrijvers.' }],
+  keyWorks: [
+    { title: 'Politeia (De staat)', note: 'Verloren; bekend uit citaten bij latere schrijvers.' },
+  ],
   lifeEvents: [
     { year: 'ca. 334 v.Chr.', text: 'Geboren in Kition op Cyprus.' },
     {

@@ -45,7 +45,8 @@ export const socrates: Figure = {
     {
       term: 'Deugd',
       native: 'ἀρετή',
-      explanation: 'Voortreffelijkheid: goed zijn in mens-zijn. Voor Socrates hangt deugd nauw samen met kennis.',
+      explanation:
+        'Voortreffelijkheid: goed zijn in mens-zijn. Voor Socrates hangt deugd nauw samen met kennis.',
     },
     {
       term: 'Socratische ironie',
@@ -72,7 +73,10 @@ export const socrates: Figure = {
     },
     { title: 'Plato, Kriton', note: 'Waarom Socrates weigert uit de gevangenis te vluchten.' },
     { title: 'Plato, Faidon', note: 'De laatste dag van Socrates: over de ziel en de dood.' },
-    { title: 'Plato, Euthyfron', note: 'Wat is vroomheid? Een schoolvoorbeeld van de socratische methode.' },
+    {
+      title: 'Plato, Euthyfron',
+      note: 'Wat is vroomheid? Een schoolvoorbeeld van de socratische methode.',
+    },
     { title: 'Plato, Gorgias', note: 'Is het beter onrecht te doen of onrecht te ondergaan?' },
     { title: 'Plato, Symposion', note: 'Een feestmaal vol redevoeringen over de liefde.' },
     { title: 'Plato, Theaitetos', note: 'Wat is kennis? Met het beeld van de vroedvrouw.' },
@@ -152,7 +156,10 @@ export const socrates: Figure = {
     },
   ],
   specs: [
-    { label: 'Bekend van', value: 'De socratische methode: vragen stellen tot zekerheden wankelen' },
+    {
+      label: 'Bekend van',
+      value: 'De socratische methode: vragen stellen tot zekerheden wankelen',
+    },
     { label: 'Geschriften', value: 'Geen. We kennen hem via Plato, Xenophon en Aristophanes.' },
     { label: 'Proces', value: '399 v.Chr., aangeklaagd door Meletos, Anytos en Lykon' },
     { label: 'Vaste plek', value: 'De agora en de gymnasia van Athene' },
@@ -170,7 +177,10 @@ export const socrates: Figure = {
       'Eindigt vaak met een open vraag om mee te nemen',
     ],
     nativePhrases: [
-      { phrase: 'γνῶθι σεαυτόν (gnōthi seauton)', translation: 'ken jezelf — het opschrift in Delphi' },
+      {
+        phrase: 'γνῶθι σεαυτόν (gnōthi seauton)',
+        translation: 'ken jezelf — het opschrift in Delphi',
+      },
       { phrase: 'ὦ φίλε (ō phile)', translation: 'mijn vriend' },
       { phrase: 'νὴ τὸν κύνα (nē ton kuna)', translation: 'bij de hond! — zijn favoriete uitroep' },
       { phrase: 'τί ἐστι; (ti esti?)', translation: 'wat ís het eigenlijk?' },
@@ -199,11 +209,19 @@ export const socrates: Figure = {
   avatar: { kind: 'svg' },
   availability: { slots: ['09:00', '09:45', '10:30', '11:15', '13:30', '14:15', '16:00', '17:30'] },
   network: [
-    { id: 'plato', relation: 'leerling', note: 'schreef de meeste dialogen waarin Socrates spreekt' },
+    {
+      id: 'plato',
+      relation: 'leerling',
+      note: 'schreef de meeste dialogen waarin Socrates spreekt',
+    },
     { id: 'xenophon', relation: 'leerling', note: 'schreef zijn Herinneringen aan Socrates' },
     { id: 'aristoteles', relation: 'navolger', note: 'via Plato' },
     { id: 'protagoras', relation: 'gesprekspartner', note: 'sofist, in Plato’s Protagoras' },
-    { id: 'diogenes', relation: 'geestverwant', note: 'Plato noemde hem "een Socrates die gek geworden is"' },
+    {
+      id: 'diogenes',
+      relation: 'geestverwant',
+      note: 'Plato noemde hem "een Socrates die gek geworden is"',
+    },
     { id: 'zeno', relation: 'navolger', note: 'grondlegger van de Stoa' },
     { id: 'epictetus', relation: 'navolger' },
     { id: 'aurelius', relation: 'navolger' },

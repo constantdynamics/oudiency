@@ -32,7 +32,9 @@ describe('denkersdata', () => {
   });
 
   it('kerndenkers hebben het ankercitaat uit de briefing', () => {
-    const sources = Object.fromEntries(CORE_FIGURES.map((f) => [f.id, f.quotes.map((q) => q.source).join(' | ')]));
+    const sources = Object.fromEntries(
+      CORE_FIGURES.map((f) => [f.id, f.quotes.map((q) => q.source).join(' | ')]),
+    );
     expect(sources.socrates).toContain('Apologie 38a');
     expect(sources.aurelius).toContain('Meditaties 4.3');
     expect(sources.laozi).toContain('Daodejing 64');
@@ -44,7 +46,10 @@ describe('denkersdata', () => {
   });
 
   it('de gegenereerde index is actueel (draai anders npm run gen:figures)', () => {
-    const file = readFileSync(resolve(process.cwd(), 'src/data/figures/index.generated.ts'), 'utf8');
+    const file = readFileSync(
+      resolve(process.cwd(), 'src/data/figures/index.generated.ts'),
+      'utf8',
+    );
     expect(file).toBe(renderFigureIndex(ALL_FIGURES));
   });
 });

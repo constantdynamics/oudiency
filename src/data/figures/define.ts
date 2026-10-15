@@ -127,7 +127,9 @@ export function generateSlots(id: string): string[] {
   const rng = seededRng(`${id}|spreekuur`);
   const quarters: string[] = [];
   for (let minutes = 9 * 60; minutes <= 20 * 60 + 45; minutes += 15) {
-    quarters.push(`${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`);
+    quarters.push(
+      `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`,
+    );
   }
   const chosen = new Set<string>();
   // Verdeel over de dag: twee per blok van drie uur.
@@ -175,7 +177,13 @@ export interface NetworkFigureInput {
   lifeEvents: LifeEvent[];
   quotes?: Quote[];
   specs?: { label: string; value: string }[];
-  voice: { register: string; method: string; habits?: string[]; nativePhrases?: { phrase: string; translation: string }[]; avoid?: string[] };
+  voice: {
+    register: string;
+    method: string;
+    habits?: string[];
+    nativePhrases?: { phrase: string; translation: string }[];
+    avoid?: string[];
+  };
   modernLens: string;
   controversies?: string[];
   network: NetworkLink[];

@@ -15,14 +15,23 @@ export const gokhale = networkFigure({
   tags: ['dienstbaarheid', 'politiek', 'onderwijs', 'hervorming', 'gematigdheid'],
   bio: 'Gopal Krishna Gokhale was een leraar en politicus die streed voor hervormingen in Brits-Indië, via onderwijs, debat en zelfopoffering. In 1905 richtte hij de Servants of India Society op, waarvan de leden beloofden hun leven aan het land te wijden. Gandhi noemde hem zijn politieke leermeester; Gokhale raadde hem aan na zijn terugkeer eerst een jaar door India te reizen voor hij politiek ging bedrijven.',
   keyConcepts: [
-    { term: 'Politiek als dienst', explanation: 'Politiek "vergeestelijken": dienen in plaats van macht verwerven.' },
-    { term: 'Geduldige hervorming', explanation: 'Verandering via kennis, overleg en persoonlijke offers.' },
+    {
+      term: 'Politiek als dienst',
+      explanation: 'Politiek "vergeestelijken": dienen in plaats van macht verwerven.',
+    },
+    {
+      term: 'Geduldige hervorming',
+      explanation: 'Verandering via kennis, overleg en persoonlijke offers.',
+    },
   ],
   keyWorks: [{ title: 'Speeches of the Honourable Mr. G. K. Gokhale', year: '1908' }],
   lifeEvents: [
     { year: '1866', text: 'Geboren in Kotluk.' },
     { year: '1889', text: 'Wordt lid van het Indian National Congress.' },
-    { year: '1905', text: 'Wordt voorzitter van het Congress en sticht de Servants of India Society.' },
+    {
+      year: '1905',
+      text: 'Wordt voorzitter van het Congress en sticht de Servants of India Society.',
+    },
     { year: '1912', text: 'Bezoekt Gandhi in Zuid-Afrika.' },
     { year: '1915', text: 'Sterft in Pune.' },
   ],

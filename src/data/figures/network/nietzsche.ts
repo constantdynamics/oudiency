@@ -13,12 +13,30 @@ export const nietzsche = networkFigure({
   school: 'Levensfilosofie; kritiek op de moraal',
   family: 'romantiek',
   theme: { primary: '#2f2a3a', accent: '#b0563a', motif: 'flame' },
-  tags: ['zingeving', 'waarden', 'kracht', 'creativiteit', 'religie', 'lijden', 'zelfoverwinning', 'veerkracht'],
+  tags: [
+    'zingeving',
+    'waarden',
+    'kracht',
+    'creativiteit',
+    'religie',
+    'lijden',
+    'zelfoverwinning',
+    'veerkracht',
+  ],
   bio: 'Friedrich Nietzsche werd op zijn vierentwintigste hoogleraar klassieke taalkunde in Bazel, maar moest door ziekte stoppen en schreef daarna als zwervende filosoof zijn grote werken. Hij stelde vast dat "God dood is" en vroeg wat er dan nog waarde heeft. Zijn antwoord: zelf waarden scheppen, en je leven zo leiden dat je het eeuwig opnieuw zou willen. Vanaf 1889 was hij geestelijk ziek.',
   keyConcepts: [
-    { term: 'Herwaardering van alle waarden', explanation: 'Vragen waar onze waarden vandaan komen, en of ze het leven dienen.' },
-    { term: 'Amor fati', explanation: 'Het noodlot liefhebben: ook het zware willen zoals het is.' },
-    { term: 'Eeuwige terugkeer', explanation: 'Leef zo dat je dit leven eindeloos opnieuw zou willen leven.' },
+    {
+      term: 'Herwaardering van alle waarden',
+      explanation: 'Vragen waar onze waarden vandaan komen, en of ze het leven dienen.',
+    },
+    {
+      term: 'Amor fati',
+      explanation: 'Het noodlot liefhebben: ook het zware willen zoals het is.',
+    },
+    {
+      term: 'Eeuwige terugkeer',
+      explanation: 'Leef zo dat je dit leven eindeloos opnieuw zou willen leven.',
+    },
     { term: 'Übermensch', explanation: 'De mens die zichzelf overwint en eigen waarden schept.' },
   ],
   keyWorks: [

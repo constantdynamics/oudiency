@@ -14,18 +14,29 @@ export const epictetus = networkFigure({
   school: 'Stoa',
   family: 'romeins',
   theme: { primary: '#5e2f22', motif: 'column', displayFont: 'cormorant' },
-  tags: ['stoicisme', 'vrijheid', 'controle', 'angst', 'tegenslag', 'oordelen', 'veerkracht', 'piekeren'],
+  tags: [
+    'stoicisme',
+    'vrijheid',
+    'controle',
+    'angst',
+    'tegenslag',
+    'oordelen',
+    'veerkracht',
+    'piekeren',
+  ],
   bio: 'Epictetus werd als slaaf geboren en diende in Rome een secretaris van keizer Nero. Hij mocht lessen volgen bij de stoïcijn Musonius Rufus en werd later vrijgelaten. Toen keizer Domitianus de filosofen uit Rome verbande, stichtte hij een school in Nicopolis in Griekenland. Zijn leerling Arrianus schreef zijn lessen op; het Handboekje daaruit is tot vandaag een gids voor wie wil leren onderscheiden wat wel en niet in zijn macht ligt.',
   keyConcepts: [
     {
       term: 'Wat in onze macht ligt',
       native: 'τὰ ἐφ’ ἡμῖν',
-      explanation: 'Onze oordelen, verlangens en keuzes zijn van ons; ons lichaam, bezit en aanzien niet.',
+      explanation:
+        'Onze oordelen, verlangens en keuzes zijn van ons; ons lichaam, bezit en aanzien niet.',
     },
     {
       term: 'Morele keuze',
       native: 'προαίρεσις',
-      explanation: 'Het vermogen om te kiezen hoe je oordeelt en handelt: het enige wat echt van jou is.',
+      explanation:
+        'Het vermogen om te kiezen hoe je oordeelt en handelt: het enige wat echt van jou is.',
     },
     {
       term: 'Oordelen',
@@ -43,7 +54,10 @@ export const epictetus = networkFigure({
       year: 'jaren 60–90',
       text: 'Is in Rome slaaf van Epaphroditos, secretaris van Nero, en volgt lessen bij Musonius Rufus.',
     },
-    { year: 'ca. 93', text: 'Keizer Domitianus verbant de filosofen uit Rome; Epictetus begint een school in Nicopolis.' },
+    {
+      year: 'ca. 93',
+      text: 'Keizer Domitianus verbant de filosofen uit Rome; Epictetus begint een school in Nicopolis.',
+    },
     { year: 'ca. 135', text: 'Sterft in Nicopolis.' },
   ],
   quotes: [
@@ -73,7 +87,8 @@ export const epictetus = networkFigure({
   ],
   voice: {
     register: 'Direct, streng en vaak grappig: een leraar die zijn leerlingen wakker schudt.',
-    method: 'Onderscheidt steeds wat wel en niet in je macht ligt, en vraagt dan: wat ga je doen met wat wél van jou is?',
+    method:
+      'Onderscheidt steeds wat wel en niet in je macht ligt, en vraagt dan: wat ga je doen met wat wél van jou is?',
   },
   modernLens:
     'Epictetus herkent onze stress over de meningen van anderen, het nieuws en algoritmes als het oude probleem: we hechten ons aan wat niet van ons is.',
@@ -90,5 +105,9 @@ export const epictetus = networkFigure({
     { id: 'aurelius', relation: 'navolger' },
     { id: 'rusticus', relation: 'bewonderaar', note: 'gaf Marcus Aurelius zijn lessen te lezen' },
   ],
-  helpsWith: ['onderscheiden wat in je macht ligt', 'angst en piekeren', 'vrijheid in moeilijke omstandigheden'],
+  helpsWith: [
+    'onderscheiden wat in je macht ligt',
+    'angst en piekeren',
+    'vrijheid in moeilijke omstandigheden',
+  ],
 });

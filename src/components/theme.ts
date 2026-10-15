@@ -1,6 +1,11 @@
 import { type CSSProperties, useEffect } from 'react';
 import type { Figure } from '@/data/types';
-import { DISPLAY_FONT_FAMILY, loadDisplayFont, loadNativeFont, NATIVE_FONT_FAMILY } from '@/lib/fonts';
+import {
+  DISPLAY_FONT_FAMILY,
+  loadDisplayFont,
+  loadNativeFont,
+  NATIVE_FONT_FAMILY,
+} from '@/lib/fonts';
 
 export type ThemedFigure = Pick<Figure, 'id' | 'theme' | 'nativeScript'>;
 
@@ -24,4 +29,3 @@ export function useFigureFonts(figure: ThemedFigure | undefined) {
     if (script) loadNativeFont(script);
   }, [displayFont, script]);
 }
-

@@ -19,10 +19,14 @@ export const leibniz = networkFigure({
     { term: 'Monaden', explanation: 'Eenvoudige, onstoffelijke eenheden waaruit alles bestaat.' },
     {
       term: 'De beste van alle mogelijke werelden',
-      explanation: 'God koos uit alle mogelijke werelden de beste, ook al is die niet zonder kwaad.',
+      explanation:
+        'God koos uit alle mogelijke werelden de beste, ook al is die niet zonder kwaad.',
     },
     { term: 'Principe van voldoende grond', explanation: 'Niets gebeurt zonder reden.' },
-    { term: 'Calculemus', explanation: '"Laten we rekenen": de droom van een universele logische taal.' },
+    {
+      term: 'Calculemus',
+      explanation: '"Laten we rekenen": de droom van een universele logische taal.',
+    },
   ],
   keyWorks: [
     { title: 'Discours de métaphysique', year: '1686' },
@@ -37,9 +41,18 @@ export const leibniz = networkFigure({
       year: '1672–1676',
       text: 'Woont in Parijs, krijgt wiskundeles van Christiaan Huygens en ontwikkelt de infinitesimaalrekening.',
     },
-    { year: '1676', text: 'Bezoekt Spinoza in Den Haag en treedt in dienst van het hof in Hannover.' },
-    { year: '1700', text: 'Wordt de eerste president van de nieuwe wetenschappelijke academie in Berlijn.' },
-    { year: '1711–1716', text: 'De strijd met Newton over wie de calculus het eerst vond, loopt hoog op.' },
+    {
+      year: '1676',
+      text: 'Bezoekt Spinoza in Den Haag en treedt in dienst van het hof in Hannover.',
+    },
+    {
+      year: '1700',
+      text: 'Wordt de eerste president van de nieuwe wetenschappelijke academie in Berlijn.',
+    },
+    {
+      year: '1711–1716',
+      text: 'De strijd met Newton over wie de calculus het eerst vond, loopt hoog op.',
+    },
     { year: '1716', text: 'Sterft in Hannover, vrijwel vergeten door het hof.' },
   ],
   quotes: [
@@ -61,8 +74,10 @@ export const leibniz = networkFigure({
     },
   ],
   voice: {
-    register: 'Optimistisch, vindingrijk en verzoenend; zoekt altijd de harmonie tussen standpunten.',
-    method: 'Zoekt de reden van elk ding, en probeert tegenstellingen te verzoenen in een groter geheel.',
+    register:
+      'Optimistisch, vindingrijk en verzoenend; zoekt altijd de harmonie tussen standpunten.',
+    method:
+      'Zoekt de reden van elk ding, en probeert tegenstellingen te verzoenen in een groter geheel.',
   },
   modernLens:
     'Leibniz, die het tweetallige talstelsel beschreef, ziet in computers zijn droom van een rekenende taal, en vraagt hoopvol of we meningsverschillen nu kunnen uitrekenen.',

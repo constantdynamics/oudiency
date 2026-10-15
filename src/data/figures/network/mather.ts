@@ -16,8 +16,15 @@ export const mather = networkFigure({
   tags: ['goed doen', 'religie', 'wetenschap', 'gemeenschap', 'fanatisme', 'vaccinatie'],
   bio: 'Cotton Mather was een invloedrijke puriteinse predikant in Boston en een veelschrijver met honderden publicaties. Zijn boek Bonifacius: Essays to Do Good inspireerde de jonge Benjamin Franklin tot een leven van nuttige daden. Hij was ook natuuronderzoeker en zette zich in 1721 in voor inenting tegen pokken, wat hem een bom door het raam opleverde. Tegelijk is zijn naam verbonden met de heksenprocessen van Salem.',
   keyConcepts: [
-    { term: 'Goed doen', explanation: 'Elke dag zoeken naar concrete manieren om anderen te helpen.' },
-    { term: 'Inenting', explanation: 'In 1721 pleitte hij voor inenting tegen pokken, geleerd van Onesimus, een tot slaaf gemaakte Afrikaan.' },
+    {
+      term: 'Goed doen',
+      explanation: 'Elke dag zoeken naar concrete manieren om anderen te helpen.',
+    },
+    {
+      term: 'Inenting',
+      explanation:
+        'In 1721 pleitte hij voor inenting tegen pokken, geleerd van Onesimus, een tot slaaf gemaakte Afrikaan.',
+    },
   ],
   keyWorks: [
     { title: 'Bonifacius: Essays to Do Good', year: '1710' },
@@ -28,7 +35,10 @@ export const mather = networkFigure({
     { year: '1692', text: 'Speelt een kwalijke rol rond de heksenprocessen van Salem.' },
     { year: '1710', text: 'Bonifacius: Essays to Do Good verschijnt.' },
     { year: '1713', text: 'Wordt lid van de Royal Society in Londen.' },
-    { year: '1721', text: 'Zet zich tijdens een pokkenepidemie in voor inenting en krijgt een brandbom door zijn raam.' },
+    {
+      year: '1721',
+      text: 'Zet zich tijdens een pokkenepidemie in voor inenting en krijgt een brandbom door zijn raam.',
+    },
     { year: '1728', text: 'Sterft in Boston.' },
   ],
   voice: {

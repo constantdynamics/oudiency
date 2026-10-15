@@ -77,7 +77,16 @@ import { yangzhu } from './network/yangzhu';
 import { zeno } from './network/zeno';
 import { zhuangzi } from './network/zhuangzi';
 
-export const CORE_FIGURES: Figure[] = [socrates, aurelius, laozi, kant, franklin, gandhi, spinoza, rousseau];
+export const CORE_FIGURES: Figure[] = [
+  socrates,
+  aurelius,
+  laozi,
+  kant,
+  franklin,
+  gandhi,
+  spinoza,
+  rousseau,
+];
 
 export const NETWORK_FIGURES: Figure[] = [
   adams,

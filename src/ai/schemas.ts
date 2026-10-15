@@ -5,9 +5,15 @@
 import { z } from 'zod';
 
 export const SessionSummarySchema = z.object({
-  summary: z.string().describe('Samenvatting van het gesprek in 3–5 zinnen, in de tweede persoon ("je").'),
-  reflectionQuestion: z.string().describe('Eén reflectievraag om mee te nemen, in de stijl van de denker.'),
-  topics: z.array(z.string()).describe('1–3 korte onderwerpen (één of twee woorden) waarover het ging.'),
+  summary: z
+    .string()
+    .describe('Samenvatting van het gesprek in 3–5 zinnen, in de tweede persoon ("je").'),
+  reflectionQuestion: z
+    .string()
+    .describe('Eén reflectievraag om mee te nemen, in de stijl van de denker.'),
+  topics: z
+    .array(z.string())
+    .describe('1–3 korte onderwerpen (één of twee woorden) waarover het ging.'),
 });
 export type SessionSummary = z.infer<typeof SessionSummarySchema>;
 
@@ -30,7 +36,9 @@ export const TimelineReactionsSchema = z.object({
       z.object({
         figureId: z.string().describe('Id uit de kandidatenlijst.'),
         type: z.enum(['like', 'comment']),
-        text: z.string().describe('Korte reactie (max. ~60 woorden) bij type "comment"; leeg bij "like".'),
+        text: z
+          .string()
+          .describe('Korte reactie (max. ~60 woorden) bij type "comment"; leeg bij "like".'),
       }),
     )
     .describe('0 tot 3 reacties. Vaak geen of één.'),
@@ -39,7 +47,9 @@ export type TimelineReactionsOutput = z.infer<typeof TimelineReactionsSchema>;
 
 export const ModerationSchema = z.object({
   verdict: z.enum(['ok', 'twijfel', 'afwijzen']),
-  reasons: z.array(z.string()).describe('Korte redenen in het Nederlands; leeg als alles in orde is.'),
+  reasons: z
+    .array(z.string())
+    .describe('Korte redenen in het Nederlands; leeg als alles in orde is.'),
 });
 export type ModerationOutput = z.infer<typeof ModerationSchema>;
 

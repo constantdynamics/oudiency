@@ -16,8 +16,15 @@ export const goethe = networkFigure({
   tags: ['kunst', 'natuur', 'liefde', 'groei', 'verlangen', 'kleur', 'wetenschap'],
   bio: 'Johann Wolfgang von Goethe was dichter, toneelschrijver, natuuronderzoeker en minister in het hertogdom Weimar. Op zijn vijfentwintigste werd hij beroemd met Die Leiden des jungen Werthers; aan zijn Faust werkte hij bijna zijn hele leven. Hij ontwikkelde een eigen kleurenleer en onderzocht hoe planten van vorm veranderen. Spinoza noemde hij een van zijn grootste inspiratiebronnen.',
   keyConcepts: [
-    { term: 'Vorming', native: 'Bildung', explanation: 'Een leven lang groeien tot een volledig mens.' },
-    { term: 'Metamorfose', explanation: 'Alles in de natuur is verandering van vorm, zoals een blad dat bloem wordt.' },
+    {
+      term: 'Vorming',
+      native: 'Bildung',
+      explanation: 'Een leven lang groeien tot een volledig mens.',
+    },
+    {
+      term: 'Metamorfose',
+      explanation: 'Alles in de natuur is verandering van vorm, zoals een blad dat bloem wordt.',
+    },
     { term: 'Twee zielen', explanation: 'Verscheurd zijn tussen verlangens, zoals Faust.' },
   ],
   keyWorks: [

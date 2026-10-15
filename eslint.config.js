@@ -27,7 +27,8 @@ const restrictedSyntax = [
     message: 'Render (AI-)tekst via <RichText> uit @/components/RichText, nooit als HTML.',
   },
   {
-    selector: "JSXAttribute[name.name='className'] TemplateLiteral > TemplateElement[value.raw=/-$/]",
+    selector:
+      "JSXAttribute[name.name='className'] TemplateLiteral > TemplateElement[value.raw=/-$/]",
     message:
       'Geen dynamisch samengestelde Tailwind-classnames: Tailwind genereert die niet. Gebruik CSS-variabelen of volledige classnames.',
   },

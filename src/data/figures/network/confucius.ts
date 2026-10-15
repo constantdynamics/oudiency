@@ -13,19 +13,49 @@ export const confucius = networkFigure({
   school: 'Confucianisme',
   family: 'chinees',
   theme: { primary: '#5c2d23', accent: '#b9893e', motif: 'scroll' },
-  tags: ['deugd', 'opvoeding', 'leren', 'familie', 'rituelen', 'gewoontes', 'leiderschap', 'respect', 'vriendschap'],
+  tags: [
+    'deugd',
+    'opvoeding',
+    'leren',
+    'familie',
+    'rituelen',
+    'gewoontes',
+    'leiderschap',
+    'respect',
+    'vriendschap',
+  ],
   bio: 'Kong Qiu, bekend als Kongzi of Confucius, was een leraar uit de kleine staat Lu. Hij hoopte als adviseur een vorst tot goed bestuur te brengen, maar dat lukte zelden; zijn grote erfenis werden zijn leerlingen. Zij tekenden zijn uitspraken op in de Analecten. Zijn ideaal is de edele mens (junzi), die door leren, zelfonderzoek en respectvolle omgangsvormen menselijkheid ontwikkelt.',
   keyConcepts: [
     { term: 'Ren', native: '仁', explanation: 'Menselijkheid: oprechte zorg voor de ander.' },
-    { term: 'Li', native: '禮', explanation: 'Riten en omgangsvormen die respect zichtbaar maken.' },
-    { term: 'Junzi', native: '君子', explanation: 'De edele mens: edel door karakter, niet door geboorte.' },
-    { term: 'Xiao', native: '孝', explanation: 'Kinderlijke plicht: respect en zorg voor je ouders.' },
+    {
+      term: 'Li',
+      native: '禮',
+      explanation: 'Riten en omgangsvormen die respect zichtbaar maken.',
+    },
+    {
+      term: 'Junzi',
+      native: '君子',
+      explanation: 'De edele mens: edel door karakter, niet door geboorte.',
+    },
+    {
+      term: 'Xiao',
+      native: '孝',
+      explanation: 'Kinderlijke plicht: respect en zorg voor je ouders.',
+    },
   ],
-  keyWorks: [{ title: 'Analecten (Lunyu, 論語)', note: 'Uitspraken, opgetekend door zijn leerlingen.' }],
+  keyWorks: [
+    { title: 'Analecten (Lunyu, 論語)', note: 'Uitspraken, opgetekend door zijn leerlingen.' },
+  ],
   lifeEvents: [
     { year: '551 v.Chr.', text: 'Geboren in de staat Lu.' },
-    { year: 'ca. 501 v.Chr.', text: 'Krijgt een bestuursfunctie in Lu en wordt volgens de overlevering later minister van justitie.' },
-    { year: '497 v.Chr.', text: 'Verlaat Lu en trekt jarenlang met zijn leerlingen langs vorstenhoven.' },
+    {
+      year: 'ca. 501 v.Chr.',
+      text: 'Krijgt een bestuursfunctie in Lu en wordt volgens de overlevering later minister van justitie.',
+    },
+    {
+      year: '497 v.Chr.',
+      text: 'Verlaat Lu en trekt jarenlang met zijn leerlingen langs vorstenhoven.',
+    },
     { year: '484 v.Chr.', text: 'Keert terug naar Lu en wijdt zich aan het onderwijs.' },
     { year: '479 v.Chr.', text: 'Sterft.' },
   ],
@@ -56,7 +86,8 @@ export const confucius = networkFigure({
   ],
   voice: {
     register: 'Vriendelijk, waardig en leergierig; spreekt met respect en verwacht dat ook.',
-    method: 'Leert met voorbeelden en korte uitspraken, en vraagt wat je vandaag hebt geleerd en hoe je het toepast.',
+    method:
+      'Leert met voorbeelden en korte uitspraken, en vraagt wat je vandaag hebt geleerd en hoe je het toepast.',
   },
   modernLens:
     'Confucius betreurt onze haast en de ruwe omgangsvormen online, en wijst op het belang van kleine rituelen: groeten, bedanken, luisteren.',

@@ -10,7 +10,11 @@ interface CardProps extends HTMLAttributes<HTMLElement> {
 export function Card({ as: Tag = 'div', className, children, padded = true, ...rest }: CardProps) {
   return (
     <Tag
-      className={cx('rounded-2xl border border-line bg-card shadow-card', padded && 'p-4 sm:p-5', className)}
+      className={cx(
+        'rounded-2xl border border-line bg-card shadow-card',
+        padded && 'p-4 sm:p-5',
+        className,
+      )}
       {...rest}
     >
       {children}
