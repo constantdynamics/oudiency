@@ -1,0 +1,200 @@
+@import 'tailwindcss';
+@import './figure-themes.css';
+
+/*
+ * Design tokens — "warm museum": papier, marmer, inkt.
+ * Elke denker zet zijn eigen sfeer via CSS custom properties (--fig-*) op <ThemeFrame>.
+ * Tailwind-utilities verwijzen naar die variabelen (bg-fig, text-fig, …): nooit dynamisch
+ * samengestelde classnames.
+ */
+@theme {
+  --color-paper: #f6f0e4;
+  --color-paper-2: #ede4d3;
+  --color-card: #fffcf5;
+  --color-ink: #1e1a15;
+  --color-ink-2: #463e33;
+  --color-ink-3: #665c4e;
+  --color-line: #dcd0bb;
+  --color-line-strong: #b9aa90;
+  --color-gold: #7f5c12;
+  --color-gold-soft: #e9d9b0;
+  --color-terracotta: #983c20;
+  --color-ok: #20603a;
+  --color-ok-soft: #dcebdf;
+  --color-warn: #874a00;
+  --color-warn-soft: #f6e3c6;
+  --color-danger: #9c241b;
+  --color-danger-soft: #f6dcd8;
+  --color-info: #23476b;
+  --color-info-soft: #dce6f0;
+
+  --font-body: 'Literata Variable', Georgia, 'Times New Roman', serif;
+  --font-display: 'Cormorant Garamond Variable', 'Literata Variable', Georgia, serif;
+
+  --shadow-card: 0 1px 2px rgb(30 26 21 / 0.06), 0 4px 16px -8px rgb(30 26 21 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(30 26 21 / 0.08), 0 12px 32px -12px rgb(30 26 21 / 0.28);
+
+  --animate-breathe: breathe 4.5s ease-in-out infinite;
+  --animate-spin-slow: spin 9s linear infinite;
+  --animate-ripple: ripple 1.8s ease-out infinite;
+  --animate-fade-in: fade-in 0.35s ease-out both;
+
+  @keyframes breathe {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.025);
+    }
+  }
+  @keyframes ripple {
+    0% {
+      transform: scale(0.92);
+      opacity: 0.55;
+    }
+    100% {
+      transform: scale(1.18);
+      opacity: 0;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Utilities die naar het thema van de huidige denker verwijzen. */
+@theme inline {
+  --color-fig: var(--fig-primary);
+  --color-fig-2: var(--fig-secondary);
+  --color-fig-accent: var(--fig-accent);
+  --color-fig-surface: var(--fig-surface);
+  --color-fig-ink: var(--fig-ink);
+  --font-fig: var(--fig-font);
+  --font-native: var(--fig-native-font);
+}
+
+:root {
+  --fig-primary: #3b3226;
+  --fig-secondary: #7a6a52;
+  --fig-accent: #b08d4a;
+  --fig-surface: #f3ecdf;
+  --fig-ink: #1e1a15;
+  --fig-font: var(--font-display);
+  --fig-native-font: var(--font-display);
+  color-scheme: light;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--color-gold-soft);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-info);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer components {
+  /* Leesbreedte: max. ~70 tekens. */
+  .prose-read {
+    max-width: 68ch;
+  }
+  .prose-read p + p {
+    margin-top: 0.9em;
+  }
+  .rich-text > * + * {
+    margin-top: 0.75em;
+  }
+  .rich-text ul {
+    list-style: disc;
+    padding-left: 1.3em;
+  }
+  .rich-text ol {
+    list-style: decimal;
+    padding-left: 1.3em;
+  }
+  .rich-text li + li {
+    margin-top: 0.3em;
+  }
+  .rich-text blockquote {
+    border-left: 3px solid var(--fig-accent);
+    padding-left: 0.9em;
+    font-style: italic;
+    color: var(--color-ink-2);
+  }
+  .rich-text h4 {
+    font-family: var(--fig-font);
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+  .paper-grain {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgb(255 255 255 / 0.55), transparent 55%),
+      radial-gradient(circle at 80% 90%, rgb(120 90 40 / 0.05), transparent 60%);
+  }
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

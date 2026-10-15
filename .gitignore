@@ -1,0 +1,26 @@
+# dependencies
+node_modules
+
+# build output
+dist
+dist-ssr
+*.local
+coverage
+.vite
+
+# env / secrets — alle VITE_-variabelen zijn publiek; zet hier nooit geheimen in
+.env
+.env.*
+!.env.example
+
+# logs & editor
+*.log
+npm-debug.log*
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# playwright
+test-results
+playwright-report
