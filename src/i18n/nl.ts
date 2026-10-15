@@ -39,7 +39,7 @@ export const nl = {
       count > 0 ? `Meldingen, ${count} ongelezen` : 'Meldingen, geen nieuwe',
   },
   demo: {
-    banner: 'Demomodus: de denkers antwoorden met vooraf geschreven tekst.',
+    banner: 'De denkers antwoorden met vooraf geschreven tekst.',
     bannerCta: 'Eigen API-key gebruiken',
     bannerDismiss: 'Melding verbergen',
     inline: 'Demomodus — vooraf geschreven antwoorden',
