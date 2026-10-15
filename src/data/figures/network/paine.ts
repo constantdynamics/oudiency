@@ -1,0 +1,70 @@
+import { networkFigure } from '../define';
+
+export const paine = networkFigure({
+  id: 'paine',
+  name: 'Thomas Paine',
+  shortName: 'Paine',
+  nativeScript: 'latin',
+  monogram: 'TP',
+  epithet: 'Pamflettist van de revolutie',
+  born: 1737,
+  died: 1809,
+  origin: 'Thetford, Engeland',
+  school: 'Radicale Verlichting',
+  family: 'amerikaans',
+  theme: { primary: '#4d2a22', motif: 'quill' },
+  tags: ['vrijheid', 'mensenrechten', 'revolutie', 'religie', 'armoede', 'schrijven', 'moed'],
+  bio: 'Thomas Paine was een Engelse korsettenmaker en belastingambtenaar die met een aanbevelingsbrief van Franklin naar Amerika vertrok. Zijn pamflet Common Sense (1776) overtuigde duizenden kolonisten van de onafhankelijkheid. Later verdedigde hij de Franse Revolutie in Rights of Man, zat hij in Parijs in de gevangenis, en maakte hij zich met The Age of Reason vijanden onder gelovigen.',
+  keyConcepts: [
+    { term: 'Gezond verstand', explanation: 'Politiek in gewone taal, zodat iedereen kan meedenken.' },
+    { term: 'Rechten van de mens', explanation: 'Rechten die niet van koningen komen, maar bij ieder mens horen.' },
+    { term: 'Sociale zekerheid', explanation: 'In Agrarian Justice (1797) stelde hij een basisuitkering en ouderdomspensioen voor.' },
+  ],
+  keyWorks: [
+    { title: 'Common Sense', year: '1776' },
+    { title: 'The American Crisis', year: '1776–1783' },
+    { title: 'Rights of Man', year: '1791–1792' },
+    { title: 'The Age of Reason', year: '1794–1807' },
+    { title: 'Agrarian Justice', year: '1797' },
+  ],
+  lifeEvents: [
+    { year: '1737', text: 'Geboren in Thetford, Engeland.' },
+    { year: '1774', text: 'Vertrekt met een aanbevelingsbrief van Franklin naar Philadelphia.' },
+    { year: '1776', text: 'Common Sense verschijnt en wordt een enorm succes.' },
+    { year: '1792', text: 'Wordt gekozen in de Franse Nationale Conventie.' },
+    { year: '1793–1794', text: 'Zit tijdens de Terreur in Parijs gevangen en ontsnapt ternauwernood aan de guillotine.' },
+    { year: '1809', text: 'Sterft arm en vergeten in New York.' },
+  ],
+  quotes: [
+    {
+      text: 'Dit zijn de tijden die de zielen van mensen op de proef stellen.',
+      original: 'These are the times that try men’s souls.',
+      source: 'The American Crisis, nr. 1 (december 1776)',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+    {
+      text: 'Mijn land is de wereld, en mijn religie is goed doen.',
+      original: 'My country is the world, and my religion is to do good.',
+      source: 'Rights of Man, deel II (1792)',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+  ],
+  voice: {
+    register: 'Strijdbaar, helder en volks; schrijft zoals mensen spreken.',
+    method: 'Maakt ingewikkelde politiek eenvoudig en vraagt: is dit redelijk voor gewone mensen?',
+  },
+  modernLens:
+    'Paine zou het internet zien als de ultieme drukpers voor pamfletten, en voorstellen als een basisinkomen herkennen als familie van zijn Agrarian Justice.',
+  network: [
+    { id: 'franklin', relation: 'mentor' },
+    { id: 'jefferson', relation: 'vriend' },
+    { id: 'adams', relation: 'criticus' },
+    { id: 'wollstonecraft', relation: 'tijdgenoot', note: 'beiden in de radicale kring rond uitgever Joseph Johnson' },
+    { id: 'locke', relation: 'invloed' },
+  ],
+  helpsWith: ['moed om je uit te spreken', 'helder schrijven over politiek'],
+});

@@ -1,0 +1,82 @@
+import { networkFigure } from '../define';
+
+export const leibniz = networkFigure({
+  id: 'leibniz',
+  name: 'Gottfried Wilhelm Leibniz',
+  shortName: 'Leibniz',
+  nativeScript: 'latin',
+  monogram: 'GL',
+  epithet: 'Universeel genie',
+  born: 1646,
+  died: 1716,
+  origin: 'Leipzig (Saksen)',
+  school: 'Rationalisme',
+  family: 'verlichting',
+  theme: { primary: '#2d3f63', motif: 'stars' },
+  tags: ['wiskunde', 'logica', 'optimisme', 'god', 'kwaad', 'harmonie', 'technologie'],
+  bio: 'Gottfried Wilhelm Leibniz was filosoof, wiskundige, jurist, diplomaat en uitvinder tegelijk. Hij ontwikkelde, los van Newton, de differentiaal- en integraalrekening, ontwierp een rekenmachine en droomde van een logische taal waarin je meningsverschillen kon uitrekenen. In zijn filosofie bestaat de wereld uit monaden, en is deze wereld de beste van alle mogelijke werelden.',
+  keyConcepts: [
+    { term: 'Monaden', explanation: 'Eenvoudige, onstoffelijke eenheden waaruit alles bestaat.' },
+    {
+      term: 'De beste van alle mogelijke werelden',
+      explanation: 'God koos uit alle mogelijke werelden de beste, ook al is die niet zonder kwaad.',
+    },
+    { term: 'Principe van voldoende grond', explanation: 'Niets gebeurt zonder reden.' },
+    { term: 'Calculemus', explanation: '"Laten we rekenen": de droom van een universele logische taal.' },
+  ],
+  keyWorks: [
+    { title: 'Discours de métaphysique', year: '1686' },
+    { title: 'Essais de Théodicée', year: '1710' },
+    { title: 'La Monadologie', year: '1714' },
+    { title: 'Principes de la nature et de la grâce', year: '1714' },
+    { title: 'Nouveaux essais sur l’entendement humain', year: 'geschreven 1704, verschenen 1765' },
+  ],
+  lifeEvents: [
+    { year: '1646', text: 'Geboren in Leipzig.' },
+    {
+      year: '1672–1676',
+      text: 'Woont in Parijs, krijgt wiskundeles van Christiaan Huygens en ontwikkelt de infinitesimaalrekening.',
+    },
+    { year: '1676', text: 'Bezoekt Spinoza in Den Haag en treedt in dienst van het hof in Hannover.' },
+    { year: '1700', text: 'Wordt de eerste president van de nieuwe wetenschappelijke academie in Berlijn.' },
+    { year: '1711–1716', text: 'De strijd met Newton over wie de calculus het eerst vond, loopt hoog op.' },
+    { year: '1716', text: 'Sterft in Hannover, vrijwel vergeten door het hof.' },
+  ],
+  quotes: [
+    {
+      text: 'Waarom is er iets in plaats van niets?',
+      original: 'Pourquoi il y a plutôt quelque chose que rien?',
+      source: 'Principes de la nature et de la grâce (1714), §7',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+    {
+      text: 'Deze wereld is de beste van alle mogelijke werelden.',
+      source: 'Samenvatting van zijn leer in Essais de Théodicée (1710)',
+      status: 'parafrase',
+      translation: 'eigen',
+      verified: true,
+      note: 'Voltaire bespotte deze gedachte in Candide.',
+    },
+  ],
+  voice: {
+    register: 'Optimistisch, vindingrijk en verzoenend; zoekt altijd de harmonie tussen standpunten.',
+    method: 'Zoekt de reden van elk ding, en probeert tegenstellingen te verzoenen in een groter geheel.',
+  },
+  modernLens:
+    'Leibniz, die het tweetallige talstelsel beschreef, ziet in computers zijn droom van een rekenende taal, en vraagt hoopvol of we meningsverschillen nu kunnen uitrekenen.',
+  network: [
+    { id: 'spinoza', relation: 'gesprekspartner', note: 'bezocht hem in 1676 en las hem kritisch' },
+    { id: 'descartes', relation: 'invloed' },
+    { id: 'newton', relation: 'rivaal' },
+    { id: 'huygens', relation: 'leraar' },
+    { id: 'wolff', relation: 'navolger' },
+    { id: 'hobbes', relation: 'correspondent' },
+    { id: 'oldenburg', relation: 'correspondent' },
+    { id: 'locke', relation: 'tegenpool', note: 'schreef een antwoord op zijn Essay' },
+    { id: 'kant', relation: 'navolger' },
+    { id: 'voltaire', relation: 'criticus' },
+  ],
+  helpsWith: ['optimisme en het kwaad in de wereld', 'verbanden zien tussen vakgebieden'],
+});

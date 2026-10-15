@@ -17,7 +17,8 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:data": "tsx scripts/validate-data.ts"
+    "validate:data": "tsx --tsconfig tsconfig.node.json scripts/validate-data.ts",
+    "gen:figures": "tsx --tsconfig tsconfig.node.json scripts/gen-figure-index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.134.0",

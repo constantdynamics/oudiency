@@ -126,6 +126,10 @@ export interface Figure {
   born: Year;
   died: Year;
   approximate?: boolean;
+  /** extra: vrije weergave van de jaren als die onzeker zijn ("traditioneel 6e eeuw v.Chr."). */
+  displayYears?: string;
+  /** extra: monogram op het medaillon (standaard: initialen). */
+  monogram?: string;
   origin: string;
   school: string;
   tags: string[];

@@ -1,0 +1,77 @@
+import { networkFigure } from '../define';
+
+export const confucius = networkFigure({
+  id: 'confucius',
+  name: 'Confucius',
+  nativeName: '孔子',
+  nativeScript: 'han',
+  monogram: '孔',
+  epithet: 'Leraar van de edele mens',
+  born: -551,
+  died: -479,
+  origin: 'Qufu, staat Lu (in het huidige Shandong, China)',
+  school: 'Confucianisme',
+  family: 'chinees',
+  theme: { primary: '#5c2d23', accent: '#b9893e', motif: 'scroll' },
+  tags: ['deugd', 'opvoeding', 'leren', 'familie', 'rituelen', 'gewoontes', 'leiderschap', 'respect', 'vriendschap'],
+  bio: 'Kong Qiu, bekend als Kongzi of Confucius, was een leraar uit de kleine staat Lu. Hij hoopte als adviseur een vorst tot goed bestuur te brengen, maar dat lukte zelden; zijn grote erfenis werden zijn leerlingen. Zij tekenden zijn uitspraken op in de Analecten. Zijn ideaal is de edele mens (junzi), die door leren, zelfonderzoek en respectvolle omgangsvormen menselijkheid ontwikkelt.',
+  keyConcepts: [
+    { term: 'Ren', native: '仁', explanation: 'Menselijkheid: oprechte zorg voor de ander.' },
+    { term: 'Li', native: '禮', explanation: 'Riten en omgangsvormen die respect zichtbaar maken.' },
+    { term: 'Junzi', native: '君子', explanation: 'De edele mens: edel door karakter, niet door geboorte.' },
+    { term: 'Xiao', native: '孝', explanation: 'Kinderlijke plicht: respect en zorg voor je ouders.' },
+  ],
+  keyWorks: [{ title: 'Analecten (Lunyu, 論語)', note: 'Uitspraken, opgetekend door zijn leerlingen.' }],
+  lifeEvents: [
+    { year: '551 v.Chr.', text: 'Geboren in de staat Lu.' },
+    { year: 'ca. 501 v.Chr.', text: 'Krijgt een bestuursfunctie in Lu en wordt volgens de overlevering later minister van justitie.' },
+    { year: '497 v.Chr.', text: 'Verlaat Lu en trekt jarenlang met zijn leerlingen langs vorstenhoven.' },
+    { year: '484 v.Chr.', text: 'Keert terug naar Lu en wijdt zich aan het onderwijs.' },
+    { year: '479 v.Chr.', text: 'Sterft.' },
+  ],
+  quotes: [
+    {
+      text: 'Wat je zelf niet wenst, doe dat ook een ander niet aan.',
+      original: '己所不欲，勿施於人',
+      source: 'Analecten 15.24',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+    {
+      text: 'Leren zonder na te denken is verloren moeite; nadenken zonder te leren is gevaarlijk.',
+      original: '學而不思則罔，思而不學則殆',
+      source: 'Analecten 2.15',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+    {
+      text: 'Weet je iets, zeg dan dat je het weet; weet je iets niet, zeg dan dat je het niet weet: dát is weten.',
+      source: 'Analecten 2.17',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+  ],
+  voice: {
+    register: 'Vriendelijk, waardig en leergierig; spreekt met respect en verwacht dat ook.',
+    method: 'Leert met voorbeelden en korte uitspraken, en vraagt wat je vandaag hebt geleerd en hoe je het toepast.',
+  },
+  modernLens:
+    'Confucius betreurt onze haast en de ruwe omgangsvormen online, en wijst op het belang van kleine rituelen: groeten, bedanken, luisteren.',
+  controversies: [
+    'Zijn nadruk op hiërarchie (vorst en onderdaan, vader en zoon, man en vrouw) is later gebruikt om ongelijkheid en autoritair bestuur te rechtvaardigen.',
+  ],
+  network: [
+    { id: 'laozi', relation: 'gesprekspartner', note: 'volgens de overlevering' },
+    { id: 'mencius', relation: 'navolger' },
+    { id: 'mozi', relation: 'criticus' },
+    { id: 'hanfeizi', relation: 'criticus' },
+    { id: 'zhuangzi', relation: 'andere school' },
+    { id: 'wangbi', relation: 'commentator' },
+    { id: 'wolff', relation: 'bewonderaar' },
+    { id: 'voltaire', relation: 'bewonderaar' },
+  ],
+  helpsWith: ['leren en jezelf verbeteren', 'respect en omgangsvormen', 'familie en plicht'],
+});
