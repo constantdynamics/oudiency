@@ -2,24 +2,13 @@ import type { ReactNode } from 'react';
 import type { Figure, MotifId } from '@/data/types';
 import { cx } from '@/lib/cx';
 import { DISPLAY_FONT_FAMILY, NATIVE_FONT_FAMILY } from '@/lib/fonts';
-import { figureThemeStyle, useFigureFonts } from './ThemeFrame';
+import { monogramFor } from '@/lib/monogram';
+import { figureThemeStyle, useFigureFonts } from './theme';
 
 export type AvatarState = 'idle' | 'listening' | 'thinking' | 'speaking';
 
 type AvatarFigure = Pick<Figure, 'id' | 'name' | 'theme' | 'nativeScript'> & { monogram?: string };
 
-const PARTICLES = new Set(['van', 'de', 'den', 'der', 'von', 'la', 'le', 'du', 'of', 'da', 'des']);
-
-/** Monogram uit de naam: maximaal twee hoofdletters (zonder tussenvoegsels). */
-export function monogramFor(figure: AvatarFigure): string {
-  if (figure.monogram) return figure.monogram;
-  const words = figure.name
-    .replace(/[.()]/g, ' ')
-    .split(/\s+/)
-    .filter((w) => w && !PARTICLES.has(w.toLowerCase()));
-  if (words.length === 1) return words[0]!.charAt(0).toUpperCase();
-  return `${words[0]!.charAt(0)}${words[words.length - 1]!.charAt(0)}`.toUpperCase();
-}
 
 /** Motieftekening per thema (lijnwerk in een 100×100-vlak, achter het monogram). */
 function MotifGlyph({ motif }: { motif: MotifId }): ReactNode {
@@ -188,7 +177,7 @@ interface AvatarProps {
 export function Avatar({ figure, size = 56, state = 'idle', className, decorative = true }: AvatarProps) {
   useFigureFonts(figure);
   const monogram = monogramFor(figure);
-  const isNative = /[^\u0000-ɏ]/.test(monogram);
+  const isNative = [...monogram].some((ch) => (ch.codePointAt(0) ?? 0) > 0x24f);
   const fontFamily = isNative
     ? NATIVE_FONT_FAMILY[figure.nativeScript ?? 'latin']
     : DISPLAY_FONT_FAMILY[figure.theme.displayFont];

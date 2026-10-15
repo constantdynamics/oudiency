@@ -27,7 +27,7 @@ import {
   type TokenUsage,
 } from './provider';
 
-type AnthropicModule = typeof import('@anthropic-ai/sdk');
+type AnthropicModule = { default: typeof Anthropic };
 
 let sdkPromise: Promise<AnthropicModule> | null = null;
 function loadSdk(): Promise<AnthropicModule> {

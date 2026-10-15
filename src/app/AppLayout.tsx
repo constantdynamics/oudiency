@@ -78,7 +78,7 @@ function DevTimeIndicator() {
 export function AppLayout() {
   const location = useLocation();
   const mainRef = useRef<HTMLElement>(null);
-  const firstRender = useRef(true);
+  const firstRenderRef = useRef(true);
   const moderatorMode = useSettingsStore((s) => s.settings.moderatorMode);
   const devPanelEnabled = useSettingsStore((s) => s.settings.devPanelEnabled);
   const showDev = isDevPanelAllowed() || devPanelEnabled;
@@ -87,8 +87,8 @@ export function AppLayout() {
 
   // Focus naar de hoofdinhoud bij navigatie (schermlezers horen de nieuwe pagina).
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
       return;
     }
     mainRef.current?.focus({ preventScroll: true });

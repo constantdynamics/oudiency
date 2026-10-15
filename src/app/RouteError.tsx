@@ -1,5 +1,5 @@
 import { isRouteErrorResponse, Link, useRouteError } from 'react-router';
-import { buttonClasses } from '@/components/Button';
+import { buttonClasses } from '@/components/buttonClasses';
 import { t } from '@/i18n/nl';
 
 export function RouteError() {
