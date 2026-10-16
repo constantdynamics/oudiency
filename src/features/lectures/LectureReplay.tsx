@@ -8,6 +8,7 @@ import type { FigureMeta } from '@/data/figures';
 import type { Figure } from '@/data/types';
 import { t } from '@/i18n/nl';
 import { formatLongDate } from '@/lib/dates';
+import { plainSource } from '@/lib/quoteCard';
 import { readingMinutes, takeWords, wordCount } from '@/lib/text';
 import {
   chaptersOf,
@@ -27,6 +28,7 @@ import {
   QuestionBlock,
   SegmentBlock,
 } from './lectureParts';
+import { ShareHighlightButton } from '../share/ShareHighlightButton';
 import { goToChapter } from './chapters';
 import { usePlayback } from './usePlayback';
 
@@ -35,7 +37,10 @@ function SharePanel({ lectureId }: { lectureId: string }) {
   const lecture = useLectureStore((s) => s.lectures.find((l) => l.id === lectureId));
   if (!lecture) return null;
   const submit = () => {
-    if (submitLecture(lecture.id)) toast(t.lectures.submitted, 'ok');
+    if (!submitLecture(lecture.id)) return;
+    toast(t.lectures.submitted, 'ok');
+    // De automatische pre-check (advies voor de moderator) loopt op de achtergrond.
+    void import('@/services/moderationAi').then((m) => m.precheckLecture(lecture.id));
   };
   if (lecture.share === 'ingediend' || lecture.share === 'goedgekeurd') {
     return (
@@ -78,6 +83,11 @@ export function LectureReplay({
   const starts = useMemo(() => wordStarts(counts), [counts]);
   const total = counts.reduce((a, b) => a + b, 0);
   const works = furtherReadingWorks(figure, view.furtherReading);
+  // Wat de lezer ziet, zonder opmaak: daar moet een gedeeld fragment letterlijk uit komen.
+  const plainText = useMemo(
+    () => view.segments.map((s) => plainSource(s.text)).join('\n\n'),
+    [view.segments],
+  );
   const [playbackMode, setPlaybackMode] = useState(false);
   const playback = usePlayback(total);
   const wpm = LIMITS.lecture.playbackWordsPerMinute;
@@ -271,6 +281,12 @@ export function LectureReplay({
             <section aria-label={t.lectures.title} className="space-y-4 border-t border-line pt-6">
               <div className="flex flex-wrap items-center gap-2">
                 <LikeButton lectureId={view.id} />
+                <ShareHighlightButton
+                  figure={meta}
+                  source={plainText}
+                  sourceLabel={t.share.fromLecture(view.title)}
+                  label={t.share.highlight}
+                />
                 {!view.isExample && <SharePanel lectureId={view.id} />}
                 <ButtonLink
                   to={`/colleges/aanvragen/${meta.id}`}

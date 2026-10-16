@@ -14,6 +14,7 @@ import type {
 import { normalize, keywordScore, salientWord, tokenize } from '@/lib/text';
 import { pick, seededRng, type Rng } from '@/lib/seeded-rng';
 import type { DemoContext, DemoHistoryItem } from '../demoContext';
+import { ruleCheck } from '../prompts/moderation';
 import { asksIfReal, authenticityReply, crisisReply, detectCrisisSignals } from '../prompts/safety';
 import type {
   HelperOutput,
@@ -336,36 +337,8 @@ async function timelineReactions(
 
 /* ---------- Overig ---------- */
 
-const RISKY_WORDS = [
-  'kanker',
-  'tering',
-  'klootzak',
-  'kut',
-  'hoer',
-  'nazi',
-  'neuk',
-  'mongool',
-  'flikker',
-];
-
 function moderation(ctx: Extract<DemoContext, { kind: 'moderation' }>): ModerationOutput {
-  const reasons: string[] = [];
-  if (/[\w.+-]+@[\w-]+\.[\w.]+/.test(ctx.text))
-    reasons.push('Bevat een e-mailadres (persoonsgegevens).');
-  if (/(\+31|\b0)[1-9](?:[\s-]?\d){8}\b/.test(ctx.text))
-    reasons.push('Bevat mogelijk een telefoonnummer.');
-  if (/\bhttps?:\/\//i.test(ctx.text)) reasons.push('Bevat een link; controleer of die gepast is.');
-  const words = new Set(tokenize(ctx.text));
-  if (RISKY_WORDS.some((w) => words.has(w)))
-    reasons.push('Bevat mogelijk kwetsend of grof taalgebruik.');
-  if (detectCrisisSignals(ctx.text)) reasons.push('Bevat signalen van een persoonlijke crisis.');
-  const verdict: ModerationOutput['verdict'] =
-    reasons.length === 0
-      ? 'ok'
-      : reasons.some((r) => r.includes('kwetsend'))
-        ? 'afwijzen'
-        : 'twijfel';
-  return { verdict, reasons };
+  return ruleCheck(ctx.text);
 }
 
 function helper(ctx: Extract<DemoContext, { kind: 'helper' }>): HelperOutput {

@@ -17,6 +17,8 @@ import { downloadTextFile } from '@/lib/ics';
 import { bookingStart, canChangeBooking } from '@/services/booking.service';
 import { bookingIcs, cancelBooking } from '@/services/session.service';
 import type { Booking, Session } from '@/store/schemas';
+import { plainSource } from '@/lib/quoteCard';
+import { ShareHighlightButton } from '../share/ShareHighlightButton';
 import { whenLabel } from './format';
 import { MessageList, ModeChoice, SummaryCard } from './sessionParts';
 
@@ -227,6 +229,10 @@ export function ClosedBooking({ meta, title }: { meta: FigureMeta; title: string
 /** Na afloop: samenvatting, reflectievraag en het gesprek om terug te lezen. */
 export function SessionEnded({ session, meta }: { session: Session; meta: FigureMeta }) {
   const reason = session.endReason ? t.sessions.endedBy[session.endReason] : t.sessions.ended;
+  const spoken = session.messages
+    .filter((m) => m.role === 'figure' && !m.hidden && !m.error)
+    .map((m) => plainSource(m.text))
+    .join('\n\n');
   // Kom je hier vanuit het gesprek (zelfde adres), begin dan bovenaan, met de focus op de uitkomst.
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -246,6 +252,14 @@ export function SessionEnded({ session, meta }: { session: Session; meta: Figure
         <ButtonLink to={`/sessies/boeken/${meta.id}`} variant="figure">
           {t.sessions.planNew}
         </ButtonLink>
+        {spoken && !session.crisis && (
+          <ShareHighlightButton
+            figure={meta}
+            source={spoken}
+            sourceLabel={t.share.fromSession}
+            label={t.sessions.shareFragment}
+          />
+        )}
         <ButtonLink to="/sessies" variant="secondary">
           {t.sessions.toSessions}
         </ButtonLink>
