@@ -4,13 +4,14 @@
  * dan de hele lijst die Oudiency nodig heeft, zodat je de sleutel in één keer goed zet.
  */
 
-export type KeyPermissionId = 'agents' | 'voices' | 'textToVoice' | 'user';
+export type KeyPermissionId = 'agents' | 'voices' | 'textToVoice' | 'textToSpeech' | 'user';
 
 /** In de volgorde van het sleutelscherm; `user` is optioneel (alleen voor het tegoed). */
 export const KEY_PERMISSIONS: readonly KeyPermissionId[] = [
   'agents',
   'voices',
   'textToVoice',
+  'textToSpeech',
   'user',
 ];
 
@@ -19,6 +20,7 @@ const SCOPE_PREFIXES: Record<KeyPermissionId, readonly string[]> = {
   agents: ['convai'],
   voices: ['voices'],
   textToVoice: ['text_to_voice', 'voice_generation', 'voice_design'],
+  textToSpeech: ['text_to_speech'],
   user: ['user'],
 };
 

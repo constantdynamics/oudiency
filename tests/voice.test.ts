@@ -470,6 +470,7 @@ describe('toegang van de sleutel', () => {
     expect(permissionOf('convai_write')).toBe('agents');
     expect(permissionOf('voices_write')).toBe('voices');
     expect(permissionOf('text_to_voice')).toBe('textToVoice');
+    expect(permissionOf('text_to_speech')).toBe('textToSpeech');
     expect(permissionOf('user_read')).toBe('user');
     expect(permissionOf('dubbing_read')).toBeUndefined();
   });

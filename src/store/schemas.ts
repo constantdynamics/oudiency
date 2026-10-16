@@ -347,3 +347,55 @@ export const VoiceStateSchema = z.object({
   ),
 });
 export type VoiceState = z.infer<typeof VoiceStateSchema>;
+
+/* ---------- Podcasts ---------- */
+
+export const PodcastFormatSchema = z.enum(['monoloog', 'gesprek', 'interview']);
+export type PodcastFormat = z.infer<typeof PodcastFormatSchema>;
+
+export const PodcastSegmentSchema = z.object({
+  id: z.string(),
+  /** Wie spreekt: de presentator ('sophie') of een denker (id). */
+  speaker: z.string(),
+  text: z.string(),
+  kind: z.enum(['intro', 'deel', 'luistervraag', 'antwoord', 'terug', 'outro']),
+});
+export type PodcastSegment = z.infer<typeof PodcastSegmentSchema>;
+
+export const PodcastEpisodeSchema = z.object({
+  id: z.string(),
+  createdAt: isoDate,
+  title: z.string(),
+  topic: z.string(),
+  format: PodcastFormatSchema,
+  /** Eén of twee denkers. */
+  figureIds: z.array(z.string()),
+  /** Gevraagde lengte in minuten. */
+  minutes: count(),
+  source: z.enum(['aanvraag', 'dagelijks']),
+  status: z.enum(['schrijven', 'klaar', 'fout']),
+  error: z.optional(z.string()),
+  segments: z.array(PodcastSegmentSchema),
+  /** Dag (JJJJ-MM-DD) van een dagaflevering. */
+  day: z.optional(z.string()),
+  /** Waar je gebleven was: fragment en seconden daarin. */
+  position: z.optional(z.object({ segment: count(), seconds: z.number() })),
+  finishedAt: z.optional(isoDate),
+});
+export type PodcastEpisode = z.infer<typeof PodcastEpisodeSchema>;
+
+export const PodcastSettingsSchema = z.object({
+  dailyEnabled: z.boolean(),
+  dailyMinutes: count(),
+  speed: z.number(),
+  autoplay: z.boolean(),
+});
+export type PodcastSettings = z.infer<typeof PodcastSettingsSchema>;
+
+export const PodcastStateSchema = z.object({
+  episodes: z.array(PodcastEpisodeSchema),
+  /** De wachtrij: afleveringen in afspeelvolgorde (de eerste speelt nu of als volgende). */
+  queue: z.array(z.string()),
+  settings: PodcastSettingsSchema,
+});
+export type PodcastState = z.infer<typeof PodcastStateSchema>;

@@ -146,6 +146,7 @@ describe('Stem & bellen (instellingen)', () => {
       true, // ElevenLabs Agents
       false, // Voices
       false, // Text to Voice
+      false, // Text to Speech
       true, // User
     ]);
     expect(items[0]).toHaveTextContent(

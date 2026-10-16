@@ -127,6 +127,19 @@ const ConversationSchema = z.object({
   ),
 });
 
+const VoiceListSchema = z.object({
+  voices: z.array(
+    z.object({
+      voice_id: z.string(),
+      name: z.string(),
+      category: z.nullish(z.string()),
+      labels: z.nullish(z.record(z.string(), z.nullish(z.string()))),
+    }),
+  ),
+});
+
+export type RawVoice = z.infer<typeof VoiceListSchema>['voices'][number];
+
 export interface SubscriptionInfo {
   tier: string;
   creditsUsed: number;
@@ -166,7 +179,7 @@ export function createElevenLabsApi(
   key: string,
   fetchImpl: typeof fetch = (input, init) => fetch(input, init),
 ) {
-  async function request(path: string, options: RequestOptions = {}): Promise<unknown> {
+  async function send(path: string, options: RequestOptions = {}): Promise<Response> {
     const url = new URL(path, VOICE.apiBase);
     for (const [name, value] of Object.entries(options.query ?? {})) {
       if (value !== undefined) url.searchParams.set(name, String(value));
@@ -187,7 +200,11 @@ export function createElevenLabsApi(
       throw new VoiceApiError('network', 'ElevenLabs is niet bereikbaar.', { cause: error });
     }
     if (!response.ok) throw await toError(response);
-    const text = await response.text();
+    return response;
+  }
+
+  async function request(path: string, options: RequestOptions = {}): Promise<unknown> {
+    const text = await (await send(path, options)).text();
     return text ? (JSON.parse(text) as unknown) : undefined;
   }
 
@@ -319,6 +336,50 @@ export function createElevenLabsApi(
 
     async deleteVoice(voiceId: string): Promise<void> {
       await request(`/v1/voices/${encodeURIComponent(voiceId)}`, { method: 'DELETE' });
+    },
+
+    /**
+     * Tekst naar spraak (podcasts): één fragment als MP3. Kost tegoed per teken; de app bewaart
+     * het resultaat op het apparaat, zodat het maar één keer gemaakt hoeft te worden.
+     */
+    async speech(input: {
+      voiceId: string;
+      text: string;
+      model: string;
+      languageCode?: string;
+      outputFormat: string;
+      settings?: { stability?: number; speed?: number };
+      signal?: AbortSignal;
+    }): Promise<Blob> {
+      const response = await send(`/v1/text-to-speech/${encodeURIComponent(input.voiceId)}`, {
+        method: 'POST',
+        query: { output_format: input.outputFormat },
+        body: {
+          text: input.text,
+          model_id: input.model,
+          ...(input.languageCode ? { language_code: input.languageCode } : {}),
+          ...(input.settings
+            ? {
+                voice_settings: {
+                  similarity_boost: 0.75,
+                  ...(input.settings.stability === undefined
+                    ? {}
+                    : { stability: input.settings.stability }),
+                  ...(input.settings.speed === undefined ? {} : { speed: input.settings.speed }),
+                },
+              }
+            : {}),
+        },
+        signal: input.signal,
+      });
+      const blob = await response.blob();
+      return blob.type ? blob : new Blob([blob], { type: 'audio/mpeg' });
+    },
+
+    /** De stemmen in het account, met de kant-en-klare stemmen (premade) van ElevenLabs. */
+    async libraryVoices(signal?: AbortSignal): Promise<RawVoice[]> {
+      const data = parse(VoiceListSchema, await request('/v1/voices', { signal }));
+      return data.voices;
     },
 
     /** Kosten van een afgerond gesprek (zolang ElevenLabs het gesprek nog kent). */

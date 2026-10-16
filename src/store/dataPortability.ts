@@ -127,4 +127,6 @@ export function wipeAllData(options: { includeApiKeys: boolean }): void {
   } catch {
     // niets
   }
+  // Ook de podcastaudio op dit apparaat (IndexedDB); los geladen, want zelden nodig.
+  void import('@/podcast/audioCache').then((cache) => cache.clearAudio());
 }

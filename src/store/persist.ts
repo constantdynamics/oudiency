@@ -22,7 +22,8 @@ export type StoreName =
   | 'library'
   | 'usage'
   | 'cache'
-  | 'voice';
+  | 'voice'
+  | 'podcasts';
 
 /** Sleutels (BYOK) staan los van de stores: ze gaan nooit mee in een export. */
 export type SecretName = 'apikey' | 'elevenlabs-key';

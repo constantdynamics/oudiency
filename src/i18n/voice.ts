@@ -29,6 +29,7 @@ const permissionItems: Record<KeyPermissionId, PermissionText> = {
     level: 'Access',
     use: 'stemvoorbeelden ontwerpen',
   },
+  textToSpeech: { area: 'Text to Speech', level: 'Access', use: 'podcasts laten voorlezen' },
   user: { area: 'User', level: 'Read', use: 'je tegoed tonen (mag ook uit)' },
 };
 
