@@ -81,8 +81,7 @@ export function pruneUsage(usage: UsageByDate, todayKey: string, keepDays = 60):
 /* ---------- Verlengen met credits ---------- */
 
 export type ExtendCheck =
-  | { ok: true }
-  | { ok: false; reason: 'geen-credits' | 'maximum' | 'niet-actief' | 'te-vroeg' };
+  { ok: true } | { ok: false; reason: 'geen-credits' | 'maximum' | 'niet-actief' | 'te-vroeg' };
 
 /**
  * Verlengen kan vanaf de waarschuwing (nog ≤ 3 minuten), max. 2× per sessie, kost 1 credit.
@@ -96,7 +95,8 @@ export function canExtend(params: {
   const { extension, warnAtRemainingMinutes } = LIMITS.session;
   if (!params.active) return { ok: false, reason: 'niet-actief' };
   if (params.extensions >= extension.maxPerSession) return { ok: false, reason: 'maximum' };
-  if (params.remainingMs > warnAtRemainingMinutes * 60_000) return { ok: false, reason: 'te-vroeg' };
+  if (params.remainingMs > warnAtRemainingMinutes * 60_000)
+    return { ok: false, reason: 'te-vroeg' };
   if (params.credits < extension.creditCost) return { ok: false, reason: 'geen-credits' };
   return { ok: true };
 }

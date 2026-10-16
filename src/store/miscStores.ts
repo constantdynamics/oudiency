@@ -1,7 +1,7 @@
 /**
  * Kleinere stores: dagvragen, meldingen, bibliotheek (likes/terugkijken), verbruik en cache.
  */
-import { z } from 'zod';
+import * as z from 'zod/mini';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { clock } from '@/lib/clock';

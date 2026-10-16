@@ -1,16 +1,10 @@
-import { z } from 'zod';
+import * as z from 'zod/mini';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { LIMITS, type Tier } from '@/config/limits';
 import { clock } from '@/lib/clock';
 import { localDateKey } from '@/lib/dates';
-import {
-  consume,
-  type LimitKind,
-  pruneUsage,
-  release,
-  resetDay,
-} from '@/services/limits.service';
+import { consume, type LimitKind, pruneUsage, release, resetDay } from '@/services/limits.service';
 import { persistOptions, registerStore } from './persist';
 import { UserProfileSchema, type UserProfile } from './schemas';
 
@@ -54,7 +48,9 @@ export const useProfileStore = create<ProfileState>()(
         set((s) => ({ profile: { ...s.profile, displayName: name.trim().slice(0, 40) } })),
       setTier: (tier) => set((s) => ({ profile: { ...s.profile, tier } })),
       addCredits: (amount) =>
-        set((s) => ({ profile: { ...s.profile, credits: Math.max(0, s.profile.credits + amount) } })),
+        set((s) => ({
+          profile: { ...s.profile, credits: Math.max(0, s.profile.credits + amount) },
+        })),
       spendCredits: (amount) => {
         if (get().profile.credits < amount) return false;
         set((s) => ({ profile: { ...s.profile, credits: s.profile.credits - amount } }));

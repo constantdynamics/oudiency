@@ -1,3 +1,4 @@
+/* eslint-disable @eslint-react/no-array-index-key -- de markdown-boom heeft geen stabiele id's; de index is hier de identiteit */
 import { Fragment, type ReactNode, useMemo } from 'react';
 import { cx } from '@/lib/cx';
 import { closeOpenMarkers, type Block, type Inline, parseMarkdown } from '@/lib/markdown';

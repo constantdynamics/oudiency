@@ -25,14 +25,22 @@ export function CrisisCard({ className }: { className?: string }) {
                   {CRISIS_RESOURCES.phone}
                 </a>{' '}
                 of gratis{' '}
-                <a className="font-semibold underline" href={`tel:${CRISIS_RESOURCES.freePhone.replace(/-/g, '')}`}>
+                <a
+                  className="font-semibold underline"
+                  href={`tel:${CRISIS_RESOURCES.freePhone.replace(/-/g, '')}`}
+                >
                   {CRISIS_RESOURCES.freePhone}
                 </a>
               </span>
             </li>
             <li className="flex items-center gap-2">
               <MessageCircle aria-hidden className="size-4 text-info" />
-              <a className="font-semibold underline" href={CRISIS_RESOURCES.chatUrl} target="_blank" rel="noreferrer noopener">
+              <a
+                className="font-semibold underline"
+                href={CRISIS_RESOURCES.chatUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
                 {t.crisis.chat}
               </a>
             </li>

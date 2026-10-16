@@ -16,8 +16,14 @@ export const TRENDING_GRAVITY = 1.5;
  *   score = likes_7d / (uren_sinds_publicatie + 2) ^ 1,5
  * Alleen likes van de afgelopen 7 dagen tellen mee.
  */
-export function trendingScore(likes: readonly LikeEvent[], publishedAt: number, now: number): number {
-  const recentLikes = likes.filter((like) => like.at <= now && now - like.at <= TRENDING_WINDOW_MS).length;
+export function trendingScore(
+  likes: readonly LikeEvent[],
+  publishedAt: number,
+  now: number,
+): number {
+  const recentLikes = likes.filter(
+    (like) => like.at <= now && now - like.at <= TRENDING_WINDOW_MS,
+  ).length;
   if (recentLikes === 0) return 0;
   const hours = Math.max(0, (now - publishedAt) / HOUR);
   return recentLikes / Math.pow(hours + 2, TRENDING_GRAVITY);

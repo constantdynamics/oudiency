@@ -18,7 +18,15 @@ interface DialogProps {
  * Toegankelijke dialoog op basis van het native <dialog>-element (focus-trap, Escape, inert
  * achtergrond door showModal).
  */
-export function Dialog({ open, onClose, title, children, footer, className, description }: DialogProps) {
+export function Dialog({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+  className,
+  description,
+}: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const descId = useId();
@@ -73,7 +81,11 @@ export function Dialog({ open, onClose, title, children, footer, className, desc
         </button>
       </div>
       <div className="px-5 py-4">{children}</div>
-      {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-line px-5 py-3">{footer}</div>}
+      {footer && (
+        <div className="flex flex-wrap justify-end gap-2 border-t border-line px-5 py-3">
+          {footer}
+        </div>
+      )}
     </dialog>
   );
 }

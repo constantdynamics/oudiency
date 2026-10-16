@@ -57,7 +57,10 @@ describe('limits.service', () => {
   it('verlengen: alleen vanaf de waarschuwing, met credit, max. 2×', () => {
     const base = { credits: 2, extensions: 0, active: true, remainingMs: 2 * 60_000 };
     expect(canExtend(base)).toEqual({ ok: true });
-    expect(canExtend({ ...base, remainingMs: 4 * 60_000 })).toEqual({ ok: false, reason: 'te-vroeg' });
+    expect(canExtend({ ...base, remainingMs: 4 * 60_000 })).toEqual({
+      ok: false,
+      reason: 'te-vroeg',
+    });
     expect(canExtend({ ...base, credits: 0 })).toEqual({ ok: false, reason: 'geen-credits' });
     expect(canExtend({ ...base, extensions: 2 })).toEqual({ ok: false, reason: 'maximum' });
     expect(canExtend({ ...base, active: false })).toEqual({ ok: false, reason: 'niet-actief' });

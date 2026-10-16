@@ -17,10 +17,13 @@
     "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:data": "tsx scripts/validate-data.ts"
+    "validate:data": "tsx --tsconfig tsconfig.node.json scripts/validate-data.ts",
+    "gen:assets": "tsx --tsconfig tsconfig.node.json scripts/gen-assets.ts",
+    "gen:index": "tsx --tsconfig tsconfig.node.json scripts/gen-index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.134.0",
+    "@elevenlabs/client": "1.28.0",
     "@fontsource-variable/cinzel": "^5.3.0",
     "@fontsource-variable/cormorant-garamond": "^5.3.0",
     "@fontsource-variable/eb-garamond": "^5.3.0",
@@ -29,7 +32,6 @@
     "@fontsource-variable/noto-serif-gujarati": "^5.3.0",
     "@fontsource/im-fell-english": "^5.3.0",
     "@fontsource/noto-serif-sc": "^5.3.1",
-    "date-fns": "^4.4.0",
     "lucide-react": "^1.57.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

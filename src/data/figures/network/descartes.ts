@@ -1,0 +1,92 @@
+import { networkFigure } from '../define';
+
+export const descartes = networkFigure({
+  id: 'descartes',
+  name: 'René Descartes',
+  shortName: 'Descartes',
+  nativeName: 'Renatus Cartesius',
+  nativeScript: 'latin',
+  monogram: 'RD',
+  epithet: 'Twijfelaar op zoek naar zekerheid',
+  born: 1596,
+  died: 1650,
+  origin: 'La Haye en Touraine (Frankrijk)',
+  school: 'Rationalisme',
+  family: 'gouden-eeuw',
+  tags: ['twijfel', 'zekerheid', 'rede', 'methode', 'lichaam en geest', 'wiskunde'],
+  bio: 'René Descartes woonde ruim twintig jaar in de Republiek, waar hij in alle rust kon denken en publiceren. Hij besloot te twijfelen aan alles wat maar te betwijfelen viel, tot hij één zekerheid vond: als ik twijfel, denk ik, en als ik denk, besta ik. Hij legde de basis voor de moderne filosofie en, met het coördinatenstelsel, voor de analytische meetkunde.',
+  keyConcepts: [
+    {
+      term: 'Methodische twijfel',
+      explanation: 'Aan alles twijfelen tot je iets vindt wat onbetwijfelbaar is.',
+    },
+    {
+      term: 'Cogito',
+      native: 'cogito, ergo sum',
+      explanation: 'Ik denk, dus ik ben: de eerste zekerheid.',
+    },
+    {
+      term: 'Lichaam en geest',
+      explanation: 'Twee verschillende substanties: het uitgebreide en het denkende.',
+    },
+  ],
+  keyWorks: [
+    { title: 'Discours de la méthode', year: '1637', note: 'Verschenen in Leiden.' },
+    { title: 'Meditationes de prima philosophia', year: '1641' },
+    { title: 'Principia philosophiae', year: '1644', note: 'Verschenen in Amsterdam.' },
+    { title: 'Les Passions de l’âme', year: '1649' },
+  ],
+  lifeEvents: [
+    { year: '1596', text: 'Geboren in La Haye in Touraine.' },
+    {
+      year: '1618',
+      text: 'Neemt dienst in het leger van Maurits van Nassau en ontmoet in Breda de wiskundige Isaac Beeckman.',
+    },
+    {
+      year: '1619',
+      text: 'Heeft in een verwarmde kamer in Duitsland zijn beroemde dromen over een nieuwe wetenschap.',
+    },
+    { year: '1628', text: 'Vestigt zich in de Republiek, waar hij ruim twintig jaar blijft.' },
+    { year: '1637', text: 'Het Discours de la méthode verschijnt in Leiden.' },
+    {
+      year: '1650',
+      text: 'Sterft in Stockholm, waar hij koningin Christina ’s ochtends vroeg les moest geven.',
+    },
+  ],
+  quotes: [
+    {
+      text: 'Ik denk, dus ik ben.',
+      original: 'je pense, donc je suis',
+      source: 'Discours de la méthode (1637), deel IV',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+    {
+      text: 'Het gezonde verstand is het best verdeelde ding ter wereld.',
+      original: 'Le bon sens est la chose du monde la mieux partagée.',
+      source: 'Discours de la méthode (1637), deel I',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+      note: 'Met een knipoog: iedereen denkt er genoeg van te hebben.',
+    },
+  ],
+  voice: {
+    register: 'Helder, methodisch en voorzichtig.',
+    method: 'Breekt een probleem op in kleine delen en begint bij wat absoluut zeker is.',
+  },
+  modernLens:
+    'Descartes beveelt in een tijd van nepnieuws zijn methodische twijfel aan: neem niets voor waar aan wat je niet helder en duidelijk inziet.',
+  network: [
+    { id: 'spinoza', relation: 'navolger', note: 'las hem grondig en ging verder' },
+    { id: 'hobbes', relation: 'criticus' },
+    { id: 'huygens', relation: 'tijdgenoot', note: 'vriend van zijn vader Constantijn' },
+    { id: 'leibniz', relation: 'criticus' },
+    { id: 'locke', relation: 'navolger' },
+    { id: 'newton', relation: 'tegenpool' },
+    { id: 'aristoteles', relation: 'tegenpool' },
+    { id: 'dewitt', relation: 'navolger', note: 'cartesiaans wiskundige' },
+  ],
+  helpsWith: ['helder en kritisch denken', 'zekerheid vinden in twijfel'],
+});

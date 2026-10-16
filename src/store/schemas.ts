@@ -1,22 +1,26 @@
 /**
  * Zod-schema's voor alles wat lokaal wordt opgeslagen. De typen worden hieruit afgeleid, zodat
  * validatie (bij laden en importeren) en TypeScript altijd overeenkomen.
+ *
+ * We gebruiken `zod/mini` (functionele API, tree-shakable): deze schema's zitten in de
+ * startbundel, en mini is daar ~17 kB gzip kleiner dan de klassieke API.
  */
-import { z } from 'zod';
+import * as z from 'zod/mini';
 
-const isoDate = z.string().min(10);
+const isoDate = z.string().check(z.minLength(10));
+const count = () => z.int().check(z.minimum(0));
 
 /* ---------- Profiel ---------- */
 
 export const UsageDaySchema = z.object({
-  sessions: z.number().int().min(0),
-  lectures: z.number().int().min(0),
+  sessions: count(),
+  lectures: count(),
 });
 
 export const UserProfileSchema = z.object({
-  displayName: z.string().max(40),
+  displayName: z.string().check(z.maxLength(40)),
   tier: z.enum(['basis', 'premium']),
-  credits: z.number().int().min(0),
+  credits: count(),
   follows: z.array(z.string()),
   discovered: z.array(z.string()),
   usageByDate: z.record(z.string(), UsageDaySchema),
@@ -27,22 +31,28 @@ export type UserProfile = z.infer<typeof UserProfileSchema>;
 
 /* ---------- Afspraken & sessies ---------- */
 
-export const BookingStatusSchema = z.enum(['gepland', 'actief', 'afgerond', 'gemist', 'geannuleerd']);
+export const BookingStatusSchema = z.enum([
+  'gepland',
+  'actief',
+  'afgerond',
+  'gemist',
+  'geannuleerd',
+]);
 export type BookingStatus = z.infer<typeof BookingStatusSchema>;
 
 export const BookingSchema = z.object({
   id: z.string(),
   figureId: z.string(),
   /** Lokale datum 'YYYY-MM-DD'. */
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  date: z.string().check(z.regex(/^\d{4}-\d{2}-\d{2}$/)),
   /** 'HH:MM' */
-  time: z.string().regex(/^\d{2}:\d{2}$/),
-  topicHint: z.string().optional(),
+  time: z.string().check(z.regex(/^\d{2}:\d{2}$/)),
+  topicHint: z.optional(z.string()),
   status: BookingStatusSchema,
   createdAt: isoDate,
-  sessionId: z.string().optional(),
+  sessionId: z.optional(z.string()),
   /** Herinneringsmelding voor de starttijd is aangemaakt. */
-  notified: z.boolean().optional(),
+  notified: z.optional(z.boolean()),
 });
 export type Booking = z.infer<typeof BookingSchema>;
 
@@ -52,13 +62,13 @@ export const MessageSchema = z.object({
   role: z.enum(['user', 'figure', 'system']),
   text: z.string(),
   createdAt: isoDate,
-  outOfCharacter: z.boolean().optional(),
+  outOfCharacter: z.optional(z.boolean()),
   /** Tijdcontext die met dit bericht naar het model ging, bijv. "[beurt 3 · verstreken 4:10 · resterend 10:50]". */
-  timeContext: z.string().optional(),
+  timeContext: z.optional(z.string()),
   /** Verborgen app-bericht dat wel naar het model gaat (bijv. "De student komt binnen"). */
-  hidden: z.boolean().optional(),
-  error: z.boolean().optional(),
-  refusal: z.boolean().optional(),
+  hidden: z.optional(z.boolean()),
+  error: z.optional(z.boolean()),
+  refusal: z.optional(z.boolean()),
 });
 export type Message = z.infer<typeof MessageSchema>;
 
@@ -69,19 +79,19 @@ export const SessionSchema = z.object({
   startedAt: isoDate,
   /** Opgeslagen eindtijd; de timer rekent hier altijd vanaf (klopt na herladen of tabwissel). */
   endsAt: isoDate,
-  extensions: z.number().int().min(0),
-  compensatedMs: z.number().int().min(0),
+  extensions: count(),
+  compensatedMs: count(),
   messages: z.array(MessageSchema),
-  summary: z.string().optional(),
-  reflectionQuestion: z.string().optional(),
-  topics: z.array(z.string()).optional(),
+  summary: z.optional(z.string()),
+  reflectionQuestion: z.optional(z.string()),
+  topics: z.optional(z.array(z.string())),
   status: z.enum(['actief', 'afronden', 'afgerond']),
-  endedAt: isoDate.optional(),
-  endReason: z.enum(['tijd', 'gebruiker']).optional(),
-  topicHint: z.string().optional(),
+  endedAt: z.optional(isoDate),
+  endReason: z.optional(z.enum(['tijd', 'gebruiker'])),
+  topicHint: z.optional(z.string()),
   provider: z.enum(['demo', 'anthropic-browser', 'proxy']),
   /** Er is gewaarschuwd dat de tijd bijna om is. */
-  warned: z.boolean().optional(),
+  warned: z.optional(z.boolean()),
 });
 export type Session = z.infer<typeof SessionSchema>;
 
@@ -99,7 +109,7 @@ export const LecturePlanSchema = z.object({
 export type LecturePlan = z.infer<typeof LecturePlanSchema>;
 
 export const LectureSegmentSchema = z.object({
-  index: z.number().int().min(0),
+  index: count(),
   kind: z.enum(['opening', 'deel', 'antwoord', 'conclusie']),
   heading: z.string(),
   text: z.string(),
@@ -122,22 +132,22 @@ export const LectureSchema = z.object({
   figureId: z.string(),
   topic: z.string(),
   mainQuestion: z.string(),
-  plan: LecturePlanSchema.optional(),
+  plan: z.optional(LecturePlanSchema),
   segments: z.array(LectureSegmentSchema),
-  questions: z.array(z.object({ afterSegment: z.number().int(), text: z.string() })),
+  questions: z.array(z.object({ afterSegment: z.int(), text: z.string() })),
   status: z.enum(['bezig', 'afgerond']),
   share: ShareStatusSchema,
-  moderationNote: z.string().optional(),
-  precheck: PrecheckSchema.optional(),
-  submittedAt: isoDate.optional(),
-  publishedAt: isoDate.optional(),
-  isExample: z.boolean().optional(),
+  moderationNote: z.optional(z.string()),
+  precheck: z.optional(PrecheckSchema),
+  submittedAt: z.optional(isoDate),
+  publishedAt: z.optional(isoDate),
+  isExample: z.optional(z.boolean()),
   likedByMe: z.boolean(),
   createdAt: isoDate,
-  completedAt: isoDate.optional(),
+  completedAt: z.optional(isoDate),
   /** Indexen in figure.keyWorks voor "Verder lezen" (nooit verzonnen titels). */
-  furtherReading: z.array(z.number().int().min(0)).optional(),
-  tags: z.array(z.string()).optional(),
+  furtherReading: z.optional(z.array(count())),
+  tags: z.optional(z.array(z.string())),
   provider: z.enum(['demo', 'anthropic-browser', 'proxy']),
 });
 export type Lecture = z.infer<typeof LectureSchema>;
@@ -148,11 +158,11 @@ export const ReactionSchema = z.object({
   id: z.string(),
   figureId: z.string(),
   type: z.enum(['like', 'comment']),
-  text: z.string().optional(),
+  text: z.optional(z.string()),
   visibleAt: isoDate,
   seen: z.boolean(),
   /** Deze reactie liet een nog niet ontdekte denker kennismaken. */
-  discovery: z.boolean().optional(),
+  discovery: z.optional(z.boolean()),
 });
 export type Reaction = z.infer<typeof ReactionSchema>;
 
@@ -161,34 +171,34 @@ export const PostSchema = z.object({
   text: z.string(),
   tags: z.array(z.string()),
   createdAt: isoDate,
-  editedAt: isoDate.optional(),
-  promptId: z.string().optional(),
+  editedAt: z.optional(isoDate),
+  promptId: z.optional(z.string()),
   /** De vraag zoals die gesteld werd (in de stijl van de denker). */
-  promptText: z.string().optional(),
-  promptFigureId: z.string().optional(),
-  isFollowUp: z.boolean().optional(),
-  likedByMe: z.boolean().optional(),
+  promptText: z.optional(z.string()),
+  promptFigureId: z.optional(z.string()),
+  isFollowUp: z.optional(z.boolean()),
+  likedByMe: z.optional(z.boolean()),
   reactions: z.array(ReactionSchema),
   /** Bij crisissignalen: geen rollenspelreacties maar een hulpkaart. */
-  crisis: z.boolean().optional(),
+  crisis: z.optional(z.boolean()),
 });
 export type Post = z.infer<typeof PostSchema>;
 
 export const DailyQuestionDaySchema = z.object({
   /** Getoonde vraag-id's op deze dag (de eerste is de geplande, daarna eventueel "andere vraag"). */
   shown: z.array(z.string()),
-  rerolls: z.number().int().min(0),
+  rerolls: count(),
   askerId: z.string(),
   /** Vraagtekst in de stijl van de denker (AI), per vraag-id. */
-  styled: z.record(z.string(), z.string()).optional(),
-  answeredPostId: z.string().optional(),
-  followUp: z
-    .object({
+  styled: z.optional(z.record(z.string(), z.string())),
+  answeredPostId: z.optional(z.string()),
+  followUp: z.optional(
+    z.object({
       questionId: z.string(),
       visibleAt: isoDate,
-      answeredPostId: z.string().optional(),
-    })
-    .optional(),
+      answeredPostId: z.optional(z.string()),
+    }),
+  ),
 });
 export type DailyQuestionDay = z.infer<typeof DailyQuestionDaySchema>;
 
@@ -198,15 +208,15 @@ export const NotificationSchema = z.object({
   id: z.string(),
   kind: z.enum(['reactie', 'ontdekt', 'afspraak', 'moderatie', 'vervolgvraag', 'systeem']),
   text: z.string(),
-  link: z.string().optional(),
-  figureId: z.string().optional(),
+  link: z.optional(z.string()),
+  figureId: z.optional(z.string()),
   /** Pas zichtbaar vanaf dit moment (bijv. vertraagde reacties, starttijd afspraak). */
   visibleAt: isoDate,
   read: z.boolean(),
   /** Er is een browsernotificatie voor getoond. */
-  pushed: z.boolean().optional(),
+  pushed: z.optional(z.boolean()),
   /** Bron-id om dubbele meldingen te voorkomen. */
-  sourceId: z.string().optional(),
+  sourceId: z.optional(z.string()),
 });
 export type AppNotification = z.infer<typeof NotificationSchema>;
 
@@ -216,7 +226,7 @@ export const LibraryStateSchema = z.object({
   /** lectureId → tijdstip van je like (ISO). */
   likes: z.record(z.string(), isoDate),
   /** lectureId → bekeken/afgerond (voor statistieken en aanbevelingen). */
-  watched: z.record(z.string(), z.object({ startedAt: isoDate, completedAt: isoDate.optional() })),
+  watched: z.record(z.string(), z.object({ startedAt: isoDate, completedAt: z.optional(isoDate) })),
 });
 export type LibraryState = z.infer<typeof LibraryStateSchema>;
 
@@ -225,7 +235,7 @@ export type LibraryState = z.infer<typeof LibraryStateSchema>;
 export const TaskModelSchema = z.object({
   model: z.string(),
   effort: z.enum(['low', 'medium', 'high']),
-  maxTokens: z.number().int().min(256).max(64_000),
+  maxTokens: z.int().check(z.minimum(256), z.maximum(64_000)),
 });
 
 export const SettingsSchema = z.object({
@@ -234,7 +244,7 @@ export const SettingsSchema = z.object({
   serverFallback: z.boolean(),
   browserNotifications: z.boolean(),
   moderatorMode: z.boolean(),
-  moderatorPinHash: z.string().optional(),
+  moderatorPinHash: z.optional(z.string()),
   readingVoice: z.boolean(),
   demoBannerDismissed: z.boolean(),
   /** Dev: reacties en vervolgvragen direct zichtbaar. */
@@ -249,10 +259,10 @@ export const UsageEntrySchema = z.object({
   at: isoDate,
   task: z.string(),
   model: z.string(),
-  inputTokens: z.number().int().min(0),
-  outputTokens: z.number().int().min(0),
-  cacheReadTokens: z.number().int().min(0),
-  cacheWriteTokens: z.number().int().min(0),
+  inputTokens: count(),
+  outputTokens: count(),
+  cacheReadTokens: count(),
+  cacheWriteTokens: count(),
 });
 export type UsageEntry = z.infer<typeof UsageEntrySchema>;
 
@@ -263,3 +273,71 @@ export const ContentCacheSchema = z.object({
   thoughts: z.record(z.string(), z.object({ text: z.string(), provider: z.string() })),
 });
 export type ContentCache = z.infer<typeof ContentCacheSchema>;
+
+/* ---------- Bellen (spraak) ---------- */
+
+export const CallTranscriptEntrySchema = z.object({
+  role: z.enum(['user', 'figure', 'system']),
+  text: z.string(),
+  at: isoDate,
+});
+export type CallTranscriptEntry = z.infer<typeof CallTranscriptEntrySchema>;
+
+export const CallEndReasonSchema = z.enum([
+  'tijd',
+  'gebruiker',
+  'crisis',
+  'verbinding',
+  'stilte',
+  'fout',
+]);
+export type CallEndReason = z.infer<typeof CallEndReasonSchema>;
+
+export const CallCostSchema = z.object({
+  credits: z.optional(z.number()),
+  fiat: z.optional(z.number()),
+  /** 'gesprek' = opgegeven door ElevenLabs; 'tegoed' = verschil in verbruikt tegoed. */
+  source: z.enum(['gesprek', 'tegoed']),
+});
+export type CallCost = z.infer<typeof CallCostSchema>;
+
+/** Een proefgesprek (de spraakproef); echte belsessies komen in de sessies terecht. */
+export const TrialCallSchema = z.object({
+  id: z.string(),
+  figureId: z.string(),
+  startedAt: isoDate,
+  endedAt: isoDate,
+  endReason: CallEndReasonSchema,
+  conversationId: z.optional(z.string()),
+  transcript: z.array(CallTranscriptEntrySchema),
+  cost: z.optional(CallCostSchema),
+});
+export type TrialCall = z.infer<typeof TrialCallSchema>;
+
+export const VoiceStateSchema = z.object({
+  /** De agent in het ElevenLabs-account van de gebruiker (geen geheim: werkt alleen met de sleutel). */
+  agent: z.optional(
+    z.object({
+      id: z.string(),
+      configVersion: z.int(),
+      /** Aangemaakt met de minimale configuratie (terugval). */
+      minimal: z.optional(z.boolean()),
+      updatedAt: isoDate,
+    }),
+  ),
+  /** Gekozen stem per denker (id in het ElevenLabs-account). */
+  voices: z.record(z.string(), z.object({ voiceId: z.string(), createdAt: isoDate })),
+  trials: z.array(TrialCallSchema),
+  /** Laatst opgevraagde accountgegevens (abonnement en tegoed). */
+  account: z.optional(
+    z.object({
+      tier: z.string(),
+      creditsUsed: z.number(),
+      creditLimit: z.number(),
+      resetsAt: z.optional(z.number()),
+      currency: z.optional(z.string()),
+      checkedAt: isoDate,
+    }),
+  ),
+});
+export type VoiceState = z.infer<typeof VoiceStateSchema>;

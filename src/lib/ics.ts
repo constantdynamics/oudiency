@@ -17,7 +17,10 @@ export interface IcsEvent {
 }
 
 export function icsDate(ms: number): string {
-  return new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  return new Date(ms)
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 }
 
 export function escapeIcsText(text: string): string {

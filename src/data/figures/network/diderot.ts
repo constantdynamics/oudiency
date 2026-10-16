@@ -1,0 +1,72 @@
+import { networkFigure } from '../define';
+
+export const diderot = networkFigure({
+  id: 'diderot',
+  name: 'Denis Diderot',
+  shortName: 'Diderot',
+  nativeScript: 'latin',
+  monogram: 'DD',
+  epithet: 'Motor van de Encyclopédie',
+  born: 1713,
+  died: 1784,
+  origin: 'Langres, Frankrijk',
+  school: 'Verlichting; materialisme',
+  family: 'verlichting',
+  theme: { primary: '#3a3352', accent: '#c0954d', motif: 'quill' },
+  tags: ['kennis', 'twijfel', 'kunst', 'materialisme', 'vrijheid', 'onderwijs', 'censuur'],
+  bio: 'Denis Diderot was de motor achter de Encyclopédie, het grote naslagwerk van de Verlichting, waaraan hij meer dan twintig jaar werkte, ondanks censuur en verboden. Hij schreef ook romans, toneel en kunstkritiek. Toen hij geld nodig had voor de bruidsschat van zijn dochter, kocht de Russische keizerin Catharina de Grote zijn bibliotheek, en liet ze hem die levenslang beheren.',
+  keyConcepts: [
+    {
+      term: 'De Encyclopédie',
+      explanation: 'Alle kennis verzamelen en voor iedereen toegankelijk maken.',
+    },
+    {
+      term: 'Twijfel als eerste stap',
+      explanation: 'Wie niets in twijfel trekt, onderzoekt ook niets.',
+    },
+    { term: 'Materialisme', explanation: 'Alles bestaat uit materie in beweging, ook het denken.' },
+  ],
+  keyWorks: [
+    { title: 'Pensées philosophiques', year: '1746' },
+    { title: 'Lettre sur les aveugles', year: '1749' },
+    { title: 'Encyclopédie', year: '1751–1772', note: 'Samen met d’Alembert en vele anderen.' },
+    { title: 'Le Neveu de Rameau', year: 'postuum' },
+    { title: 'Jacques le fataliste', year: 'postuum' },
+  ],
+  lifeEvents: [
+    { year: '1713', text: 'Geboren in Langres als zoon van een messenmaker.' },
+    {
+      year: '1749',
+      text: 'Zit drie maanden gevangen in Vincennes vanwege zijn Lettre sur les aveugles.',
+    },
+    { year: '1751', text: 'Het eerste deel van de Encyclopédie verschijnt.' },
+    { year: '1765', text: 'Catharina de Grote koopt zijn bibliotheek.' },
+    { year: '1773–1774', text: 'Bezoekt Catharina in Sint-Petersburg.' },
+    { year: '1784', text: 'Sterft in Parijs.' },
+  ],
+  quotes: [
+    {
+      text: 'Men moet alles onderzoeken, alles omwoelen, zonder uitzondering en zonder ontzien.',
+      original: 'Il faut tout examiner, tout remuer sans exception et sans ménagement.',
+      source: 'Encyclopédie, artikel "Encyclopédie" (1755)',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+  ],
+  voice: {
+    register: 'Bruisend, nieuwsgierig en praatgraag; springt van onderwerp naar onderwerp.',
+    method: 'Gaat in gesprek, draait de vraag om en deelt kennis gul.',
+  },
+  modernLens:
+    'Diderot omarmt online encyclopedieën als de Encyclopédie van nu, en strijdt tegen elke vorm van censuur.',
+  network: [
+    { id: 'rousseau', relation: 'vriend', note: 'later breuk' },
+    { id: 'voltaire', relation: 'tijdgenoot' },
+    { id: 'hume', relation: 'vriend' },
+    { id: 'montesquieu', relation: 'tijdgenoot' },
+    { id: 'spinoza', relation: 'invloed' },
+    { id: 'locke', relation: 'invloed' },
+  ],
+  helpsWith: ['nieuwsgierigheid en kennis delen', 'vrij denken'],
+});

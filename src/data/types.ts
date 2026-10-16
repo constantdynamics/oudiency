@@ -59,12 +59,7 @@ export type MotifId =
   | 'tulip'
   | 'flame';
 
-export type DisplayFontId =
-  | 'cormorant'
-  | 'cinzel'
-  | 'eb-garamond'
-  | 'im-fell'
-  | 'literata';
+export type DisplayFontId = 'cormorant' | 'cinzel' | 'eb-garamond' | 'im-fell' | 'literata';
 
 /** extra: schrift van de eigen naam, om het juiste font lazy te laden. */
 export type NativeScript = 'latin' | 'greek' | 'han' | 'devanagari' | 'gujarati';
@@ -126,6 +121,10 @@ export interface Figure {
   born: Year;
   died: Year;
   approximate?: boolean;
+  /** extra: vrije weergave van de jaren als die onzeker zijn ("traditioneel 6e eeuw v.Chr."). */
+  displayYears?: string;
+  /** extra: monogram op het medaillon (standaard: initialen). */
+  monogram?: string;
   origin: string;
   school: string;
   tags: string[];
@@ -197,7 +196,8 @@ export interface DailyQuestion {
 }
 
 /** Demo: een vooraf geschreven sessiefragment. */
-export type SessionPhase = 'opening' | 'terugkeer' | 'doorvragen' | 'verdiepen' | 'afronden' | 'slot';
+export type SessionPhase =
+  'opening' | 'terugkeer' | 'doorvragen' | 'verdiepen' | 'afronden' | 'slot';
 
 export interface SessionFragment {
   id: string;

@@ -1,5 +1,40 @@
-import { format, formatDistanceStrict } from 'date-fns';
-import { nl } from 'date-fns/locale';
+/**
+ * Datum- en tijdhulpjes. Bewust zonder datumbibliotheek: vaste Nederlandse namen geven overal
+ * (browser, Node, tests) dezelfde uitvoer en houden de startbundel klein.
+ */
+
+const DAYS = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+const DAYS_SHORT = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
+const MONTHS = [
+  'januari',
+  'februari',
+  'maart',
+  'april',
+  'mei',
+  'juni',
+  'juli',
+  'augustus',
+  'september',
+  'oktober',
+  'november',
+  'december',
+];
+const MONTHS_SHORT = [
+  'jan',
+  'feb',
+  'mrt',
+  'apr',
+  'mei',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'okt',
+  'nov',
+  'dec',
+];
+
+const pad = (n: number) => String(n).padStart(2, '0');
 
 export const MINUTE = 60_000;
 export const HOUR = 60 * MINUTE;
@@ -43,18 +78,28 @@ export function dayIndex(dateKey: string): number {
   return daysBetweenKeys('1970-01-01', dateKey);
 }
 
-export function formatDate(ms: number, pattern: string): string {
-  return format(new Date(ms), pattern, { locale: nl });
-}
-
 /** 'dinsdag 14 oktober' */
 export function formatLongDate(ms: number): string {
-  return formatDate(ms, 'EEEE d MMMM');
+  const d = new Date(ms);
+  return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+}
+
+/** 'di 14 okt' */
+export function formatShortDate(ms: number): string {
+  const d = new Date(ms);
+  return `${DAYS_SHORT[d.getDay()]} ${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`;
+}
+
+/** '14 oktober 2026' */
+export function formatFullDate(ms: number): string {
+  const d = new Date(ms);
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 /** '14:05' */
 export function formatTime(ms: number): string {
-  return formatDate(ms, 'HH:mm');
+  const d = new Date(ms);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 /** 'vandaag', 'morgen' of 'do 16 okt'. */
@@ -63,7 +108,7 @@ export function relativeDayLabel(dateKey: string, todayKey: string): string {
   if (diff === 0) return 'vandaag';
   if (diff === 1) return 'morgen';
   if (diff === -1) return 'gisteren';
-  return formatDate(localDateTime(dateKey, '12:00'), 'EEE d MMM');
+  return formatShortDate(localDateTime(dateKey, '12:00'));
 }
 
 /** Resterende tijd als 'mm:ss' (nooit negatief). */
@@ -71,13 +116,19 @@ export function formatCountdown(ms: number): string {
   const total = Math.max(0, Math.ceil(ms / 1000));
   const minutes = Math.floor(total / 60);
   const seconds = total % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return `${pad(minutes)}:${pad(seconds)}`;
 }
 
-/** '5 minuten geleden' — relatief ten opzichte van `now`. */
+/** '5 minuten geleden' — relatief ten opzichte van `now` (afgerond naar beneden). */
 export function timeAgo(ms: number, now: number): string {
-  if (now - ms < MINUTE) return 'zojuist';
-  return `${formatDistanceStrict(new Date(ms), new Date(now), { locale: nl })} geleden`;
+  const diff = now - ms;
+  if (diff < MINUTE) return 'zojuist';
+  const unit = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many} geleden`;
+  if (diff < HOUR) return unit(Math.floor(diff / MINUTE), 'minuut', 'minuten');
+  if (diff < DAY) return unit(Math.floor(diff / HOUR), 'uur', 'uur');
+  if (diff < 30 * DAY) return unit(Math.floor(diff / DAY), 'dag', 'dagen');
+  if (diff < 365 * DAY) return unit(Math.floor(diff / (30 * DAY)), 'maand', 'maanden');
+  return unit(Math.floor(diff / (365 * DAY)), 'jaar', 'jaar');
 }
 
 /** Jaar met 'v.Chr.' voor negatieve jaartallen. */

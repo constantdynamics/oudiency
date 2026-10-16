@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as z from 'zod/mini';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { persistOptions, registerStore } from './persist';
@@ -34,7 +34,10 @@ export const usePostStore = create<PostState>()(
         set((s) => ({
           posts: s.posts.map((p) =>
             p.reactions.some((r) => wanted.has(r.id) && !r.seen)
-              ? { ...p, reactions: p.reactions.map((r) => (wanted.has(r.id) ? { ...r, seen: true } : r)) }
+              ? {
+                  ...p,
+                  reactions: p.reactions.map((r) => (wanted.has(r.id) ? { ...r, seen: true } : r)),
+                }
               : p,
           ),
         }));

@@ -24,4 +24,5 @@ export const useToastStore = create<ToastState>()((set, get) => ({
   dismiss: (id) => set((s) => ({ toasts: s.toasts.filter((toast) => toast.id !== id) })),
 }));
 
-export const toast = (text: string, tone?: Toast['tone']) => useToastStore.getState().push(text, tone);
+export const toast = (text: string, tone?: Toast['tone']) =>
+  useToastStore.getState().push(text, tone);

@@ -2,24 +2,12 @@ import type { ReactNode } from 'react';
 import type { Figure, MotifId } from '@/data/types';
 import { cx } from '@/lib/cx';
 import { DISPLAY_FONT_FAMILY, NATIVE_FONT_FAMILY } from '@/lib/fonts';
-import { figureThemeStyle, useFigureFonts } from './ThemeFrame';
+import { monogramFor } from '@/lib/monogram';
+import { figureThemeStyle, useFigureFonts } from './theme';
 
 export type AvatarState = 'idle' | 'listening' | 'thinking' | 'speaking';
 
 type AvatarFigure = Pick<Figure, 'id' | 'name' | 'theme' | 'nativeScript'> & { monogram?: string };
-
-const PARTICLES = new Set(['van', 'de', 'den', 'der', 'von', 'la', 'le', 'du', 'of', 'da', 'des']);
-
-/** Monogram uit de naam: maximaal twee hoofdletters (zonder tussenvoegsels). */
-export function monogramFor(figure: AvatarFigure): string {
-  if (figure.monogram) return figure.monogram;
-  const words = figure.name
-    .replace(/[.()]/g, ' ')
-    .split(/\s+/)
-    .filter((w) => w && !PARTICLES.has(w.toLowerCase()));
-  if (words.length === 1) return words[0]!.charAt(0).toUpperCase();
-  return `${words[0]!.charAt(0)}${words[words.length - 1]!.charAt(0)}`.toUpperCase();
-}
 
 /** Motieftekening per thema (lijnwerk in een 100×100-vlak, achter het monogram). */
 function MotifGlyph({ motif }: { motif: MotifId }): ReactNode {
@@ -30,8 +18,22 @@ function MotifGlyph({ motif }: { motif: MotifId }): ReactNode {
         <g className={common} strokeWidth={2} opacity={0.5}>
           <path d="M14 74h10v-8h-6v-6h14v14h10v-14h14v6h-6v8h10v-14h14v14h8" />
           <path d="M30 26c6-6 14-8 20-8s14 2 20 8" strokeWidth={1.2} />
-          <ellipse cx="34" cy="24" rx="4" ry="1.8" transform="rotate(-30 34 24)" className="fill-fig stroke-none" />
-          <ellipse cx="66" cy="24" rx="4" ry="1.8" transform="rotate(30 66 24)" className="fill-fig stroke-none" />
+          <ellipse
+            cx="34"
+            cy="24"
+            rx="4"
+            ry="1.8"
+            transform="rotate(-30 34 24)"
+            className="fill-fig stroke-none"
+          />
+          <ellipse
+            cx="66"
+            cy="24"
+            rx="4"
+            ry="1.8"
+            transform="rotate(30 66 24)"
+            className="fill-fig stroke-none"
+          />
         </g>
       );
     case 'laurel':
@@ -100,16 +102,28 @@ function MotifGlyph({ motif }: { motif: MotifId }): ReactNode {
         <g className="fill-none stroke-fig" opacity={0.45}>
           <ellipse cx="50" cy="50" rx="30" ry="30" strokeWidth={1.4} />
           <ellipse cx="50" cy="50" rx="14" ry="30" strokeWidth={1} />
-          <path d="M14 30l22 14M12 50h24M14 70l22-14" strokeWidth={1} className="stroke-fig-accent" />
+          <path
+            d="M14 30l22 14M12 50h24M14 70l22-14"
+            strokeWidth={1}
+            className="stroke-fig-accent"
+          />
         </g>
       );
     case 'botanical':
       return (
         <g className="stroke-fig" strokeWidth={1.3} opacity={0.5}>
           <path d="M22 84C30 70 32 56 30 40" className="fill-none" />
-          <path d="M30 48c7-2 11-7 11-14-7 1-11 6-11 14zM29 60c-7-1-11-6-12-13 7 0 11 5 12 13zM27 72c7-2 11-7 12-14-7 1-11 6-12 14z" className="fill-fig" fillOpacity={0.5} />
+          <path
+            d="M30 48c7-2 11-7 11-14-7 1-11 6-11 14zM29 60c-7-1-11-6-12-13 7 0 11 5 12 13zM27 72c7-2 11-7 12-14-7 1-11 6-12 14z"
+            className="fill-fig"
+            fillOpacity={0.5}
+          />
           <path d="M78 84C70 70 68 56 70 40" className="fill-none" />
-          <path d="M70 48c-7-2-11-7-11-14 7 1 11 6 11 14zM71 60c7-1 11-6 12-13-7 0-11 5-12 13z" className="fill-fig" fillOpacity={0.5} />
+          <path
+            d="M70 48c-7-2-11-7-11-14 7 1 11 6 11 14zM71 60c7-1 11-6 12-13-7 0-11 5-12 13z"
+            className="fill-fig"
+            fillOpacity={0.5}
+          />
         </g>
       );
     case 'column':
@@ -185,10 +199,16 @@ interface AvatarProps {
  * Animaties per staat (luistert / denkt / spreekt); respecteert prefers-reduced-motion.
  * Nooit foto's van echte, hedendaagse mensen.
  */
-export function Avatar({ figure, size = 56, state = 'idle', className, decorative = true }: AvatarProps) {
+export function Avatar({
+  figure,
+  size = 56,
+  state = 'idle',
+  className,
+  decorative = true,
+}: AvatarProps) {
   useFigureFonts(figure);
   const monogram = monogramFor(figure);
-  const isNative = /[^\u0000-ɏ]/.test(monogram);
+  const isNative = [...monogram].some((ch) => (ch.codePointAt(0) ?? 0) > 0x24f);
   const fontFamily = isNative
     ? NATIVE_FONT_FAMILY[figure.nativeScript ?? 'latin']
     : DISPLAY_FONT_FAMILY[figure.theme.displayFont];
@@ -212,11 +232,21 @@ export function Avatar({ figure, size = 56, state = 'idle', className, decorativ
         viewBox="0 0 100 100"
         width={size}
         height={size}
-        className={cx('relative', state === 'listening' && 'animate-breathe motion-reduce:animate-none')}
+        className={cx(
+          'relative',
+          state === 'listening' && 'animate-breathe motion-reduce:animate-none',
+        )}
       >
         <circle cx="50" cy="50" r="48" className="fill-fig-accent" opacity={0.9} />
         <circle cx="50" cy="50" r="45.5" className="fill-fig-surface" />
-        <circle cx="50" cy="50" r="43" className="fill-none stroke-fig" strokeWidth={0.8} opacity={0.6} />
+        <circle
+          cx="50"
+          cy="50"
+          r="43"
+          className="fill-none stroke-fig"
+          strokeWidth={0.8}
+          opacity={0.6}
+        />
         <MotifGlyph motif={figure.theme.motif} />
         <text
           x="50"
@@ -224,7 +254,12 @@ export function Avatar({ figure, size = 56, state = 'idle', className, decorativ
           dy="0.35em"
           textAnchor="middle"
           className="fill-fig"
-          style={{ fontFamily, fontSize, fontWeight: 600, letterSpacing: monogram.length > 1 ? '0.02em' : undefined }}
+          style={{
+            fontFamily,
+            fontSize,
+            fontWeight: 600,
+            letterSpacing: monogram.length > 1 ? '0.02em' : undefined,
+          }}
         >
           {monogram}
         </text>

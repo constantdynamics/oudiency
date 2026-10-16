@@ -3,3 +3,5 @@ coverage
 node_modules
 package-lock.json
 public
+src/data/figures/index.generated.ts
+src/data/seed/lectures/index.generated.ts

@@ -81,7 +81,8 @@ export function daySlots(
     if (start <= now) return { time, start, status: 'verlopen' };
     if (busy.has(time)) return { time, start, status: 'bezet' };
     const clash = mine.find((b) => b.time === time);
-    if (clash) return { time, start, status: 'onbeschikbaar', note: 'Je hebt dan al een andere afspraak.' };
+    if (clash)
+      return { time, start, status: 'onbeschikbaar', note: 'Je hebt dan al een andere afspraak.' };
     return { time, start, status: 'vrij' };
   });
 
@@ -101,7 +102,9 @@ export function daySlots(
 /** Datumsleutels van vandaag en de komende 7 dagen. */
 export function bookingDays(now: number): string[] {
   const today = localDateKey(now);
-  return Array.from({ length: LIMITS.session.bookingDaysAhead + 1 }, (_, i) => addDaysToKey(today, i));
+  return Array.from({ length: LIMITS.session.bookingDaysAhead + 1 }, (_, i) =>
+    addDaysToKey(today, i),
+  );
 }
 
 export type StartWindow = 'te-vroeg' | 'open' | 'gemist';
@@ -127,6 +130,8 @@ export function findMissedBookings(bookings: readonly Booking[], now: number): B
 /** Eerstvolgende geplande afspraak (of de afspraak waarvan de deur nu openstaat). */
 export function nextBooking(bookings: readonly Booking[], now: number): Booking | undefined {
   return bookings
-    .filter((b) => (b.status === 'gepland' && startWindow(b, now) !== 'gemist') || b.status === 'actief')
+    .filter(
+      (b) => (b.status === 'gepland' && startWindow(b, now) !== 'gemist') || b.status === 'actief',
+    )
     .sort((a, b) => bookingStart(a) - bookingStart(b))[0];
 }

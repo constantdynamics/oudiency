@@ -1,0 +1,99 @@
+import { networkFigure } from '../define';
+
+export const voltaire = networkFigure({
+  id: 'voltaire',
+  name: 'Voltaire',
+  nativeName: 'François-Marie Arouet',
+  nativeScript: 'latin',
+  epithet: 'Spotter en strijder voor tolerantie',
+  born: 1694,
+  died: 1778,
+  origin: 'Parijs, Frankrijk',
+  school: 'Verlichting',
+  family: 'verlichting',
+  theme: { primary: '#4a2d45', accent: '#bb924b', motif: 'quill' },
+  tags: ['tolerantie', 'vrijheid', 'religie', 'humor', 'kritiek', 'optimisme', 'rechtvaardigheid'],
+  bio: 'François-Marie Arouet, beter bekend als Voltaire, was de scherpste pen van de Verlichting. Hij zat twee keer in de Bastille, leefde jaren in ballingschap en schreef toneel, poëzie, geschiedenis en tienduizenden brieven. In Candide dreef hij de spot met het optimisme van Leibniz. Met de zaak-Calas streed hij tegen religieuze onverdraagzaamheid: "Écrasez l’infâme!"',
+  keyConcepts: [
+    {
+      term: 'Tolerantie',
+      explanation: 'Verdraagzaamheid tussen geloven; vervolging om een overtuiging is barbaars.',
+    },
+    { term: 'Spot als wapen', explanation: 'Satire legt dwaasheid en machtsmisbruik bloot.' },
+    {
+      term: 'Onze tuin bewerken',
+      explanation: 'Na alle grote theorieën: doe wat binnen je bereik ligt.',
+    },
+  ],
+  keyWorks: [
+    { title: 'Lettres philosophiques', year: '1734' },
+    { title: 'Éléments de la philosophie de Newton', year: '1738' },
+    { title: 'Candide', year: '1759' },
+    { title: 'Traité sur la tolérance', year: '1763' },
+    { title: 'Dictionnaire philosophique', year: '1764' },
+  ],
+  lifeEvents: [
+    { year: '1694', text: 'Geboren in Parijs.' },
+    { year: '1717', text: 'Zit bijna een jaar in de Bastille vanwege spotverzen.' },
+    {
+      year: '1726–1728',
+      text: 'Woont in ballingschap in Engeland en raakt onder de indruk van Locke en Newton.',
+    },
+    { year: '1759', text: 'Candide verschijnt en wordt meteen verboden en verslonden.' },
+    {
+      year: '1762–1765',
+      text: 'Voert campagne voor eerherstel van Jean Calas, een protestant die onterecht was terechtgesteld.',
+    },
+    {
+      year: '1778',
+      text: 'Keert triomfantelijk terug in Parijs, ontmoet daar Franklin, en sterft een paar maanden later.',
+    },
+  ],
+  quotes: [
+    {
+      text: 'We moeten onze tuin bewerken.',
+      original: 'Il faut cultiver notre jardin.',
+      source: 'Candide (1759), slotzin',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+    {
+      text: 'Als God niet bestond, zou men hem moeten uitvinden.',
+      original: 'Si Dieu n’existait pas, il faudrait l’inventer.',
+      source: 'Épître à l’auteur du livre des Trois imposteurs (1769)',
+      status: 'authentiek',
+      translation: 'eigen',
+      verified: true,
+    },
+    {
+      text: 'Ik ben het niet eens met wat u zegt, maar ik zal tot de dood uw recht verdedigen om het te zeggen.',
+      source: 'Vaak aan Voltaire toegeschreven',
+      status: 'toegeschreven',
+      translation: 'eigen',
+      verified: true,
+      note: 'Deze zin is van Evelyn Beatrice Hall (1906), die er Voltaires houding mee samenvatte.',
+    },
+  ],
+  voice: {
+    register: 'Geestig, snel en spottend; achter de spot een fel rechtvaardigheidsgevoel.',
+    method: 'Prikt door hoogdravendheid heen met ironie, en eindigt praktisch: wat kun je nu doen?',
+  },
+  modernLens:
+    'Voltaire zou de satirici en stand-upcomedians van nu als zijn erfgenamen zien, en elke vorm van vervolging om een overtuiging te lijf gaan.',
+  controversies: [
+    'In zijn geschriften staan antisemitische passages, en hij verdiende ook geld met handel die verbonden was aan de koloniën.',
+  ],
+  network: [
+    { id: 'franklin', relation: 'tijdgenoot', note: 'ontmoeting in Parijs, 1778' },
+    { id: 'rousseau', relation: 'rivaal' },
+    { id: 'diderot', relation: 'tijdgenoot' },
+    { id: 'newton', relation: 'invloed' },
+    { id: 'locke', relation: 'invloed' },
+    { id: 'leibniz', relation: 'tegenpool' },
+    { id: 'montesquieu', relation: 'tijdgenoot' },
+    { id: 'hume', relation: 'tijdgenoot' },
+    { id: 'confucius', relation: 'voorbeeld' },
+  ],
+  helpsWith: ['tolerantie', 'kritiek met humor', 'praktisch blijven'],
+});

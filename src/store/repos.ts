@@ -7,7 +7,16 @@ import { useBookingStore } from './bookingStore';
 import { useLectureStore } from './lectureStore';
 import { usePostStore } from './postStore';
 import { useProfileStore } from './profileStore';
-import type { Booking, Lecture, LectureSegment, Message, Post, Reaction, Session, UserProfile } from './schemas';
+import type {
+  Booking,
+  Lecture,
+  LectureSegment,
+  Message,
+  Post,
+  Reaction,
+  Session,
+  UserProfile,
+} from './schemas';
 import { useSessionStore } from './sessionStore';
 
 export interface BookingRepo {

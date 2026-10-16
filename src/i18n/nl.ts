@@ -39,7 +39,7 @@ export const nl = {
       count > 0 ? `Meldingen, ${count} ongelezen` : 'Meldingen, geen nieuwe',
   },
   demo: {
-    banner: 'Demomodus: de denkers antwoorden met vooraf geschreven tekst.',
+    banner: 'De denkers antwoorden met vooraf geschreven tekst.',
     bannerCta: 'Eigen API-key gebruiken',
     bannerDismiss: 'Melding verbergen',
     inline: 'Demomodus — vooraf geschreven antwoorden',
@@ -66,6 +66,12 @@ export const nl = {
     generic: 'Er ging iets mis. Probeer het opnieuw.',
     refusal: 'Hier kan de simulatie niet op ingaan. Probeer het anders te formuleren.',
     figureNotFound: 'Deze denker kennen we niet.',
+    pageBody:
+      'Er ging iets mis bij het tonen van deze pagina. Herladen helpt meestal; je gegevens blijven bewaard.',
+    newVersionTitle: 'Er is een nieuwe versie',
+    newVersionBody:
+      'Oudiency is net bijgewerkt. Herlaad de pagina om verder te gaan; je gegevens blijven bewaard.',
+    reload: 'Pagina herladen',
   },
   figures: {
     title: 'Denkers',
@@ -150,7 +156,9 @@ export const nl = {
     shareFragment: 'Deel een fragment',
     timerLabel: 'Resterende tijd',
     memoryNote: (n: number) =>
-      n === 1 ? 'De denker herinnert zich jullie vorige gesprek.' : `De denker herinnert zich jullie vorige ${n} gesprekken.`,
+      n === 1
+        ? 'De denker herinnert zich jullie vorige gesprek.'
+        : `De denker herinnert zich jullie vorige ${n} gesprekken.`,
     limitReached: 'Je daglimiet voor sessies is bereikt.',
     premiumHint: 'Met Premium plan je tot 3 sessies per dag.',
     states: {
@@ -231,7 +239,8 @@ export const nl = {
     questions: 'Populaire vragen',
     figureOfTheDay: 'Denker van de dag',
     helpMe: 'Wie kan mij helpen?',
-    helpMePlaceholder: 'Beschrijf je vraag of probleem, bijvoorbeeld: ik ben bang om fouten te maken',
+    helpMePlaceholder:
+      'Beschrijf je vraag of probleem, bijvoorbeeld: ik ben bang om fouten te maken',
     helpMeSubmit: 'Zoek denkers',
     search: 'Zoek in colleges',
     filters: 'Filters',

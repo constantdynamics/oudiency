@@ -1,8 +1,8 @@
 /**
  * Profiel → Mijn data: exporteren (JSON), importeren en alles wissen.
- * De API-key gaat nooit mee in een export.
+ * API-sleutels (Anthropic, ElevenLabs) gaan nooit mee in een export: ze staan buiten de stores.
  */
-import { z } from 'zod';
+import * as z from 'zod/mini';
 import { APP } from '@/config/app';
 import { clock } from '@/lib/clock';
 import { runMigrations, storageKey, storeRegistry, type StoreName } from './persist';
@@ -11,13 +11,13 @@ import './allStores';
 
 const ExportFileSchema = z.object({
   app: z.literal('oudiency'),
-  formatVersion: z.number().int(),
+  formatVersion: z.int(),
   exportedAt: z.string(),
   stores: z.record(
     z.string(),
     z.object({
       state: z.unknown(),
-      version: z.number().int().min(0),
+      version: z.int().check(z.minimum(0)),
     }),
   ),
 });
@@ -97,7 +97,8 @@ export async function importData(json: string): Promise<ImportResult> {
 }
 
 /** Wis alle gegevens van deze app in deze browser. */
-export function wipeAllData(options: { includeApiKey: boolean }): void {
+export function wipeAllData(options: { includeApiKeys: boolean }): void {
+  const secrets = new Set([storageKey('apikey'), storageKey('elevenlabs-key')]);
   const prefix = `${APP.storageNamespace}:`;
   const keys: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {
@@ -105,7 +106,7 @@ export function wipeAllData(options: { includeApiKey: boolean }): void {
     if (key && key.startsWith(prefix)) keys.push(key);
   }
   for (const key of keys) {
-    if (!options.includeApiKey && key === storageKey('apikey')) continue;
+    if (!options.includeApiKeys && secrets.has(key)) continue;
     localStorage.removeItem(key);
   }
   try {

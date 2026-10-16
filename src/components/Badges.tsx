@@ -40,7 +40,12 @@ export function Pill({ children, tone = 'neutral', className, title, icon }: Pil
 /** Verplicht label bij elk gesprek, college en elke reactie (EU AI-verordening: transparantie). */
 export function AiLabel({ className }: { className?: string }) {
   return (
-    <Pill tone="info" className={className} title={t.app.aiLabelLong} icon={<Sparkles aria-hidden className="size-3" />}>
+    <Pill
+      tone="info"
+      className={className}
+      title={t.app.aiLabelLong}
+      icon={<Sparkles aria-hidden className="size-3" />}
+    >
       {t.app.aiLabel}
     </Pill>
   );
@@ -56,7 +61,12 @@ export function ExampleBadge({ className }: { className?: string }) {
 
 export function DemoBadge({ className }: { className?: string }) {
   return (
-    <Pill tone="warn" className={className} title={t.demo.inline} icon={<FlaskConical aria-hidden className="size-3" />}>
+    <Pill
+      tone="warn"
+      className={className}
+      title={t.demo.inline}
+      icon={<FlaskConical aria-hidden className="size-3" />}
+    >
       {t.app.demoMode}
     </Pill>
   );
