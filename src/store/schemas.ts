@@ -275,6 +275,8 @@ export type UsageEntry = z.infer<typeof UsageEntrySchema>;
 export const ContentCacheSchema = z.object({
   /** `${figureId}|${datum}` → gedachte van vandaag. */
   thoughts: z.record(z.string(), z.object({ text: z.string(), provider: z.string() })),
+  /** De denker van de dag ligt vast voor die dag (ook als je hem die dag ontdekt). */
+  figureOfTheDay: z.optional(z.object({ dateKey: z.string(), figureId: z.string() })),
 });
 export type ContentCache = z.infer<typeof ContentCacheSchema>;
 
