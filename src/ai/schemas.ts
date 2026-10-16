@@ -70,3 +70,20 @@ export const HelperSchema = z.object({
     .describe('Precies drie verschillende denkers.'),
 });
 export type HelperOutput = z.infer<typeof HelperSchema>;
+
+export const PodcastScriptSchema = z.object({
+  title: z.string().describe('Titel van de aflevering, max. 70 tekens.'),
+  segments: z
+    .array(
+      z.object({
+        speaker: z
+          .string()
+          .describe('Id van de spreker: "sophie" of een denker-id uit de opdracht.'),
+        text: z
+          .string()
+          .describe('Wat de spreker zegt: gesproken tekst, 40–180 woorden, zonder opmaak.'),
+      }),
+    )
+    .describe('Alle fragmenten in volgorde; het eerste en het laatste zijn van Sophie.'),
+});
+export type PodcastScriptOutput = z.infer<typeof PodcastScriptSchema>;

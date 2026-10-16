@@ -11,6 +11,7 @@ import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { Toasts } from '@/components/Toasts';
 import { APP } from '@/config/app';
+import { registerDailyEpisodeTask } from '@/podcast/daily';
 import { useBackgroundTasks } from '@/services/background';
 import { t } from '@/i18n/nl';
 import { clock } from '@/lib/clock';
@@ -103,6 +104,9 @@ export function AppLayout() {
   const devPanelEnabled = useSettingsStore((s) => s.settings.devPanelEnabled);
   const showDev = isDevPanelAllowed() || devPanelEnabled;
 
+  // De podcastaflevering van vandaag (alleen met je eigen Claude-sleutel). Vóór de
+  // achtergrondtaken, zodat hij al bij de eerste ronde meedoet.
+  useEffect(() => registerDailyEpisodeTask(), []);
   useBackgroundTasks();
   useScrollRestoration();
   useHeaderHeight(headerRef);
