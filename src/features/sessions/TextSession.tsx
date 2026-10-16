@@ -1,6 +1,7 @@
-import { LogOut, RefreshCw } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAiMode } from '@/ai';
+import { AiErrorNote } from '@/components/AiErrorNote';
 import { Button } from '@/components/Button';
 import { CrisisCard } from '@/components/CrisisCard';
 import { Dialog } from '@/components/Dialog';
@@ -13,6 +14,7 @@ import { extendSession, finishSession } from '@/services/session.service';
 import { addUserMessage, type TurnContext } from '@/services/sessionAi';
 import { timerState } from '@/services/session-timer';
 import { useProfileStore } from '@/store/profileStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import type { Session } from '@/store/schemas';
 import { clearTurnError, isBusy, runTurn, stopTurn, useLiveTurn } from './liveTurn';
 import { Composer, MessageList, SessionHeader, TimeWarning } from './sessionParts';
@@ -78,6 +80,12 @@ export function TextSession({
     void runTurn(session.id, kind, turn);
   };
 
+  // Lukt het met de eigen key niet (key, tegoed, model), dan kun je in de demomodus verder.
+  const switchToDemo = () => {
+    useSettingsStore.getState().update({ aiSource: 'demo' });
+    retry();
+  };
+
   const extend = () => {
     const result = extendSession(session.id);
     toast(
@@ -127,20 +135,12 @@ export function TextSession({
       <div className="sticky bottom-[calc(4rem_+_env(safe-area-inset-bottom))] z-10 -mx-4 space-y-2 max-md:-mb-12 border-t border-line bg-paper/95 px-4 pt-3 pb-3 backdrop-blur sm:-mx-6 sm:px-6 md:bottom-0">
         {session.crisis && <CrisisCard />}
         {failed && (
-          <div
-            role="alert"
-            className="flex flex-wrap items-center gap-3 rounded-2xl border border-danger-soft bg-danger-soft px-4 py-3"
-          >
-            <p className="flex-1">{t.sessions.aiError}</p>
-            <Button
-              size="sm"
-              variant="secondary"
-              icon={<RefreshCw aria-hidden className="size-4" />}
-              onClick={retry}
-            >
-              {t.sessions.retry}
-            </Button>
-          </div>
+          <AiErrorNote
+            error={live.error ?? { kind: 'other', message: t.sessions.aiError }}
+            onRetry={retry}
+            retryLabel={t.sessions.retry}
+            onUseDemo={switchToDemo}
+          />
         )}
         {(phase === 'afronden' || phase === 'slot') && (
           <TimeWarning credits={credits} extensions={session.extensions} onExtend={extend} />

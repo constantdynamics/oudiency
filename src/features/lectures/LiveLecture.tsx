@@ -1,6 +1,7 @@
-import { ArrowRight, MessageCircleQuestion, Play, RefreshCw } from 'lucide-react';
+import { ArrowRight, MessageCircleQuestion, Play } from 'lucide-react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { useAiMode } from '@/ai';
+import { AiErrorNote } from '@/components/AiErrorNote';
 import { Pill } from '@/components/Badges';
 import { Button, ButtonLink } from '@/components/Button';
 import { CrisisCard } from '@/components/CrisisCard';
@@ -20,6 +21,7 @@ import {
   stepHeading,
 } from '@/services/lecture.service';
 import { useProfileStore } from '@/store/profileStore';
+import { useSettingsStore } from '@/store/settingsStore';
 import type { Lecture } from '@/store/schemas';
 import {
   LectureHall,
@@ -130,6 +132,12 @@ export function LiveLecture({
     void runNext(lecture.id, figure, displayName);
   };
 
+  // Lukt het met de eigen key niet (key, tegoed, model), dan kun je in de demomodus verder.
+  const switchToDemo = () => {
+    useSettingsStore.getState().update({ aiSource: 'demo' });
+    retry();
+  };
+
   const parts = partNumbers(lecture.segments);
   const avatar = running ? (run.status === 'schrijft' ? 'speaking' : 'thinking') : 'listening';
   const hint = nextLabel(lecture, step);
@@ -174,20 +182,12 @@ export function LiveLecture({
         ))}
 
       {failed && (
-        <div
-          role="alert"
-          className="flex flex-wrap items-center gap-3 rounded-2xl border border-danger-soft bg-danger-soft px-4 py-3"
-        >
-          <p className="flex-1">{t.lectures.error}</p>
-          <Button
-            size="sm"
-            variant="secondary"
-            icon={<RefreshCw aria-hidden className="size-4" />}
-            onClick={retry}
-          >
-            {t.lectures.retry}
-          </Button>
-        </div>
+        <AiErrorNote
+          error={run.error ?? { kind: 'other', message: t.lectures.error }}
+          onRetry={retry}
+          retryLabel={t.lectures.retry}
+          onUseDemo={switchToDemo}
+        />
       )}
 
       {crisis && (

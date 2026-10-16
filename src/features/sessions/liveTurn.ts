@@ -4,7 +4,7 @@
  * stroom een rerender en blijft de opslag schoon.
  */
 import { create } from 'zustand';
-import { AiError, isAbort } from '@/ai';
+import { type AiErrorInfo, describeAiError, isAbort } from '@/ai';
 import { clock } from '@/lib/clock';
 import { markdownToPlainText } from '@/lib/markdown';
 import { speak } from '@/lib/speech';
@@ -20,7 +20,7 @@ interface LiveTurnState {
   kind?: 'opening' | 'antwoord';
   status: LiveStatus;
   text: string;
-  error?: { kind: AiError['kind']; message: string };
+  error?: AiErrorInfo;
   controller?: AbortController;
 }
 
@@ -70,12 +70,11 @@ export async function runTurn(
     }
     // Tijd die de storing kostte, krijg je terug (max. 2 minuten per sessie).
     compensateSession(sessionId, clock.now() - startedAt);
-    const kindOf = error instanceof AiError ? error.kind : 'other';
     useLiveTurn.setState({
       status: 'fout',
       text: '',
       controller: undefined,
-      error: { kind: kindOf, message: error instanceof Error ? error.message : String(error) },
+      error: describeAiError(error),
     });
   }
 }

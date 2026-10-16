@@ -4,8 +4,9 @@
  * niet in de startbundel zitten.
  */
 import { useSyncExternalStore } from 'react';
+import { t } from '@/i18n/nl';
 import { apiKeyStorage, subscribeApiKey, useSettingsStore } from '@/store/settingsStore';
-import type { AIProvider, ProviderId } from './provider';
+import { AiError, type AiErrorKind, type AIProvider, type ProviderId } from './provider';
 
 let demo: Promise<AIProvider> | null = null;
 let anthropic: { key: string; provider: Promise<AIProvider> } | null = null;
@@ -63,5 +64,37 @@ export function useAiMode(): ProviderId {
   return aiSource === 'anthropic-browser' && hasKey ? 'anthropic-browser' : 'demo';
 }
 
+/** Voor de UI: soort fout, Nederlandse uitleg en de melding van de dienst zelf. */
+export interface AiErrorInfo {
+  kind: AiErrorKind;
+  message: string;
+  detail?: string;
+}
+
+export function describeAiError(error: unknown): AiErrorInfo {
+  if (error instanceof AiError) {
+    return { kind: error.kind, message: error.message, detail: error.detail };
+  }
+  return {
+    kind: 'other',
+    message: t.ai.errors.other,
+    detail: error instanceof Error ? error.message : undefined,
+  };
+}
+
+/** Test een nieuwe Anthropic-key met een korte, goedkope aanroep, vóórdat hij wordt bewaard. */
+export async function testAnthropicKey(key: string): Promise<void> {
+  const { AnthropicBrowserProvider } = await import('./anthropicBrowserProvider');
+  await new AnthropicBrowserProvider(key).streamText(
+    {
+      task: 'dailyQuestion',
+      system: [{ text: 'Antwoord met alleen het woord: ok.' }],
+      messages: [{ role: 'user', content: 'Test' }],
+      demo: { kind: 'test' },
+    },
+    () => {},
+  );
+}
+
 export { AiError, isAbort } from './provider';
-export type { AIProvider, ProviderId } from './provider';
+export type { AiErrorKind, AIProvider, ProviderId } from './provider';

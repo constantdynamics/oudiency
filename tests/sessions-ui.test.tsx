@@ -1,7 +1,7 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ALL_FIGURES } from '@/data/figures/all';
 import type { Figure } from '@/data/types';
 import { BookingPage } from '@/features/sessions/BookingPage';
@@ -14,7 +14,7 @@ import { bookSession } from '@/services/session.service';
 import { useBookingStore } from '@/store/bookingStore';
 import { initialProfile, useProfileStore } from '@/store/profileStore';
 import { useSessionStore } from '@/store/sessionStore';
-import { useSettingsStore } from '@/store/settingsStore';
+import { apiKeyStorage, useSettingsStore } from '@/store/settingsStore';
 
 const socrates = ALL_FIGURES.find((f) => f.id === 'socrates') as Figure;
 const DAY = '2026-10-19';
@@ -48,6 +48,8 @@ beforeEach(() => {
 
 afterEach(() => {
   clock.setOffset(0);
+  vi.unstubAllGlobals();
+  apiKeyStorage.clear();
 });
 
 describe('afspraak maken', () => {
@@ -126,6 +128,46 @@ describe('het gesprek', () => {
       endReason: 'gebruiker',
     });
     expect(useBookingStore.getState().bookings[0]?.status).toBe('afgerond');
+  });
+
+  it('eigen key zonder tegoed: de echte reden, en verder in de demomodus', async () => {
+    const user = userEvent.setup();
+    apiKeyStorage.set('sk-ant-test-zonder-tegoed');
+    useSettingsStore.getState().update({ aiSource: 'anthropic-browser' });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              type: 'error',
+              error: {
+                type: 'invalid_request_error',
+                message: 'Your credit balance is too low to access the Anthropic API.',
+              },
+            }),
+            { status: 400, headers: { 'content-type': 'application/json' } },
+          ),
+      ),
+    );
+    const time = firstFreeTime();
+    const booking = bookSession(socrates, { figureId: 'socrates', date: DAY, time }, MORNING);
+    clock.travelTo(localDateTime(DAY, time) + MINUTE);
+    renderAt(`/sessies/${booking.id}`);
+    await user.click(await screen.findByRole('button', { name: /Typen/ }));
+
+    const alert = await screen.findByRole('alert', undefined, { timeout: 8000 });
+    expect(alert).toHaveTextContent('Je tegoed bij Anthropic is op');
+    expect(alert).toHaveTextContent('Claude: Your credit balance is too low');
+    expect(
+      within(alert).getByRole('link', { name: 'Open Billing in de Claude Console' }),
+    ).toHaveAttribute('href', 'https://platform.claude.com/settings/billing');
+
+    await user.click(within(alert).getByRole('button', { name: 'Verder in de demomodus' }));
+    expect(useSettingsStore.getState().settings.aiSource).toBe('demo');
+    // De begroeting komt nu uit de demomodus; daarna kun je typen.
+    await waitForEnabled(await screen.findByLabelText('Jouw bericht'));
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('te vroeg: wanneer de deur opengaat, met agenda, verzetten en annuleren', async () => {

@@ -2,6 +2,7 @@
  * Alle UI-teksten centraal (Nederlands). Inhoud van denkers, colleges en demo-fragmenten staat
  * in src/data; hier staat de taal van de app zelf.
  */
+import type { AiErrorKind } from '@/ai/provider';
 import { APP, CRISIS_RESOURCES } from '@/config/app';
 
 export const nl = {
@@ -72,6 +73,34 @@ export const nl = {
     newVersionBody:
       'Oudiency is net bijgewerkt. Herlaad de pagina om verder te gaan; je gegevens blijven bewaard.',
     reload: 'Pagina herladen',
+  },
+  ai: {
+    /** Waarom Claude (met je eigen key) niet antwoordde. */
+    errors: {
+      auth: 'Claude accepteert je API-key niet, of de key mag dit niet.',
+      billing: 'Je tegoed bij Anthropic is op, dus Claude kan nu niet antwoorden.',
+      model: 'Het gekozen model is niet beschikbaar voor je API-key.',
+      rate: 'Even te veel verzoeken tegelijk. Wacht een minuut en probeer het opnieuw.',
+      overloaded: 'Claude is even overbelast. Probeer het zo opnieuw.',
+      network:
+        'Geen verbinding met Claude. Controleer je internet; ook een adblocker of firewall kan api.anthropic.com tegenhouden.',
+      invalid: 'Claude weigerde de aanvraag.',
+      refusal: 'Hier kan de simulatie niet op ingaan.',
+      aborted: 'Afgebroken.',
+      other: 'Er ging iets mis bij Claude.',
+    } satisfies Record<AiErrorKind, string>,
+    /** Wat je eraan doet (alleen waar dat iets toevoegt). */
+    fixes: {
+      auth: 'Controleer of je de hele key hebt gekopieerd, of maak een nieuwe in de Claude Console.',
+      billing:
+        'Koop tegoed bij in de Claude Console (Billing); daarna werkt het meteen. Tot die tijd kun je verder in de demomodus.',
+      model: 'Zet in je instellingen de modellen per taak terug op de standaard.',
+    } as Partial<Record<AiErrorKind, string>>,
+    settingsLink: 'Naar je AI-instellingen',
+    billingLink: 'Open Billing in de Claude Console',
+    billingUrl: 'https://platform.claude.com/settings/billing',
+    useDemo: 'Verder in de demomodus',
+    detail: (text: string) => `Claude: ${text}`,
   },
   figures: {
     title: 'Denkers',

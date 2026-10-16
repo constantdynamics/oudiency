@@ -11,6 +11,50 @@ import { useUsageStore } from '@/store/miscStores';
 import { initialProfile, useProfileStore } from '@/store/profileStore';
 import { apiKeyStorage, initialSettings, useSettingsStore } from '@/store/settingsStore';
 
+/** Een gestreamd antwoord van de Messages API (server-sent events), zoals de SDK het verwacht. */
+function streamResponse(text: string): Response {
+  const events: [string, unknown][] = [
+    [
+      'message_start',
+      {
+        type: 'message_start',
+        message: {
+          id: 'msg_test',
+          type: 'message',
+          role: 'assistant',
+          model: 'claude-haiku-5-5',
+          content: [],
+          stop_reason: null,
+          stop_sequence: null,
+          usage: { input_tokens: 12, output_tokens: 1 },
+        },
+      },
+    ],
+    [
+      'content_block_start',
+      { type: 'content_block_start', index: 0, content_block: { type: 'text', text: '' } },
+    ],
+    [
+      'content_block_delta',
+      { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text } },
+    ],
+    ['content_block_stop', { type: 'content_block_stop', index: 0 }],
+    [
+      'message_delta',
+      {
+        type: 'message_delta',
+        delta: { stop_reason: 'end_turn', stop_sequence: null },
+        usage: { output_tokens: 1 },
+      },
+    ],
+    ['message_stop', { type: 'message_stop' }],
+  ];
+  const body = events
+    .map(([event, data]) => `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`)
+    .join('');
+  return new Response(body, { status: 200, headers: { 'content-type': 'text/event-stream' } });
+}
+
 function renderAt(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
@@ -49,7 +93,7 @@ describe('profiel', () => {
     expect(screen.getByText('8 / 73')).toBeInTheDocument();
   });
 
-  it('eigen API-key: opslaan, testen (fout netjes gemeld), gemaskeerd tonen en wissen', async () => {
+  it('eigen API-key: eerst testen; lukt dat niet, dan uitleg en niets bewaard', async () => {
     const user = userEvent.setup();
     // Geen echt netwerk in tests: de API weigert de sleutel.
     vi.stubGlobal(
@@ -72,8 +116,26 @@ describe('profiel', () => {
     ).toHaveAttribute('href', 'https://console.anthropic.com/settings/keys');
     await user.type(screen.getByLabelText('Anthropic API-key'), 'sk-ant-test-0123456789abcd');
     await user.click(screen.getByRole('button', { name: 'Opslaan en testen' }));
+    const alert = await screen.findByRole('alert', undefined, { timeout: 8000 });
+    expect(alert).toHaveTextContent('Claude accepteert je API-key niet');
+    expect(alert).toHaveTextContent('Claude: invalid x-api-key');
+    // Niet bewaard; de key staat nog in het veld om te verbeteren.
+    expect(apiKeyStorage.get()).toBeNull();
+    expect(screen.getByLabelText('Anthropic API-key')).toHaveValue('sk-ant-test-0123456789abcd');
+  });
+
+  it('eigen API-key: werkt hij, dan bewaard, gemaskeerd getoond en weer te wissen', async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => streamResponse('ok')),
+    );
+    renderAt('/profiel');
+    await user.click(screen.getByRole('radio', { name: /Eigen API-key/ }));
+    await user.type(screen.getByLabelText('Anthropic API-key'), 'sk-ant-test-0123456789abcd');
+    await user.click(screen.getByRole('button', { name: 'Opslaan en testen' }));
     expect(
-      await screen.findByText(/Je API-key wordt niet geaccepteerd/, undefined, { timeout: 8000 }),
+      await screen.findByText(/De sleutel werkt/, undefined, { timeout: 8000 }),
     ).toBeInTheDocument();
     expect(apiKeyStorage.get()).toBe('sk-ant-test-0123456789abcd');
     expect(screen.getByText('sk-ant-…abcd')).toBeInTheDocument();

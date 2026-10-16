@@ -4,7 +4,7 @@
  * wordt bij "Ga verder" opnieuw gemaakt.
  */
 import { create } from 'zustand';
-import { AiError, isAbort } from '@/ai';
+import { type AiErrorInfo, describeAiError, isAbort } from '@/ai';
 import { toast } from '@/components/toastStore';
 import type { Figure } from '@/data/types';
 import { t } from '@/i18n/nl';
@@ -20,7 +20,7 @@ interface LectureRunState {
   lectureId?: string;
   status: LectureRunStatus;
   text: string;
-  error?: { kind: AiError['kind']; message: string };
+  error?: AiErrorInfo;
   controller?: AbortController;
 }
 
@@ -80,10 +80,7 @@ export async function runNext(lectureId: string, figure: Figure, studentName?: s
       status: 'fout',
       text: '',
       controller: undefined,
-      error: {
-        kind: error instanceof AiError ? error.kind : 'other',
-        message: error instanceof Error ? error.message : String(error),
-      },
+      error: describeAiError(error),
     });
   }
 }

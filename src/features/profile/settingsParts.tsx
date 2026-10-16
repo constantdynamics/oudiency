@@ -1,6 +1,7 @@
 import { Download, ExternalLink, KeyRound, RotateCcw, Trash2, Upload } from 'lucide-react';
 import { useId, useRef, useState } from 'react';
-import { AiError } from '@/ai';
+import { type AiErrorInfo, describeAiError, testAnthropicKey } from '@/ai';
+import { AiErrorNote } from '@/components/AiErrorNote';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Dialog } from '@/components/Dialog';
@@ -24,21 +25,7 @@ type KeyState =
   | { status: 'idle' }
   | { status: 'testing' }
   | { status: 'ok' }
-  | { status: 'error'; message: string };
-
-/** Een korte, goedkope test-aanroep met de nieuwe sleutel. */
-async function testKey(): Promise<void> {
-  const { getProvider } = await import('@/ai');
-  await getProvider().streamText(
-    {
-      task: 'dailyQuestion',
-      system: [{ text: 'Antwoord met alleen het woord: ok.' }],
-      messages: [{ role: 'user', content: 'Test' }],
-      demo: { kind: 'test' },
-    },
-    () => {},
-  );
-}
+  | { status: 'error'; error: AiErrorInfo };
 
 /** AI-bron: demomodus of je eigen Anthropic-sleutel (BYOK). */
 export function AiSourceSection() {
@@ -50,21 +37,20 @@ export function AiSourceSection() {
   const [state, setState] = useState<KeyState>({ status: 'idle' });
   const stored = hasKey ? apiKeyStorage.get() : null;
 
+  // Eerst testen (een korte, goedkope aanroep), pas bewaren als hij werkt. Lukt het niet, dan
+  // blijft de key in het veld staan en zie je waarom.
   const save = async () => {
     const value = key.trim();
     if (!value) return;
-    apiKeyStorage.set(value);
-    update({ aiSource: 'anthropic-browser' });
-    setKey('');
     setState({ status: 'testing' });
     try {
-      await testKey();
+      await testAnthropicKey(value);
+      apiKeyStorage.set(value);
+      update({ aiSource: 'anthropic-browser' });
+      setKey('');
       setState({ status: 'ok' });
     } catch (error) {
-      setState({
-        status: 'error',
-        message: error instanceof AiError ? error.message : t.errors.generic,
-      });
+      setState({ status: 'error', error: describeAiError(error) });
     }
   };
 
@@ -159,8 +145,8 @@ export function AiSourceSection() {
           </form>
           <p aria-live="polite" className="text-sm">
             {state.status === 'ok' && <span className="text-ok">{t.profile.keyOk}</span>}
-            {state.status === 'error' && <span className="text-danger">{state.message}</span>}
           </p>
+          {state.status === 'error' && <AiErrorNote error={state.error} settingsLink={false} />}
           <p className="text-sm text-ink-3">{t.profile.keyPrivacy}</p>
           {stored && (
             <Button
