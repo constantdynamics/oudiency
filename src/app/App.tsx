@@ -33,6 +33,11 @@ const SessionPage = lazy(() =>
 const LecturesPage = lazy(() =>
   import('@/features/lectures/LecturesPage').then((m) => ({ default: m.LecturesPage })),
 );
+const LectureRequestPage = lazy(() =>
+  import('@/features/lectures/LectureRequestPage').then((m) => ({
+    default: m.LectureRequestPage,
+  })),
+);
 const LecturePage = lazy(() =>
   import('@/features/lectures/LecturePage').then((m) => ({ default: m.LecturePage })),
 );
@@ -66,6 +71,7 @@ export function App() {
             <Route path="sessies/boeken/:figureId?" element={<BookingPage />} />
             <Route path="sessies/:id" element={<SessionPage />} />
             <Route path="colleges" element={<LecturesPage />} />
+            <Route path="colleges/aanvragen/:figureId?" element={<LectureRequestPage />} />
             <Route path="colleges/:id" element={<LecturePage />} />
             <Route path="profiel" element={<ProfilePage />} />
             <Route path="profiel/stem" element={<VoiceSettingsPage />} />

@@ -96,8 +96,8 @@ Standaardmodellen per taak (aan te passen onder Profiel → Instellingen → Gea
 
 ## Bellen met de denkers (proef)
 
-Je kunt live, met je stem, met de denkers praten. De proef begint met Socrates; in de sessies (M4)
-kies je straks bij de starttijd tussen **Bellen** en **Typen**.
+Je kunt live, met je stem, met de denkers praten: als proefgesprek, of in een sessie op afspraak,
+waar je bij de starttijd kiest tussen **Bellen** en **Typen**.
 
 - **ElevenLabs Agents** luistert, spreekt en regelt de beurtwisseling (je kunt de denker gewoon
   onderbreken). Het brein is **Claude Sonnet 5.5**, via ElevenLabs; je hebt alleen een

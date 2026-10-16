@@ -22,7 +22,8 @@ import { BookingError, bookSession, rescheduleBooking } from '@/services/session
 import { useBookingStore } from '@/store/bookingStore';
 import { useProfileStore } from '@/store/profileStore';
 import type { Booking } from '@/store/schemas';
-import { BookingConfirmation, FigurePicker, SlotGrid } from './bookingParts';
+import { FigurePicker } from '@/features/figures/FigurePicker';
+import { BookingConfirmation, SlotGrid } from './bookingParts';
 import { whenLabel } from './format';
 
 function SlotPicker({ figureId, rescheduleId }: { figureId: string; rescheduleId?: string }) {
@@ -180,7 +181,11 @@ export function BookingPage() {
     return (
       <>
         <PageHeader eyebrow={t.sessions.title} title={t.sessions.book} intro={t.sessions.intro} />
-        <FigurePicker />
+        <FigurePicker
+          title={t.sessions.chooseFigure}
+          hint={t.sessions.pickFigureHint}
+          linkTo={(id) => `/sessies/boeken/${id}`}
+        />
       </>
     );
   }

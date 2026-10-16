@@ -67,7 +67,7 @@ function ProfileHeader({ meta }: { meta: FigureMeta }) {
               {t.figures.planSession}
             </ButtonLink>
             <ButtonLink
-              to={`/colleges?docent=${meta.id}`}
+              to={`/colleges/aanvragen/${meta.id}`}
               variant="figure-outline"
               icon={<BookOpenText aria-hidden className="size-4" />}
             >

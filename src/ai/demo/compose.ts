@@ -201,12 +201,25 @@ function rankBlocks(blocks: readonly LectureBlock[], text: string): LectureBlock
 async function lecturePlan(
   ctx: Extract<DemoContext, { kind: 'lecture-plan' }>,
 ): Promise<LecturePlanOutput> {
-  const { demo } = await loadAll(ctx.figureId);
-  const chosen = rankBlocks(demo.lecture.blocks, `${ctx.topic} ${ctx.mainQuestion}`).slice(0, 3);
+  const { demo, figure } = await loadAll(ctx.figureId);
+  const request = `${ctx.topic} ${ctx.mainQuestion}`;
+  const chosen = rankBlocks(demo.lecture.blocks, request).slice(0, 3);
   const title = ctx.topic.trim().replace(/[.!?]+$/, '');
+  // Leestips: de werken die het best bij de vraag passen, aangevuld met de hoofdwerken.
+  const works = figure.keyWorks
+    .map((work, index) => ({
+      number: index + 1,
+      score: keywordScore(request, tokenize(`${work.title} ${work.note ?? ''}`)),
+    }))
+    .sort((a, b) => b.score - a.score || a.number - b.number);
+  const reading = works.filter((w) => w.score > 0).slice(0, 3);
+  for (const work of works) if (reading.length < 2 && !reading.includes(work)) reading.push(work);
+  const tags = [...new Set(tokenize(ctx.topic))].slice(0, 3);
   return {
     title: title.charAt(0).toUpperCase() + title.slice(1),
     segments: chosen.map((block) => ({ heading: block.heading, keyPoints: [block.lesson] })),
+    furtherReading: reading.map((w) => w.number),
+    tags: tags.length ? tags : (chosen[0]?.keywords.slice(0, 2) ?? []),
   };
 }
 

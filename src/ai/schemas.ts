@@ -27,6 +27,12 @@ export const LecturePlanOutputSchema = z.object({
       }),
     )
     .describe('Precies drie delen.'),
+  furtherReading: z
+    .array(z.number().int())
+    .describe('1–3 nummers uit de lijst LEESTIPS die het best bij dit college passen.'),
+  tags: z
+    .array(z.string())
+    .describe('2–4 korte trefwoorden (één of twee woorden), kleine letters.'),
 });
 export type LecturePlanOutput = z.infer<typeof LecturePlanOutputSchema>;
 

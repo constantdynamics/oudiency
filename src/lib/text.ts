@@ -88,6 +88,18 @@ export function wordCount(text: string): number {
   return trimmed ? trimmed.split(/\s+/).length : 0;
 }
 
+/** De eerste `n` woorden van een tekst, met de witruimte (en alinea's) ertussen. */
+export function takeWords(text: string, n: number): string {
+  if (n <= 0) return '';
+  const words = /\S+/g;
+  let count = 0;
+  for (let match = words.exec(text); match; match = words.exec(text)) {
+    count += 1;
+    if (count === n) return text.slice(0, match.index + match[0].length);
+  }
+  return text;
+}
+
 /** Leestijd in minuten (Nederlands, rustig tempo ~220 woorden per minuut). */
 export function readingMinutes(words: number, wordsPerMinute = 220): number {
   return Math.max(1, Math.round(words / wordsPerMinute));
