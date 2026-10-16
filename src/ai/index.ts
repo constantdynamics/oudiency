@@ -32,6 +32,14 @@ function loadAnthropic(key: string): Promise<AIProvider> {
   return anthropic.provider;
 }
 
+/** Laadt de actieve provider alvast, voor een pagina die hem meteen nodig heeft. */
+export function preloadProvider(): void {
+  const key = activeProviderId() === 'anthropic-browser' ? apiKeyStorage.get() : null;
+  (key ? loadAnthropic(key) : loadDemo()).catch(() => {
+    // Mislukt: de echte aanroep meldt het straks zelf.
+  });
+}
+
 /** De provider voor deze aanroep (de keuze ligt vast op het moment van vragen). */
 export function getProvider(): AIProvider {
   const id = activeProviderId();

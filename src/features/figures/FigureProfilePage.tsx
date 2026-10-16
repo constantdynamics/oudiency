@@ -15,6 +15,7 @@ import { lifespanOf } from '@/data/figures/format';
 import type { Figure } from '@/data/types';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { t } from '@/i18n/nl';
+import { prefetchThought } from '@/services/thought.service';
 import { useProfileStore } from '@/store/profileStore';
 import { LectureRow } from '../lectures/LectureRow';
 import { isInLibrary, useAllLectureSummaries } from '../lectures/summary';
@@ -225,6 +226,9 @@ export function FigureProfilePage() {
 
   // Een profiel openen (via een link, de denker van de dag of een reactie) is ontdekken.
   const metaId = meta?.id;
+  useEffect(() => {
+    if (metaId) prefetchThought(metaId);
+  }, [metaId]);
   const alreadyKnown = metaId ? isDiscovered(metaId, discovered) : true;
   useEffect(() => {
     if (!metaId || alreadyKnown) return;
