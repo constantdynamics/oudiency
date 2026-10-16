@@ -8,8 +8,11 @@ import { AiError, isAbort } from '@/ai';
 import { toast } from '@/components/toastStore';
 import type { Figure } from '@/data/types';
 import { t } from '@/i18n/nl';
+import { markdownToPlainText } from '@/lib/markdown';
+import { speak } from '@/lib/speech';
 import { findLecture, nextStep } from '@/services/lecture.service';
 import { useLibraryStore } from '@/store/miscStores';
+import { useSettingsStore } from '@/store/settingsStore';
 
 export type LectureRunStatus = 'stil' | 'plant' | 'denkt' | 'schrijft' | 'fout';
 
@@ -50,7 +53,7 @@ export async function runNext(lectureId: string, figure: Figure, studentName?: s
       if (controller.signal.aborted) throw new DOMException('Afgebroken', 'AbortError');
       patch({ status: 'denkt' });
     }
-    await ai.generateNextSegment(
+    const segment = await ai.generateNextSegment(
       lectureId,
       figure,
       (chunk) => {
@@ -59,6 +62,9 @@ export async function runNext(lectureId: string, figure: Figure, studentName?: s
       controller.signal,
       studentName,
     );
+    if (segment && mine() && useSettingsStore.getState().settings.readingVoice) {
+      speak(markdownToPlainText(segment.text));
+    }
     if (findLecture(lectureId)?.status === 'afgerond') {
       useLibraryStore.getState().markWatched(lectureId, true);
       if (mine()) toast(t.lectures.finished, 'ok');

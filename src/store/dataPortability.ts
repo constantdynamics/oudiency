@@ -1,6 +1,7 @@
 /**
  * Profiel → Mijn data: exporteren (JSON), importeren en alles wissen.
  * API-sleutels (Anthropic, ElevenLabs) gaan nooit mee in een export: ze staan buiten de stores.
+ * De moderatorpincode (hash) gaat ook niet mee.
  */
 import * as z from 'zod/mini';
 import { APP } from '@/config/app';
@@ -23,6 +24,15 @@ const ExportFileSchema = z.object({
 });
 export type ExportFile = z.infer<typeof ExportFileSchema>;
 
+/** De moderatorpincode (hash) gaat niet mee: wie importeert, kiest zelf een nieuwe. */
+function withoutModeratorPin(state: unknown): unknown {
+  if (!state || typeof state !== 'object' || !('settings' in state)) return state;
+  const settings = (state as { settings: Record<string, unknown> }).settings;
+  const rest: Record<string, unknown> = { ...settings, moderatorMode: false };
+  delete rest.moderatorPinHash;
+  return { ...state, settings: rest };
+}
+
 export function exportData(): ExportFile {
   const stores: ExportFile['stores'] = {};
   for (const name of storeRegistry.keys()) {
@@ -30,7 +40,10 @@ export function exportData(): ExportFile {
     if (!raw) continue;
     try {
       const parsed = JSON.parse(raw) as { state: unknown; version?: number };
-      stores[name] = { state: parsed.state, version: parsed.version ?? 0 };
+      stores[name] = {
+        state: name === 'settings' ? withoutModeratorPin(parsed.state) : parsed.state,
+        version: parsed.version ?? 0,
+      };
     } catch {
       // onleesbare store overslaan
     }

@@ -13,6 +13,7 @@ import {
   markAnswered,
   openFollowUp,
   pickAsker,
+  planDay,
   recentQuestionIds,
   rerollToday,
 } from '@/services/dailyQuestion.service';
@@ -68,6 +69,13 @@ describe('vraag van de dag', () => {
     expect(recentQuestionIds(days, addDaysToKey(DAY, 30)).size).toBe(30);
     // Na 30 dagen mag een vraag terugkomen: dag 0 valt buiten het venster van dag 31.
     expect(recentQuestionIds(days, addDaysToKey(DAY, 31)).has(seen[0]!)).toBe(false);
+  });
+
+  it('planDay toont vooraf precies de vraag die ensureToday vastlegt, zonder op te slaan', () => {
+    ensureToday(localDateTime(addDaysToKey(DAY, -1), '09:00'));
+    const planned = planDay(DAY);
+    expect(useDailyQuestionStore.getState().days[DAY]).toBeUndefined();
+    expect(ensureToday(NOW)).toEqual(planned);
   });
 
   it('de vrager: liefst een gevolgde denker, anders een bekende', () => {

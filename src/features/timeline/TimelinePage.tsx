@@ -14,6 +14,7 @@ import {
   currentQuestion,
   ensureToday,
   openFollowUp,
+  planDay,
   rerollToday,
 } from '@/services/dailyQuestion.service';
 import { createPost, PostError, type PostPrompt } from '@/services/timeline.service';
@@ -44,11 +45,13 @@ export function TimelinePage() {
   const now = Math.max(useNow(15_000), lastRunAt);
   const todayKey = localDateKey(now);
   const posts = usePostStore((s) => s.posts);
-  const day = useDailyQuestionStore((s) => s.days[todayKey]);
+  const storedDay = useDailyQuestionStore((s) => s.days[todayKey]);
+  // Het eerste bezoek van de dag: toon meteen de vraag die ensureToday hieronder vastlegt.
+  const day = storedDay ?? planDay(todayKey);
   const [prompt, setPrompt] = useState<PostPrompt>();
   const demo = useAiMode() === 'demo';
-  const question = day ? currentQuestion(day) : undefined;
-  const { figure: asker } = useFigure(day?.askerId);
+  const question = currentQuestion(day);
+  const { figure: asker } = useFigure(day.askerId);
   const followUp = openFollowUp(day, now);
 
   // De vraag van vandaag vastleggen (zelfde vraag de hele dag, geen herhaling binnen 30 dagen).
@@ -57,7 +60,7 @@ export function TimelinePage() {
   }, [todayKey]);
 
   // Met een eigen key stelt de denker de vraag in de eigen stijl (één keer per vraag per dag).
-  const styledAlready = Boolean(question && day?.styled?.[question.id]);
+  const styledAlready = Boolean(question && day.styled?.[question.id]);
   useEffect(() => {
     if (demo || !asker || !question || styledAlready) return;
     void import('@/services/timelineAi').then((ai) =>
@@ -65,10 +68,10 @@ export function TimelinePage() {
     );
   }, [demo, asker, question, styledAlready, todayKey]);
 
-  const questionText = question ? (day?.styled?.[question.id] ?? question.text) : '';
+  const questionText = question ? (day.styled?.[question.id] ?? question.text) : '';
 
   const answer = (isFollowUp: boolean) => {
-    if (!day || !question) return;
+    if (!question) return;
     setPrompt({
       promptId: question.id,
       promptText: isFollowUp ? question.followUp : questionText,
@@ -97,7 +100,7 @@ export function TimelinePage() {
     <div className="mx-auto max-w-2xl space-y-6">
       <PageHeader title={t.timeline.title} intro={t.timeline.intro} className="mb-0" />
 
-      {day && question && (
+      {question && (
         <QuestionCard
           askerId={day.askerId}
           eyebrow={t.timeline.dailyQuestion}
@@ -110,7 +113,7 @@ export function TimelinePage() {
         />
       )}
 
-      {day && followUp && (
+      {followUp && (
         <QuestionCard
           askerId={day.askerId}
           eyebrow={t.timeline.followUp}

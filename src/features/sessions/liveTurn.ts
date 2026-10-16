@@ -6,9 +6,12 @@
 import { create } from 'zustand';
 import { AiError, isAbort } from '@/ai';
 import { clock } from '@/lib/clock';
+import { markdownToPlainText } from '@/lib/markdown';
+import { speak } from '@/lib/speech';
 import { compensateSession, newMessage } from '@/services/session.service';
 import { generateOpening, generateReply, type TurnContext } from '@/services/sessionAi';
 import { useSessionStore } from '@/store/sessionStore';
+import { useSettingsStore } from '@/store/settingsStore';
 
 export type LiveStatus = 'stil' | 'denkt' | 'typt' | 'fout';
 
@@ -51,7 +54,10 @@ export async function runTurn(
       kind === 'opening'
         ? await generateOpening(sessionId, ctx, onDelta, controller.signal)
         : await generateReply(sessionId, ctx, onDelta, controller.signal);
-    if (text) useSessionStore.getState().appendMessage(sessionId, newMessage('figure', text));
+    if (text) {
+      useSessionStore.getState().appendMessage(sessionId, newMessage('figure', text));
+      if (useSettingsStore.getState().settings.readingVoice) speak(markdownToPlainText(text));
+    }
     useLiveTurn.setState({ status: 'stil', text: '', controller: undefined });
   } catch (error) {
     if (isAbort(error)) {

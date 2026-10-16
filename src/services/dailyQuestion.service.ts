@@ -71,19 +71,30 @@ function knownFigures(): Set<string> {
   return new Set([...CORE_IDS, ...discovered]);
 }
 
+/**
+ * Het dagrecord dat ensureToday voor die dag aanmaakt, zonder iets op te slaan. Zo kan de timeline
+ * de vraag al in de eerste render tonen (geen verspringend invoerveld bij het eerste bezoek).
+ */
+export function planDay(dateKey: string): DailyQuestionDay {
+  const question = pickQuestion(
+    dateKey,
+    recentQuestionIds(useDailyQuestionStore.getState().days, dateKey),
+  );
+  const { follows } = useProfileStore.getState().profile;
+  return {
+    shown: [question.id],
+    rerolls: 0,
+    askerId: pickAsker(question, knownFigures(), follows, dateKey),
+  };
+}
+
 /** De vraag van vandaag (maakt het dagrecord aan als dat er nog niet is). */
 export function ensureToday(now = clock.now()): DailyQuestionDay {
   const dateKey = localDateKey(now);
   const store = useDailyQuestionStore.getState();
   const existing = store.days[dateKey];
   if (existing) return existing;
-  const question = pickQuestion(dateKey, recentQuestionIds(store.days, dateKey));
-  const { follows } = useProfileStore.getState().profile;
-  const day: DailyQuestionDay = {
-    shown: [question.id],
-    rerolls: 0,
-    askerId: pickAsker(question, knownFigures(), follows, dateKey),
-  };
+  const day = planDay(dateKey);
   store.setDay(dateKey, day);
   return day;
 }

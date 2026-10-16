@@ -21,6 +21,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { DemoBanner } from './DemoBanner';
 import { ErrorBoundary } from './ErrorBoundary';
 import { NotificationBell } from './NotificationBell';
+import { PageFallback } from './PageFallback';
 import { isDevPanelAllowed } from './devAccess';
 import { useHeaderHeight, useScrollRestoration } from './scroll';
 
@@ -74,16 +75,6 @@ function ProfileLink() {
     >
       {initial || <UserRound aria-hidden className="size-5" />}
     </NavLink>
-  );
-}
-
-/** Terwijl een pagina-chunk laadt (alleen zichtbaar bij een trage verbinding). */
-function PageFallback() {
-  return (
-    <div className="flex justify-center py-24" role="status" aria-live="polite">
-      <span className="size-8 animate-spin rounded-full border-2 border-line-strong border-t-ink motion-reduce:animate-none" />
-      <span className="sr-only">{t.app.loading}</span>
-    </div>
   );
 }
 

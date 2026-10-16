@@ -41,11 +41,38 @@ function cspPlugin(): Plugin {
   };
 }
 
+/**
+ * Laad de broodletter en de standaard-displayletter vooraf, zodat ze tegelijk met het script
+ * binnenkomen in plaats van pas na de CSS (sneller beeld, minder verspringen).
+ */
+const PRELOADED_FONTS =
+  /(literata-latin-wght-normal|cormorant-garamond-latin-wght-normal)-[\w-]+\.woff2$/;
+
+function fontPreloadPlugin(): Plugin {
+  return {
+    name: 'oudiency-font-preload',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        const fonts = Object.keys(ctx.bundle ?? {}).filter((file) => PRELOADED_FONTS.test(file));
+        const links = fonts
+          .map(
+            (file) =>
+              `<link rel="preload" href="./${file}" as="font" type="font/woff2" crossorigin />`,
+          )
+          .join('\n    ');
+        return links ? html.replace('</head>', `    ${links}\n  </head>`) : html;
+      },
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   // Relatieve paden + HashRouter: de site werkt onder elke reponaam op GitHub Pages.
   base: './',
-  plugins: [react(), tailwindcss(), cspPlugin()],
+  plugins: [react(), tailwindcss(), cspPlugin(), fontPreloadPlugin()],
   resolve: {
     alias: [
       { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },

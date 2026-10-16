@@ -1,4 +1,14 @@
-import { CalendarPlus, ListOrdered, Pause, Play, RotateCcw, Send, Square } from 'lucide-react';
+import {
+  CalendarPlus,
+  ListOrdered,
+  Pause,
+  Play,
+  RotateCcw,
+  Send,
+  Square,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Pill } from '@/components/Badges';
 import { Button, ButtonLink } from '@/components/Button';
@@ -9,6 +19,7 @@ import type { Figure } from '@/data/types';
 import { t } from '@/i18n/nl';
 import { formatLongDate } from '@/lib/dates';
 import { plainSource } from '@/lib/quoteCard';
+import { canSpeak, speak, stopSpeaking } from '@/lib/speech';
 import { readingMinutes, takeWords, wordCount } from '@/lib/text';
 import {
   chaptersOf,
@@ -89,6 +100,19 @@ export function LectureReplay({
     [view.segments],
   );
   const [playbackMode, setPlaybackMode] = useState(false);
+  // Voorlezen met de browserstem (als die er is).
+  const [speechOk] = useState(canSpeak);
+  const [reading, setReading] = useState(false);
+  useEffect(() => () => stopSpeaking(), []);
+  const toggleReading = () => {
+    if (reading) {
+      stopSpeaking();
+      setReading(false);
+      return;
+    }
+    setReading(true);
+    speak(plainText, () => setReading(false));
+  };
   const playback = usePlayback(total);
   const wpm = LIMITS.lecture.playbackWordsPerMinute;
 
@@ -171,6 +195,23 @@ export function LectureReplay({
               >
                 {t.lectures.playback}
               </Button>
+              {speechOk && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  aria-pressed={reading}
+                  icon={
+                    reading ? (
+                      <VolumeX aria-hidden className="size-4" />
+                    ) : (
+                      <Volume2 aria-hidden className="size-4" />
+                    )
+                  }
+                  onClick={toggleReading}
+                >
+                  {reading ? t.lectures.stopReading : t.lectures.readAloud}
+                </Button>
+              )}
               <p className="text-sm text-ink-3">{t.lectures.playbackHint(wpm)}</p>
             </>
           ) : (

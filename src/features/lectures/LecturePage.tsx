@@ -13,6 +13,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { t } from '@/i18n/nl';
 import { viewOfExample, viewOfLecture } from '@/services/lecture.service';
 import { useLectureStore } from '@/store/lectureStore';
+import { LectureHall } from './lectureParts';
 import { LectureReplay } from './LectureReplay';
 import { LiveLecture } from './LiveLecture';
 
@@ -69,7 +70,20 @@ export function LecturePage() {
 
   let content;
   if (!figure || (!own && !example.lecture)) {
-    content = <Thinking className="mt-10 justify-center" text={t.app.loading} />;
+    // De kop staat er meteen (lichte gegevens); de tekst en het profiel laden erachter.
+    const name = meta.shortName ?? meta.name;
+    content = (
+      <div className="mx-auto max-w-3xl space-y-8">
+        <LectureHall
+          meta={meta}
+          title={own?.plan?.title ?? own?.topic ?? exampleMeta?.title ?? ''}
+          mainQuestion={own?.mainQuestion ?? exampleMeta?.mainQuestion ?? ''}
+          eyebrow={own ? t.lectures.hall(name) : t.lectures.exampleHall(name)}
+          isExample={!own}
+        />
+        <Thinking className="justify-center" text={t.app.loading} />
+      </div>
+    );
   } else if (own && own.status === 'bezig') {
     content = <LiveLecture lecture={own} meta={meta} figure={figure} />;
   } else {

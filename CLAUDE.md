@@ -8,9 +8,10 @@ genummerd (max. 10), per vraag ≥ 5 suggesties als a, b, c … (witregel vóór
 ## Stack
 
 Vite 8 + React 19 + TypeScript (strict) · Tailwind 4 (`@theme`-tokens + CSS-variabelen per denker) ·
-React Router (`HashRouter`, declaratief, pagina's via `React.lazy`) · Zustand persist + Zod
-(`zod/mini` in de opslag, klassiek `zod` alleen in lazy AI-code) · `@anthropic-ai/sdk` (BYOK, lazy
-geladen) · lucide-react · @fontsource · Vitest + Testing Library · ESLint + Prettier · Node 24.
+React Router (`HashRouter`, declaratief; routes in `src/app/routes.tsx`, pagina's via `lazyPage`) ·
+Zustand persist + Zod (`zod/mini` in de opslag, klassiek `zod` alleen in lazy AI-code) ·
+`@anthropic-ai/sdk` (BYOK, lazy geladen) · lucide-react · @fontsource · Vitest + Testing Library ·
+ESLint + Prettier · Node 24.
 
 ## Commando's
 
@@ -75,7 +76,9 @@ GitHub Pages.
 - Denkers: één bestand per denker in `src/data/figures/{core,network}/`, export-naam = id; daarna
   `npm run gen:index`. Volledige profielen laden lazy (eigen chunk per denker).
 - Houd de startbundel klein (Lighthouse mobiel ≥ 90): zware dingen (`@anthropic-ai/sdk`, klassiek
-  `zod`, extra fonts, pagina's) alleen via dynamische imports.
+  `zod`, extra fonts, pagina's) alleen via dynamische imports. Een nieuwe pagina gaat via
+  `lazyPage` in `routes.tsx` (deeplinks halen hun chunk vooraf op); displayletters laden pas na
+  de eerste paint (`src/lib/fonts.ts`).
 - Modellen per taak: `src/config/models.ts`. Zet nooit het model-ID van de bouwende sessie in
   commits, PR's of code.
 

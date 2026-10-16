@@ -24,12 +24,26 @@ export const NATIVE_FONT_FAMILY: Record<NativeScript, string> = {
 
 const loaded = new Set<string>();
 
+/**
+ * Pas na de volgende paint: tot dan staat de tekst in de vooraf geladen letter (zie de
+ * fontfamilies hierboven), en zo houdt een displayletter het eerste beeld nooit op.
+ */
+function afterNextPaint(task: () => void): void {
+  if (typeof requestAnimationFrame !== 'function') {
+    task();
+    return;
+  }
+  requestAnimationFrame(() => setTimeout(task, 0));
+}
+
 function once(key: string, loader: () => Promise<unknown>): void {
   if (loaded.has(key)) return;
   loaded.add(key);
-  loader().catch(() => {
-    // Laden mislukt (bijv. offline): de fallback-fonts nemen het over.
-    loaded.delete(key);
+  afterNextPaint(() => {
+    loader().catch(() => {
+      // Laden mislukt (bijv. offline): de fallback-fonts nemen het over.
+      loaded.delete(key);
+    });
   });
 }
 

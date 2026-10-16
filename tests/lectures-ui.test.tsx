@@ -144,13 +144,14 @@ describe('terugkijken', () => {
   it('een voorbeeldcollege met hoofdstukken, afspeelmodus en vind-ik-leuk', async () => {
     const user = userEvent.setup();
     renderAt('/colleges/vb-socrates-agora');
+    // De kop staat er meteen; de tekst (eigen chunk) volgt.
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Is sociale media een agora?' }),
+      screen.getByRole('heading', { level: 1, name: 'Is sociale media een agora?' }),
     ).toBeInTheDocument();
+    expect(
+      await screen.findAllByRole('button', { name: '1. Wat was de agora eigenlijk?' }),
+    ).toHaveLength(2);
     expect(screen.getByText('Voorbeeld')).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: '1. Wat was de agora eigenlijk?' }).length).toBe(
-      2,
-    );
     expect(screen.getByRole('heading', { name: 'Verder lezen' })).toBeInTheDocument();
 
     const like = screen.getByRole('button', { name: 'Vind ik leuk' });
