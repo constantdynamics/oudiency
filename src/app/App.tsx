@@ -45,6 +45,12 @@ const ModerationPage = lazy(() =>
 const AboutPage = lazy(() =>
   import('@/features/about/AboutPage').then((m) => ({ default: m.AboutPage })),
 );
+const VoiceSettingsPage = lazy(() =>
+  import('@/features/voice/VoiceSettingsPage').then((m) => ({ default: m.VoiceSettingsPage })),
+);
+const CallPage = lazy(() =>
+  import('@/features/voice/CallPage').then((m) => ({ default: m.CallPage })),
+);
 
 export function App() {
   return (
@@ -62,6 +68,8 @@ export function App() {
             <Route path="colleges" element={<LecturesPage />} />
             <Route path="colleges/:id" element={<LecturePage />} />
             <Route path="profiel" element={<ProfilePage />} />
+            <Route path="profiel/stem" element={<VoiceSettingsPage />} />
+            <Route path="bellen/:figureId" element={<CallPage />} />
             <Route path="moderatie" element={<ModerationPage />} />
             <Route path="over" element={<AboutPage />} />
             <Route path="*" element={<NotFound />} />

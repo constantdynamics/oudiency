@@ -1,6 +1,6 @@
 /**
  * Profiel → Mijn data: exporteren (JSON), importeren en alles wissen.
- * De API-key gaat nooit mee in een export.
+ * API-sleutels (Anthropic, ElevenLabs) gaan nooit mee in een export: ze staan buiten de stores.
  */
 import * as z from 'zod/mini';
 import { APP } from '@/config/app';
@@ -97,7 +97,8 @@ export async function importData(json: string): Promise<ImportResult> {
 }
 
 /** Wis alle gegevens van deze app in deze browser. */
-export function wipeAllData(options: { includeApiKey: boolean }): void {
+export function wipeAllData(options: { includeApiKeys: boolean }): void {
+  const secrets = new Set([storageKey('apikey'), storageKey('elevenlabs-key')]);
   const prefix = `${APP.storageNamespace}:`;
   const keys: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {
@@ -105,7 +106,7 @@ export function wipeAllData(options: { includeApiKey: boolean }): void {
     if (key && key.startsWith(prefix)) keys.push(key);
   }
   for (const key of keys) {
-    if (!options.includeApiKey && key === storageKey('apikey')) continue;
+    if (!options.includeApiKeys && secrets.has(key)) continue;
     localStorage.removeItem(key);
   }
   try {

@@ -12,3 +12,4 @@ export { usePostStore } from './postStore';
 export { useProfileStore } from './profileStore';
 export { useSessionStore } from './sessionStore';
 export { useSettingsStore } from './settingsStore';
+export { useVoiceStore } from './voiceStore';

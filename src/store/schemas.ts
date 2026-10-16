@@ -273,3 +273,71 @@ export const ContentCacheSchema = z.object({
   thoughts: z.record(z.string(), z.object({ text: z.string(), provider: z.string() })),
 });
 export type ContentCache = z.infer<typeof ContentCacheSchema>;
+
+/* ---------- Bellen (spraak) ---------- */
+
+export const CallTranscriptEntrySchema = z.object({
+  role: z.enum(['user', 'figure', 'system']),
+  text: z.string(),
+  at: isoDate,
+});
+export type CallTranscriptEntry = z.infer<typeof CallTranscriptEntrySchema>;
+
+export const CallEndReasonSchema = z.enum([
+  'tijd',
+  'gebruiker',
+  'crisis',
+  'verbinding',
+  'stilte',
+  'fout',
+]);
+export type CallEndReason = z.infer<typeof CallEndReasonSchema>;
+
+export const CallCostSchema = z.object({
+  credits: z.optional(z.number()),
+  fiat: z.optional(z.number()),
+  /** 'gesprek' = opgegeven door ElevenLabs; 'tegoed' = verschil in verbruikt tegoed. */
+  source: z.enum(['gesprek', 'tegoed']),
+});
+export type CallCost = z.infer<typeof CallCostSchema>;
+
+/** Een proefgesprek (de spraakproef); echte belsessies komen in de sessies terecht. */
+export const TrialCallSchema = z.object({
+  id: z.string(),
+  figureId: z.string(),
+  startedAt: isoDate,
+  endedAt: isoDate,
+  endReason: CallEndReasonSchema,
+  conversationId: z.optional(z.string()),
+  transcript: z.array(CallTranscriptEntrySchema),
+  cost: z.optional(CallCostSchema),
+});
+export type TrialCall = z.infer<typeof TrialCallSchema>;
+
+export const VoiceStateSchema = z.object({
+  /** De agent in het ElevenLabs-account van de gebruiker (geen geheim: werkt alleen met de sleutel). */
+  agent: z.optional(
+    z.object({
+      id: z.string(),
+      configVersion: z.int(),
+      /** Aangemaakt met de minimale configuratie (terugval). */
+      minimal: z.optional(z.boolean()),
+      updatedAt: isoDate,
+    }),
+  ),
+  /** Gekozen stem per denker (id in het ElevenLabs-account). */
+  voices: z.record(z.string(), z.object({ voiceId: z.string(), createdAt: isoDate })),
+  trials: z.array(TrialCallSchema),
+  /** Laatst opgevraagde accountgegevens (abonnement en tegoed). */
+  account: z.optional(
+    z.object({
+      tier: z.string(),
+      creditsUsed: z.number(),
+      creditLimit: z.number(),
+      resetsAt: z.optional(z.number()),
+      currency: z.optional(z.string()),
+      checkedAt: isoDate,
+    }),
+  ),
+});
+export type VoiceState = z.infer<typeof VoiceStateSchema>;

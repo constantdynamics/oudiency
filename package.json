@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.134.0",
+    "@elevenlabs/client": "1.28.0",
     "@fontsource-variable/cinzel": "^5.3.0",
     "@fontsource-variable/cormorant-garamond": "^5.3.0",
     "@fontsource-variable/eb-garamond": "^5.3.0",

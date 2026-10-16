@@ -17,6 +17,12 @@ describe('crisisroute (app-side vangnet)', () => {
     'Mijn leven heeft geen zin meer',
     'Ik kan het echt niet meer aan',
     'I don’t want to live anymore',
+    // Omgekeerde volgorde (na een bijwoord of bijzin), zoals in gesproken taal vaak gebeurt.
+    'Eerlijk gezegd wil ik er niet meer zijn.',
+    'Soms wil ik dood',
+    'Eigenlijk zie ik het niet meer zitten',
+    'Op zulke dagen wil ik gewoon verdwijnen',
+    'Sinds de scheiding kan ik het niet meer aan',
   ])('herkent "%s"', (text) => {
     expect(detectCrisisSignals(text)).toBe(true);
   });
@@ -32,6 +38,8 @@ describe('crisisroute (app-side vangnet)', () => {
     'Ik kan niet meer wachten tot de vakantie',
     'Ik wil er een punt achter zetten met mijn oude baan',
     'Ik wil niet meer zo hard werken',
+    'Ga ik dood aan deze griep?',
+    'Morgen kan ik niet meer langskomen',
   ])('laat "%s" met rust', (text) => {
     expect(detectCrisisSignals(text)).toBe(false);
   });

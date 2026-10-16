@@ -68,7 +68,8 @@ GitHub Pages.
 ## Conventies
 
 - Tijd altijd via `clock` (`src/lib/clock.ts`), nooit `Date.now()` in domeinlogica (lint).
-- Alle UI-teksten in `src/i18n/nl.ts`; config in `src/config/` (app, limits, models).
+- Alle UI-teksten in `src/i18n/` (`nl.ts`; `voice.ts` voor bellen, laadt lazy); config in
+  `src/config/` (app, limits, models, voice).
 - AI-tekst alleen via `RichText` (beperkte, veilige markdown); nooit `dangerouslySetInnerHTML`.
 - Logica met tests in `src/lib`, `src/services`, `src/ai/prompts`; UI dun houden.
 - Denkers: één bestand per denker in `src/data/figures/{core,network}/`, export-naam = id; daarna
@@ -77,6 +78,20 @@ GitHub Pages.
   `zod`, extra fonts, pagina's) alleen via dynamische imports.
 - Modellen per taak: `src/config/models.ts`. Zet nooit het model-ID van de bouwende sessie in
   commits, PR's of code.
+
+## Bellen (spraak)
+
+- ElevenLabs Agents met Claude (`claude-sonnet-5-5`) als brein. Eén agent per account; rol, stem en
+  openingszin per gesprek als override (`src/voice`, `src/ai/prompts/voice.ts`). Wijzig je
+  `agentPayload`, verhoog dan `VOICE.agentConfigVersion`: de app werkt de agent zelf bij.
+- ElevenLabs-sleutel = `elevenLabsKeyStorage`: alleen localStorage, alleen naar `api.elevenlabs.io`,
+  nooit in een export. Privacy van de agent blijft `record_voice: false`, bewaartermijn 0.
+- CSP blijft strikt: audio-worklets via `?url&no-inline` (nooit `data:`), de resampler via
+  `?worker&url`. `livekit-client` is in `vite.config.ts` vervangen door een stub: bellen gaat via
+  WebSocket (gesprekslink); kies nooit WebRTC zonder die alias weg te halen.
+- `CallSession` (los van React, getest) rekent vanaf `endsAt`, stuurt tijdsignalen bij 3 en 1
+  minuut, vraagt om het afscheid en stopt direct bij een crisissignaal.
+- Stemmen per kerndenker in `src/data/voices.ts` (geen citaten; `validate:data` controleert ze).
 
 ## Werkwijze
 

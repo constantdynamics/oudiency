@@ -33,15 +33,19 @@ Licentie: <https://openfontlicense.org> · Fontsource: <https://fontsource.org>
 
 ## Software (open source)
 
-| Pakket                   | Licentie |
-| ------------------------ | -------- |
-| React, React DOM         | MIT      |
-| React Router             | MIT      |
-| Zustand                  | MIT      |
-| Zod                      | MIT      |
-| Anthropic TypeScript SDK | MIT      |
-| Tailwind CSS             | MIT      |
-| Vite                     | MIT      |
-| Lucide (iconen)          | ISC      |
+| Pakket                                                                                              | Licentie |
+| --------------------------------------------------------------------------------------------------- | -------- |
+| React, React DOM                                                                                    | MIT      |
+| React Router                                                                                        | MIT      |
+| Zustand                                                                                             | MIT      |
+| Zod                                                                                                 | MIT      |
+| Anthropic TypeScript SDK                                                                            | MIT      |
+| Tailwind CSS                                                                                        | MIT      |
+| Vite                                                                                                | MIT      |
+| Lucide (iconen)                                                                                     | ISC      |
+| ElevenLabs JavaScript SDK (`@elevenlabs/client`), met de audio-worklets (μ-law-code uit `wavefile`) | MIT      |
 
-De volledige lijst met versies staat in `package.json` / `package-lock.json`.
+De volledige lijst met versies staat in `package.json` / `package-lock.json`. De WebRTC-bibliotheek
+`livekit-client` (Apache-2.0) is een afhankelijkheid van de ElevenLabs-SDK, maar wordt niet
+meegeleverd: Oudiency belt via WebSocket en vervangt hem in de build door een lege module. De
+resampler voor de microfoon is eigen code (`src/voice/resampler.ts`).

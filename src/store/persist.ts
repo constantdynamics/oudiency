@@ -21,9 +21,13 @@ export type StoreName =
   | 'notifications'
   | 'library'
   | 'usage'
-  | 'cache';
+  | 'cache'
+  | 'voice';
 
-export function storageKey(name: StoreName | 'apikey'): string {
+/** Sleutels (BYOK) staan los van de stores: ze gaan nooit mee in een export. */
+export type SecretName = 'apikey' | 'elevenlabs-key';
+
+export function storageKey(name: StoreName | SecretName): string {
   return `${APP.storageNamespace}:${name}`;
 }
 
