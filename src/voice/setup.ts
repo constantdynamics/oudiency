@@ -8,7 +8,13 @@ import type { VoiceSpec } from '@/data/voices';
 import type { CallCost } from '@/store/schemas';
 import { useVoiceStore } from '@/store/voiceStore';
 import { agentPayload } from './agentConfig';
-import { type ElevenLabsApi, type SubscriptionInfo, VoiceApiError, type VoicePreview } from './api';
+import {
+  type ElevenLabsApi,
+  mergePermissionErrors,
+  type SubscriptionInfo,
+  VoiceApiError,
+  type VoicePreview,
+} from './api';
 
 /**
  * Zorgt dat de agent bestaat en de huidige configuratie heeft. Weigert ElevenLabs de volledige
@@ -135,6 +141,31 @@ export async function refreshAccount(api: ElevenLabsApi): Promise<SubscriptionIn
     currency: info.currency,
   });
   return info;
+}
+
+export type KeyCheck = { ok: true; account: boolean } | { ok: false; error: VoiceApiError };
+
+/**
+ * Uitkomst van de sleuteltest: tegoed (User) en agenten (ElevenLabs Agents) worden tegelijk
+ * opgevraagd. Een verkeerde sleutel gaat voor; mist de toegang tot Agents, dan komen alle
+ * weigeringen samen in één melding. Zonder leesrecht op het tegoed werkt de sleutel nog.
+ */
+export function keyCheckOutcome(
+  accountError: VoiceApiError | undefined,
+  agentsError: VoiceApiError | undefined,
+): KeyCheck {
+  const errors = [accountError, agentsError].filter((e): e is VoiceApiError => e !== undefined);
+  const wrongKey = errors.find((e) => e.kind === 'auth');
+  if (wrongKey) return { ok: false, error: wrongKey };
+  if (agentsError?.kind === 'permission') {
+    return {
+      ok: false,
+      error: mergePermissionErrors(errors.filter((e) => e.kind === 'permission')),
+    };
+  }
+  if (!accountError) return { ok: true, account: true };
+  if (accountError.kind === 'permission' && !agentsError) return { ok: true, account: false };
+  return { ok: false, error: errors.find((e) => e.kind !== 'permission') ?? accountError };
 }
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));

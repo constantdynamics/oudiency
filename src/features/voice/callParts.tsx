@@ -14,7 +14,8 @@ import { cx } from '@/lib/cx';
 import type { TrialCall } from '@/store/schemas';
 import type { CallErrorKind, CallState, TranscriptLine } from '@/voice/callSession';
 import { formatDuration } from '@/voice/format';
-import { CostLine } from './settingsParts';
+import { missingScope } from '@/voice/permissions';
+import { CostLine, PermissionHelp } from './settingsParts';
 
 function CallHeader({ eyebrow = tv.call.eyebrow }: { eyebrow?: string }) {
   return (
@@ -26,7 +27,8 @@ function CallHeader({ eyebrow = tv.call.eyebrow }: { eyebrow?: string }) {
 }
 
 export function CallErrorNote({ kind, message }: { kind: CallErrorKind; message?: string }) {
-  const showDetail = ['permission', 'invalid', 'other', 'quota', 'verbinding'].includes(kind);
+  const showDetail = ['invalid', 'other', 'quota', 'verbinding'].includes(kind);
+  const scope = missingScope(message);
   return (
     <div
       role="alert"
@@ -35,7 +37,11 @@ export function CallErrorNote({ kind, message }: { kind: CallErrorKind; message?
       <AlertTriangle aria-hidden className="mt-0.5 size-5 shrink-0 text-danger" />
       <div>
         <p>{tv.errors[kind]}</p>
-        {showDetail && message && <p className="mt-1 text-sm text-ink-2">{message}</p>}
+        {kind === 'permission' ? (
+          <PermissionHelp missing={scope ? [scope] : []} message={message} />
+        ) : (
+          showDetail && message && <p className="mt-1 text-sm text-ink-2">{message}</p>
+        )}
       </div>
     </div>
   );

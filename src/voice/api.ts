@@ -5,6 +5,7 @@
  */
 import * as z from 'zod/mini';
 import { VOICE } from '@/config/voice';
+import { missingScope } from './permissions';
 
 export type VoiceErrorKind =
   | 'auth'
@@ -22,16 +23,19 @@ export class VoiceApiError extends Error {
   readonly status?: number;
   /** Foutcode van ElevenLabs, bijvoorbeeld `missing_permissions`. */
   readonly code?: string;
+  /** Ontbrekende toestemmingen (technische namen, bijv. `convai_read`), als ElevenLabs ze noemt. */
+  readonly missing: readonly string[];
   constructor(
     kind: VoiceErrorKind,
     message: string,
-    options: { status?: number; code?: string; cause?: unknown } = {},
+    options: { status?: number; code?: string; missing?: readonly string[]; cause?: unknown } = {},
   ) {
     super(message, { cause: options.cause });
     this.name = 'VoiceApiError';
     this.kind = kind;
     this.status = options.status;
     this.code = options.code;
+    this.missing = options.missing ?? [];
   }
 }
 
@@ -71,10 +75,11 @@ async function toError(response: Response): Promise<VoiceApiError> {
   } catch {
     // geen JSON in de foutmelding
   }
+  const scope = missingScope(message);
   return new VoiceApiError(
     classifyError(response.status, code, message),
     message || `ElevenLabs antwoordde met status ${response.status}.`,
-    { status: response.status, code },
+    { status: response.status, code, missing: scope ? [scope] : [] },
   );
 }
 
@@ -333,6 +338,13 @@ export function createElevenLabsApi(
 }
 
 export type ElevenLabsApi = ReturnType<typeof createElevenLabsApi>;
+
+/** Meerdere weigeringen samen (de sleuteltest): alle ontbrekende toestemmingen in één melding. */
+export function mergePermissionErrors(errors: readonly VoiceApiError[]): VoiceApiError {
+  return new VoiceApiError('permission', [...new Set(errors.map((e) => e.message))].join(' · '), {
+    missing: [...new Set(errors.flatMap((e) => e.missing))],
+  });
+}
 
 /** Elke fout als VoiceApiError (onbekende fouten worden 'other'). */
 export function toVoiceError(error: unknown): VoiceApiError {

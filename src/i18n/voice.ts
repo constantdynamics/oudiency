@@ -3,7 +3,34 @@
  * meeladen en de startbundel klein blijft.
  */
 import type { CallErrorKind } from '@/voice/callSession';
+import type { KeyPermissionId } from '@/voice/permissions';
 import type { CallEndReason } from '@/store/schemas';
+
+interface PermissionText {
+  /** Naam in het sleutelscherm van ElevenLabs. */
+  area: string;
+  alias?: string;
+  /** Niveau dat Oudiency nodig heeft. */
+  level: string;
+  use: string;
+}
+
+const permissionItems: Record<KeyPermissionId, PermissionText> = {
+  agents: {
+    area: 'ElevenLabs Agents',
+    alias: 'heette eerder Conversational AI',
+    level: 'Write',
+    use: 'de gespreksagent klaarzetten en bellen',
+  },
+  voices: { area: 'Voices', level: 'Write', use: 'de stem per denker bewaren' },
+  textToVoice: {
+    area: 'Text to Voice',
+    alias: 'ook wel Voice Design',
+    level: 'Access',
+    use: 'stemvoorbeelden ontwerpen',
+  },
+  user: { area: 'User', level: 'Read', use: 'je tegoed tonen (mag ook uit)' },
+};
 
 export const tv = {
   settings: {
@@ -30,7 +57,7 @@ export const tv = {
     steps: [
       'Log in op elevenlabs.io (of maak een account). Voor live gesprekken heb je tegoed nodig; een betaald abonnement werkt het best.',
       'Klik links in de zijbalk op Developers en open het tabblad API Keys. Kies Create API Key.',
-      'Noem hem bijvoorbeeld Oudiency. Een nieuwe sleutel is standaard beperkt: zet toegang aan voor ElevenLabs Agents (schrijven), Voices (schrijven), Text to Voice en User (lezen). Mist er één, dan noemt de app hem.',
+      'Noem hem bijvoorbeeld Oudiency. Een nieuwe sleutel is standaard beperkt: zet de toegang aan die hieronder staat.',
       'Stel eventueel een kredietlimiet in voor deze sleutel, zodat de kosten nooit verrassen.',
       'Kopieer de sleutel meteen (je ziet hem maar één keer) en plak hem hieronder.',
     ],
@@ -52,6 +79,14 @@ export const tv = {
     credits: (used: string, limit: string) =>
       `Tegoed deze periode: ${used} van ${limit} credits gebruikt`,
     resets: (date: string) => `Vult weer aan op ${date}`,
+  },
+  permissions: {
+    title: 'Toegang die de sleutel nodig heeft',
+    where:
+      'Pas de sleutel aan bij ElevenLabs: Developers → API Keys → het menu (⋯) bij je sleutel → Edit. Of maak een nieuwe sleutel met deze toegang.',
+    items: permissionItems,
+    missing: 'ontbreekt',
+    other: (scope: string) => `Ook nodig volgens ElevenLabs: ${scope}`,
   },
   agent: {
     title: '2. Klaarzetten',
@@ -141,8 +176,7 @@ export const tv = {
   },
   errors: {
     auth: 'ElevenLabs herkent deze sleutel niet. Controleer of je hem helemaal hebt gekopieerd.',
-    permission:
-      'Deze sleutel mist een toestemming. Zet bij de sleutel de toestemming aan die ElevenLabs hieronder noemt.',
+    permission: 'Deze sleutel mist toegang bij ElevenLabs.',
     quota: 'Je ElevenLabs-tegoed is op, of de limiet van deze sleutel is bereikt.',
     rate: 'ElevenLabs krijgt even te veel verzoeken. Probeer het over een minuut opnieuw.',
     not_found: 'Dit onderdeel bestaat niet (meer) in je ElevenLabs-account. Zet het opnieuw klaar.',
