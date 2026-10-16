@@ -22,7 +22,7 @@ import { DemoBanner } from './DemoBanner';
 import { ErrorBoundary } from './ErrorBoundary';
 import { NotificationBell } from './NotificationBell';
 import { isDevPanelAllowed } from './devAccess';
-import { useScrollRestoration } from './scroll';
+import { useHeaderHeight, useScrollRestoration } from './scroll';
 
 const DevPanel = lazy(() => import('@/features/dev/DevPanel'));
 
@@ -106,6 +106,7 @@ function DevTimeIndicator() {
 export function AppLayout() {
   const location = useLocation();
   const mainRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const firstRenderRef = useRef(true);
   const moderatorMode = useSettingsStore((s) => s.settings.moderatorMode);
   const devPanelEnabled = useSettingsStore((s) => s.settings.devPanelEnabled);
@@ -113,6 +114,7 @@ export function AppLayout() {
 
   useBackgroundTasks();
   useScrollRestoration();
+  useHeaderHeight(headerRef);
 
   // Focus naar de hoofdinhoud bij navigatie (schermlezers horen de nieuwe pagina).
   useEffect(() => {
@@ -133,7 +135,10 @@ export function AppLayout() {
         {t.app.skipToContent}
       </button>
       <DevTimeIndicator />
-      <header className="sticky top-0 z-30 border-b border-line bg-paper/92 backdrop-blur supports-[backdrop-filter]:bg-paper/80">
+      <header
+        ref={headerRef}
+        className="sticky top-0 z-30 border-b border-line bg-paper/92 backdrop-blur supports-[backdrop-filter]:bg-paper/80"
+      >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <Logo />
           <nav aria-label={t.nav.main} className="hidden md:block">

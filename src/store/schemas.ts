@@ -87,7 +87,11 @@ export const SessionSchema = z.object({
   topics: z.optional(z.array(z.string())),
   status: z.enum(['actief', 'afronden', 'afgerond']),
   endedAt: z.optional(isoDate),
-  endReason: z.optional(z.enum(['tijd', 'gebruiker'])),
+  endReason: z.optional(z.enum(['tijd', 'gebruiker', 'crisis', 'verbinding', 'fout'])),
+  /** Getypt of gebeld (ontbreekt bij oudere sessies: dan getypt). */
+  mode: z.optional(z.enum(['tekst', 'bellen'])),
+  /** Er klonk een crisissignaal: de hulpkaart blijft zichtbaar bij dit gesprek. */
+  crisis: z.optional(z.boolean()),
   topicHint: z.optional(z.string()),
   provider: z.enum(['demo', 'anthropic-browser', 'proxy']),
   /** Er is gewaarschuwd dat de tijd bijna om is. */

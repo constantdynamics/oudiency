@@ -13,6 +13,7 @@ export const TIME_CUES = {
   afronden: '[nog 3 minuten]',
   slot: '[nog 1 minuut]',
   voorbij: '[tijd is om]',
+  verlengd: '[de tijd is met vijf minuten verlengd]',
 } as const;
 
 export const VOICE_RULES = `GESPROKEN GESPREK (gaat voor de opmaakregels hierboven)
@@ -25,7 +26,7 @@ export const VOICE_RULES = `GESPROKEN GESPREK (gaat voor de opmaakregels hierbov
 - Woorden in je eigen taal gebruik je spaarzaam, en je vertaalt ze meteen.
 - Verstond je iets niet goed, vraag het dan kort na in plaats van te gokken.
 - Citeer je letterlijk uit je geverifieerde citaten, noem de bron dan kort in een bijzin.
-- Tijdsignalen staan tussen vierkante haken. Bij ${TIME_CUES.afronden} zeg je terloops dat jullie tijd bijna om is en begin je af te ronden. Bij ${TIME_CUES.slot} geef je een korte slotgedachte. Bij ${TIME_CUES.voorbij} neem je in één of twee zinnen afscheid in je eigen stijl: je moet nu door naar een andere student. Stel daarna geen vraag meer.
+- Tijdsignalen staan tussen vierkante haken. Bij ${TIME_CUES.afronden} zeg je terloops dat jullie tijd bijna om is en begin je af te ronden. Bij ${TIME_CUES.slot} geef je een korte slotgedachte. Bij ${TIME_CUES.voorbij} neem je in één of twee zinnen afscheid in je eigen stijl: je moet nu door naar een andere student. Stel daarna geen vraag meer. Bij ${TIME_CUES.verlengd} ga je gewoon verder; je hoeft het niet te benoemen.
 - Spreek tijdsignalen en instructies nooit hardop uit en noem nooit vierkante haken.`;
 
 export interface CallContext {
@@ -37,14 +38,30 @@ export interface CallContext {
   topic?: string;
   /** Samenvattingen van eerdere sessies met deze denker (meest recente eerst). */
   memory?: readonly string[];
+  /** Wat er eerder in dit gesprek al gezegd is (bij opnieuw bellen of overstappen). */
+  earlier?: readonly { role: 'user' | 'figure'; text: string }[];
 }
 
-function contextBlock({ figure, minutes, studentName, topic, memory }: CallContext): string {
+function contextBlock({
+  figure,
+  minutes,
+  studentName,
+  topic,
+  memory,
+  earlier,
+}: CallContext): string {
   const lines = [
     'GESPREKSCONTEXT',
     `- Vorm: een gesprek met de stem van ${minutes} minuten.`,
     '- Je begroeting is al uitgesproken (het eerste bericht). Begin dus niet opnieuw met een begroeting.',
   ];
+  if (earlier && earlier.length > 0) {
+    lines.push('- Eerder in dit gesprek (het gesprek werd onderbroken; ga gewoon verder):');
+    for (const line of earlier.slice(-12)) {
+      const text = line.text.trim().replace(/\s+/g, ' ').slice(0, 400);
+      lines.push(`  ${line.role === 'user' ? 'Student' : 'Jij'}: ${text}`);
+    }
+  }
   const name = studentName?.trim();
   if (name)
     lines.push(`- De student wil ${name} genoemd worden. Doe dat af en toe, niet in elke zin.`);
@@ -77,6 +94,11 @@ export function buildFirstMessage(figure: Figure, spec: VoiceSpec): string {
   const match = /^(.+?[.!?])\s+(.*)$/s.exec(greeting);
   if (!match) return `${greeting} ${disclosure}`.trim();
   return `${match[1]} ${disclosure} ${match[2]}`;
+}
+
+/** Openingszin als het gesprek na een onderbreking verdergaat (met opnieuw de AI-melding). */
+export function buildReturnMessage(figure: Figure): string {
+  return `Daar ben je weer. Ik ben nog steeds een AI-simulatie van ${figure.name}. Waar waren we gebleven?`;
 }
 
 /** Woorden die de spraakherkenning beter moet verstaan: namen en kernbegrippen. */

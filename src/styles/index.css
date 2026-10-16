@@ -89,6 +89,8 @@
   --fig-ink: #1e1a15;
   --fig-font: var(--font-display);
   --fig-native-font: var(--font-display);
+  /* Hoogte van de vaste kop; bijgewerkt door useHeaderHeight (groeit met de demomelding). */
+  --header-h: 4rem;
   color-scheme: light;
 }
 
@@ -96,6 +98,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--header-h) + 0.5rem);
   }
   body {
     background-color: var(--color-paper);

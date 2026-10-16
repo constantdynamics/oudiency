@@ -11,6 +11,8 @@ export const APP = {
   /** Versie van het exportformaat van "Mijn data". */
   exportFormatVersion: 1,
   repositoryUrl: 'https://github.com/constantdynamics/oudiency',
+  /** Publieke URL op GitHub Pages (ook in de og-tags van index.html). */
+  siteUrl: 'https://constantdynamics.github.io/oudiency/',
 } as const;
 
 export const CRISIS_RESOURCES = {

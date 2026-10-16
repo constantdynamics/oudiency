@@ -9,6 +9,7 @@ import {
   localDateKey,
   relativeDayLabel,
   timeAgo,
+  timeUntil,
 } from '@/lib/dates';
 import { buildIcs, escapeIcsText, foldLine } from '@/lib/ics';
 import { closeOpenMarkers, markdownToPlainText, parseInline, parseMarkdown } from '@/lib/markdown';
@@ -185,6 +186,16 @@ describe('dates', () => {
     expect(timeAgo(now - 5 * 60_000, now)).toBe('5 minuten geleden');
     expect(timeAgo(now - 3 * 3_600_000, now)).toBe('3 uur geleden');
     expect(timeAgo(now - 2 * 86_400_000, now)).toBe('2 dagen geleden');
+  });
+
+  it('zegt hoe lang het nog duurt', () => {
+    const now = new Date(2026, 9, 15, 12, 0).getTime();
+    expect(timeUntil(now + 30_000, now)).toBe('zo meteen');
+    expect(timeUntil(now + 25 * 60_000, now)).toBe('over 25 min');
+    expect(timeUntil(now + 59.5 * 60_000, now)).toBe('over 1 u');
+    expect(timeUntil(now + (3 * 60 + 19) * 60_000 - 500, now)).toBe('over 3 u 19 min');
+    expect(timeUntil(now + 26 * 3_600_000, now)).toBe('over 1 dag');
+    expect(timeUntil(now + 3 * 86_400_000, now)).toBe('over 3 dagen');
   });
 });
 

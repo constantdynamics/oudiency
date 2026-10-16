@@ -10,7 +10,7 @@ export const tv = {
     eyebrow: 'Proef',
     title: 'Stem & bellen',
     intro:
-      'Bel live met de denkers: je praat gewoon, en de denker antwoordt met een eigen stem. We beginnen met een proef met Socrates.',
+      'Bel live met de denkers: je praat gewoon, en de denker antwoordt met een eigen stem. Zet hier je sleutel en de stemmen klaar; bellen kan daarna in je sessies, of hier als proef.',
     howTitle: 'Zo werkt het',
     how: [
       'ElevenLabs luistert, spreekt en regelt de beurtwisseling; je kunt de denker gewoon onderbreken.',
@@ -19,6 +19,8 @@ export const tv = {
       'ElevenLabs bewaart geen opname en wist het gesprek direct. Het transcript staat alleen hier, op dit apparaat.',
       'Je hoort aan het begin altijd dat je met een AI-simulatie praat. Het is nooit de echte stem van de denker.',
     ],
+    figuresLabel: 'Stem van welke denker?',
+    hasVoice: 'stem gekozen',
     costTitle: 'Wat kost het?',
     cost: 'Indicatie: ongeveer $0,08 per minuut plus het gebruik van Claude, dus zo’n $1,50 tot $2 voor een gesprek van 15 minuten. Na elk gesprek zie je wat het echt kostte.',
   },
@@ -134,7 +136,7 @@ export const tv = {
     notReadyBody: 'Zet eerst je sleutel, de gespreksagent en de stem klaar.',
     unavailableTitle: 'Deze denker kun je nog niet bellen',
     unavailableBody:
-      'In de proef kun je bellen met Socrates. De andere denkers volgen in de sessies.',
+      'Bellen kan met de kerndenkers van wie je de stem hebt klaargezet. De netwerkdenkers volgen later.',
     leaveWarning: 'Het gesprek loopt nog. Weet je zeker dat je weggaat?',
   },
   errors: {

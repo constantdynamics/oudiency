@@ -1,33 +1,25 @@
 import { AlertTriangle, Headphones, Mic, MicOff, Phone, PhoneOff } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { AiLabel } from '@/components/Badges';
 import { Avatar, type AvatarState } from '@/components/Avatar';
 import { Button, ButtonLink } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { CrisisCard } from '@/components/CrisisCard';
+import { SessionClock } from '@/components/SessionClock';
 import { VOICE } from '@/config/voice';
 import type { FigureMeta } from '@/data/figures';
 import type { Figure } from '@/data/types';
-import { useNow } from '@/hooks/useNow';
 import { tv } from '@/i18n/voice';
 import { cx } from '@/lib/cx';
-import { formatCountdown } from '@/lib/dates';
-import { screenReaderAnnouncement, timerState, type TimerColor } from '@/services/session-timer';
 import type { TrialCall } from '@/store/schemas';
 import type { CallErrorKind, CallState, TranscriptLine } from '@/voice/callSession';
 import { formatDuration } from '@/voice/format';
 import { CostLine } from './settingsParts';
 
-const TIMER_COLORS: Record<TimerColor, string> = {
-  groen: 'text-ok',
-  oranje: 'text-warn',
-  rood: 'text-danger',
-};
-
-function CallHeader() {
+function CallHeader({ eyebrow = tv.call.eyebrow }: { eyebrow?: string }) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <p className="text-sm font-medium tracking-wide text-gold uppercase">{tv.call.eyebrow}</p>
+      <p className="text-sm font-medium tracking-wide text-gold uppercase">{eyebrow}</p>
       <AiLabel />
     </div>
   );
@@ -54,20 +46,31 @@ export function CallLobby({
   meta,
   error,
   onStart,
+  eyebrow,
+  subtitle,
+  backTo = '/profiel/stem',
+  backLabel = tv.call.toSettings,
+  onBack,
 }: {
   meta: FigureMeta;
   error?: CallState['error'];
   onStart: () => void;
+  eyebrow?: string;
+  subtitle?: string;
+  backTo?: string;
+  backLabel?: string;
+  /** Terug zonder te navigeren (bijvoorbeeld van bellen naar typen). */
+  onBack?: () => void;
 }) {
   const name = meta.shortName ?? meta.name;
   return (
     <div className="mx-auto max-w-xl">
-      <CallHeader />
+      <CallHeader eyebrow={eyebrow} />
       <div className="mt-6 flex flex-col items-center text-center">
         <Avatar figure={meta} size={160} decorative={false} />
         <h1 className="mt-4 font-fig text-5xl leading-none text-fig">{meta.name}</h1>
         <p className="mt-2 text-ink-2">
-          {tv.call.eyebrow} · hooguit {VOICE.trialMinutes} minuten
+          {subtitle ?? `${tv.call.eyebrow} · hooguit ${VOICE.trialMinutes} minuten`}
         </p>
         <p className="mt-4 max-w-prose text-sm text-ink-2">{tv.call.lobbyNote(meta.name)}</p>
         <p className="mt-2 max-w-sm text-sm text-ink-2">
@@ -88,29 +91,16 @@ export function CallLobby({
         >
           {error ? tv.call.retry : tv.call.start(name)}
         </Button>
-        <ButtonLink className="mt-3" variant="ghost" size="sm" to="/profiel/stem">
-          {tv.call.toSettings}
-        </ButtonLink>
+        {onBack ? (
+          <Button className="mt-3" variant="ghost" size="sm" onClick={onBack}>
+            {backLabel}
+          </Button>
+        ) : (
+          <ButtonLink className="mt-3" variant="ghost" size="sm" to={backTo}>
+            {backLabel}
+          </ButtonLink>
+        )}
       </div>
-    </div>
-  );
-}
-
-function CallTimer({ startedAt, endsAt }: { startedAt: number; endsAt: number }) {
-  const now = useNow(500);
-  const { remainingMs, color } = timerState(startedAt, endsAt, now);
-  const announcement = screenReaderAnnouncement(remainingMs);
-  return (
-    <div className="mt-3">
-      <p
-        className={cx('text-3xl font-semibold tabular-nums', TIMER_COLORS[color])}
-        aria-label={`${tv.call.remaining}: ${formatCountdown(remainingMs)}`}
-      >
-        {formatCountdown(remainingMs)}
-      </p>
-      <p className="sr-only" aria-live="polite">
-        {announcement ?? ''}
-      </p>
     </div>
   );
 }
@@ -186,18 +176,23 @@ export function LiveCall({
   state,
   onToggleMute,
   onHangUp,
+  eyebrow,
+  children,
 }: {
   meta: FigureMeta;
   figure: Figure;
   state: CallState;
   onToggleMute: () => void;
   onHangUp: () => void;
+  eyebrow?: string;
+  /** Extra inhoud onder de knoppen (bijvoorbeeld verlengen in een sessie). */
+  children?: ReactNode;
 }) {
   const name = meta.shortName ?? meta.name;
   const connected = state.status === 'live' || state.status === 'afscheid';
   return (
     <div className="mx-auto max-w-xl">
-      <CallHeader />
+      <CallHeader eyebrow={eyebrow} />
       <div className="mt-6 flex flex-col items-center text-center">
         <Avatar figure={meta} size={160} state={avatarStateFor(state)} decorative={false} />
         <h1 className="mt-4 font-fig text-5xl leading-none text-fig">{meta.name}</h1>
@@ -205,7 +200,12 @@ export function LiveCall({
           {statusText(state, name, figure)}
         </p>
         {state.startedAt !== undefined && state.endsAt !== undefined && (
-          <CallTimer startedAt={state.startedAt} endsAt={state.endsAt} />
+          <SessionClock
+            className="mt-3 text-3xl"
+            startedAt={state.startedAt}
+            endsAt={state.endsAt}
+            label={tv.call.remaining}
+          />
         )}
       </div>
       <div className="mt-6 flex items-start justify-center gap-8">
@@ -247,6 +247,7 @@ export function LiveCall({
           </span>
         </div>
       </div>
+      {children && <div className="mt-6">{children}</div>}
       <CallTranscript lines={state.transcript} name={name} follow />
     </div>
   );

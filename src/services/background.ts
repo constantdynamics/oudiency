@@ -4,11 +4,12 @@
  *  - gemiste afspraken afhandelen (dagplek komt vrij)
  *  - meldingen klaarzetten voor de starttijd van afspraken
  *  - denkers "ontdekken" zodra hun vertraagde reactie zichtbaar wordt
+ *  - sessies afronden die over tijd zijn (tabblad was dicht), met samenvatting
  *  - browsernotificaties tonen (optioneel, alleen als het tabblad open is)
  * Features kunnen eigen taken registreren (bijv. sessies die over tijd zijn afronden).
  */
 import { useEffect } from 'react';
-import { figureName } from '@/data/figures';
+import { figureName, loadFigure } from '@/data/figures';
 import { t } from '@/i18n/nl';
 import { clock } from '@/lib/clock';
 import { formatTime, MINUTE } from '@/lib/dates';
@@ -17,6 +18,7 @@ import { useBookingStore } from '@/store/bookingStore';
 import { useNotificationStore } from '@/store/miscStores';
 import { usePostStore } from '@/store/postStore';
 import { useProfileStore } from '@/store/profileStore';
+import { useSessionStore } from '@/store/sessionStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { bookingStart, findMissedBookings } from './booking.service';
 
@@ -78,6 +80,27 @@ export function revealDiscoveries(now: number): void {
   }
 }
 
+/**
+ * Sessies die over tijd zijn terwijl het sessiescherm dicht was: alsnog afronden (met afscheid)
+ * en de samenvatting maken. De sessie- en AI-code laden pas als dat nodig is (startbundel).
+ */
+export async function finishOverdueSessions(now: number): Promise<void> {
+  if (useSessionStore.getState().sessions.some((s) => s.status === 'actief')) {
+    const { finishSession, overdueSessions } = await import('./session.service');
+    for (const session of overdueSessions(useSessionStore.getState().sessions, now)) {
+      const figure = await loadFigure(session.figureId).catch(() => undefined);
+      if (figure) finishSession(session.id, figure, 'tijd', Date.parse(session.endsAt));
+    }
+  }
+  const pending = useSessionStore.getState().sessions.filter((s) => s.status === 'afronden');
+  if (pending.length === 0) return;
+  const { summarizeSession } = await import('./sessionAi');
+  for (const session of pending) {
+    const figure = await loadFigure(session.figureId).catch(() => undefined);
+    if (figure) void summarizeSession(session.id, figure);
+  }
+}
+
 function pushBrowserNotifications(now: number): void {
   if (!useSettingsStore.getState().settings.browserNotifications) return;
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
@@ -111,6 +134,7 @@ export async function runBackgroundTasks(): Promise<void> {
     handleMissedBookings(now);
     scheduleAppointmentNotifications();
     revealDiscoveries(now);
+    await finishOverdueSessions(now);
     for (const task of extraTasks) await task(now);
     pushBrowserNotifications(now);
   } finally {
