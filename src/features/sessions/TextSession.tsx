@@ -131,8 +131,8 @@ export function TextSession({
         live={busy ? { text: live.text, thinking: figure.microcopy.thinking } : null}
         follow
       />
-      {/* Vast boven de tabbalk (mobiel) of onderaan het scherm (desktop). */}
-      <div className="sticky bottom-[calc(4rem_+_env(safe-area-inset-bottom))] z-10 -mx-4 space-y-2 max-md:-mb-12 border-t border-line bg-paper/95 px-4 pt-3 pb-3 backdrop-blur sm:-mx-6 sm:px-6 md:bottom-0">
+      {/* Vast boven de tabbalk (mobiel) of onderaan het scherm (desktop), en boven de miniplayer. */}
+      <div className="sticky bottom-[calc(4rem_+_env(safe-area-inset-bottom)_+_var(--player-h))] z-10 -mx-4 space-y-2 max-md:-mb-12 border-t border-line bg-paper/95 px-4 pt-3 pb-3 backdrop-blur sm:-mx-6 sm:px-6 md:bottom-[var(--player-h)]">
         {session.crisis && <CrisisCard />}
         {failed && (
           <AiErrorNote

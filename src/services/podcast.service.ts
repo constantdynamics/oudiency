@@ -43,6 +43,13 @@ export function episodeProblem(
   return undefined;
 }
 
+/** Schatting vooraf van de ElevenLabs-credits om een aflevering van zoveel minuten voor te lezen. */
+export function estimatedCreditsFor(minutes: number): number {
+  return Math.round(
+    minutes * PODCAST.wordsPerMinute * PODCAST.charsPerWord * PODCAST.creditsPerChar,
+  );
+}
+
 export function newEpisode(
   request: EpisodeRequest,
   source: PodcastEpisode['source'],

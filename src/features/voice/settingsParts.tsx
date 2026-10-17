@@ -366,8 +366,26 @@ function PreviewPlayer({ preview, index }: { preview: VoicePreview; index: numbe
 
 type DesignPhase = 'idle' | 'designing' | 'choosing' | 'saving';
 
-/** Stap 3: de stem van een denker, gekozen uit drie ontworpen voorbeelden. */
-export function VoiceDesignCard({ meta, spec }: { meta: FigureMeta; spec: VoiceSpec }) {
+/** Wie een stem krijgt: een denker, of Sophie, de presentator van de podcasts. */
+interface VoiceOwner {
+  id: string;
+  name: string;
+  shortName?: string;
+}
+
+/** Stap 3: de stem van een denker (of Sophie), gekozen uit drie ontworpen voorbeelden. */
+export function VoiceDesignCard({
+  meta,
+  spec,
+  title,
+  body = tv.design.body,
+}: {
+  meta: VoiceOwner;
+  spec: VoiceSpec;
+  /** Andere kop of uitleg (bijv. voor Sophie, buiten de stappen van de spraakproef). */
+  title?: string;
+  body?: string;
+}) {
   const hasKey = useHasSecret(elevenLabsKeyStorage);
   const voice = useVoiceStore((s) => s.voices[meta.id]);
   const [phase, setPhase] = useState<DesignPhase>('idle');
@@ -412,10 +430,10 @@ export function VoiceDesignCard({ meta, spec }: { meta: FigureMeta; spec: VoiceS
     <StepCard
       id="stem"
       icon={<AudioLines aria-hidden className="size-5 text-fig" />}
-      title={tv.design.title(name)}
+      title={title ?? tv.design.title(name)}
       done={Boolean(voice) && phase === 'idle'}
     >
-      <p className="text-ink-2">{tv.design.body}</p>
+      <p className="text-ink-2">{body}</p>
       <details className="mt-2 text-sm text-ink-3">
         <summary className="cursor-pointer">{tv.design.description}</summary>
         <p className="mt-1" lang="en">

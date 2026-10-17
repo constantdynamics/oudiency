@@ -46,6 +46,15 @@ const VoiceSettingsPage = lazyPage(() =>
   import('@/features/voice/VoiceSettingsPage').then((m) => m.VoiceSettingsPage),
 );
 const CallPage = lazyPage(() => import('@/features/voice/CallPage').then((m) => m.CallPage));
+const PodcastsPage = lazyPage(() =>
+  import('@/features/podcasts/PodcastsPage').then((m) => m.PodcastsPage),
+);
+const NewEpisodePage = lazyPage(() =>
+  import('@/features/podcasts/NewEpisodePage').then((m) => m.NewEpisodePage),
+);
+const EpisodePage = lazyPage(() =>
+  import('@/features/podcasts/EpisodePage').then((m) => m.EpisodePage),
+);
 
 function page(path: string, Page: LazyPage): RouteObject {
   return { path, element: <Page />, handle: Page };
@@ -65,6 +74,9 @@ export const routes: RouteObject[] = [
       page('colleges', LecturesPage),
       page('colleges/aanvragen/:figureId?', LectureRequestPage),
       page('colleges/:id', LecturePage),
+      page('podcasts', PodcastsPage),
+      page('podcasts/nieuw', NewEpisodePage),
+      page('podcasts/:id', EpisodePage),
       page('profiel', ProfilePage),
       page('profiel/stem', VoiceSettingsPage),
       page('bellen/:figureId', CallPage),

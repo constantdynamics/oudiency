@@ -9,7 +9,8 @@ import { defineConfig, type Plugin } from 'vite';
  * omdat HMR inline scripts gebruikt.
  *
  * - connect-src: Anthropic (eigen key) en ElevenLabs (bellen: REST en de gespreks-WebSocket).
- * - media-src data: voor de stemvoorbeelden; de audio-worklets en resampler komen van 'self'.
+ * - media-src data: voor de stemvoorbeelden, blob: voor de podcastfragmenten (op het apparaat
+ *   bewaard); de audio-worklets en resampler komen van 'self'.
  *
  * Fase 2: voeg het Supabase-domein toe aan connect-src.
  */
@@ -22,7 +23,7 @@ export const CONTENT_SECURITY_POLICY = [
   "connect-src 'self' https://api.anthropic.com https://api.elevenlabs.io wss://api.elevenlabs.io",
   "manifest-src 'self'",
   "worker-src 'self'",
-  "media-src 'self' data:",
+  "media-src 'self' data: blob:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

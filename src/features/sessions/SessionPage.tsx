@@ -23,6 +23,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { elevenLabsKeyStorage, useHasSecret } from '@/store/settingsStore';
 import { useVoiceStore } from '@/store/voiceStore';
 import type { CallSession } from '@/voice/callSession';
+import { pausePodcast } from '@/podcast/playerActions';
 import { BeforeStart, ClosedBooking, DoorOpenView, SessionEnded } from './sessionViews';
 import { TextSession } from './TextSession';
 import { createSessionCall } from './voiceCall';
@@ -105,6 +106,7 @@ export function SessionPage() {
       if (!next) return;
       setVoiceLobby(false);
       setCall(next);
+      pausePodcast();
       void next.start();
     } catch (error) {
       toast(error instanceof BookingError ? error.message : t.errors.generic, 'warn');

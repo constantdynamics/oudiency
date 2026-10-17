@@ -6,10 +6,11 @@
 import type { VoiceSpec } from './voices';
 
 export const HOST_ID = 'sophie';
+export const HOST_NAME = 'Sophie';
 
 export const HOST = {
   id: HOST_ID,
-  name: 'Sophie',
+  name: HOST_NAME,
   role: 'AI-presentator',
   /** Voor Voice Design (Engels werkt daar het best; wordt niet uitgesproken). */
   voice: {

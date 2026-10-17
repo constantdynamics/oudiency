@@ -82,6 +82,8 @@
 }
 
 :root {
+  /* Hoogte van de miniplayer (0 als die er niet is); pagina's houden er ruimte voor vrij. */
+  --player-h: 0px;
   --fig-primary: #3b3226;
   --fig-secondary: #7a6a52;
   --fig-accent: #b08d4a;

@@ -13,6 +13,8 @@ export const PODCAST = {
   defaultMinutes: 10,
   /** Gemiddeld spreektempo, voor de schatting van lengte en kosten. */
   wordsPerMinute: 150,
+  /** Gemiddeld aantal tekens per woord (met spatie), voor de kostenschatting vooraf. */
+  charsPerWord: 6,
   /** ElevenLabs-credits per teken voor het gekozen model (Flash v2.5). */
   creditsPerChar: 0.5,
   /** Dagaflevering: de tekst staat klaar als je de app opent; de stemmen pas bij afspelen. */

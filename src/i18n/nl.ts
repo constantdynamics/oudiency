@@ -31,6 +31,7 @@ export const nl = {
     figures: 'Denkers',
     sessions: 'Sessies',
     lectures: 'Colleges',
+    podcasts: 'Podcasts',
     profile: 'Profiel',
     moderation: 'Moderatie',
     about: 'Over',
@@ -38,6 +39,19 @@ export const nl = {
     notifications: 'Meldingen',
     openNotifications: (count: number) =>
       count > 0 ? `Meldingen, ${count} ongelezen` : 'Meldingen, geen nieuwe',
+  },
+  miniPlayer: {
+    region: 'Podcastspeler',
+    open: '(open de podcastspeler)',
+    play: 'Afspelen',
+    pause: 'Pauze',
+    back: '15 seconden terug',
+    forward: '15 seconden vooruit',
+    ready: 'Klaar om te luisteren',
+    loading: 'Even geduld …',
+    error: 'Het voorlezen lukte niet: open de speler',
+    progress: 'Voortgang van de aflevering',
+    speaking: (name: string) => `${name} spreekt`,
   },
   demo: {
     banner: 'De denkers antwoorden met vooraf geschreven tekst.',

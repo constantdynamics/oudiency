@@ -4,6 +4,7 @@ import {
   Compass,
   Landmark,
   MessagesSquare,
+  Podcast,
   ShieldCheck,
   UserRound,
 } from 'lucide-react';
@@ -12,6 +13,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { Toasts } from '@/components/Toasts';
 import { APP } from '@/config/app';
 import { registerDailyEpisodeTask } from '@/podcast/daily';
+import { MiniPlayer } from '@/podcast/MiniPlayer';
 import { useBackgroundTasks } from '@/services/background';
 import { t } from '@/i18n/nl';
 import { clock } from '@/lib/clock';
@@ -34,6 +36,7 @@ const NAV_ITEMS = [
   { to: '/denkers', label: t.nav.figures, icon: Landmark, end: false },
   { to: '/sessies', label: t.nav.sessions, icon: CalendarClock, end: false },
   { to: '/colleges', label: t.nav.lectures, icon: BookOpenText, end: false },
+  { to: '/podcasts', label: t.nav.podcasts, icon: Podcast, end: false },
 ] as const;
 
 function Logo() {
@@ -50,7 +53,8 @@ function Logo() {
         <path d="M20 7.5v25M7.5 20h25" className="stroke-gold" strokeWidth="1" />
         <circle cx="20" cy="20" r="3" className="fill-ink" />
       </svg>
-      <span className="font-display text-[1.65rem] leading-none font-semibold tracking-tight">
+      {/* Op tabletbreedte alleen het beeldmerk: dan past de navigatie ernaast. */}
+      <span className="font-display text-[1.65rem] leading-none font-semibold tracking-tight md:max-lg:hidden">
         {APP.name}
       </span>
     </Link>
@@ -121,7 +125,7 @@ export function AppLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col pb-[var(--player-h)]">
       <button
         type="button"
         onClick={() => mainRef.current?.focus()}
@@ -145,7 +149,7 @@ export function AppLayout() {
                     end={item.end}
                     className={({ isActive }) =>
                       cx(
-                        'rounded-full px-3.5 py-2 text-[0.95rem] font-medium transition-colors',
+                        'rounded-full px-2.5 py-2 text-sm font-medium transition-colors lg:px-3.5 lg:text-[0.95rem]',
                         isActive
                           ? 'bg-ink text-paper'
                           : 'text-ink-2 hover:bg-paper-2 hover:text-ink',
@@ -157,7 +161,7 @@ export function AppLayout() {
                 </li>
               ))}
               {moderatorMode && (
-                <li>
+                <li className="hidden lg:block">
                   <NavLink
                     to="/moderatie"
                     className={({ isActive }) =>
@@ -179,7 +183,7 @@ export function AppLayout() {
               <NavLink
                 to="/moderatie"
                 aria-label={t.nav.moderation}
-                className="inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-paper-2 md:hidden"
+                className="inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-paper-2 lg:hidden"
               >
                 <ShieldCheck aria-hidden className="size-5" />
               </NavLink>
@@ -226,11 +230,13 @@ export function AppLayout() {
         </div>
       </footer>
 
+      <MiniPlayer />
+
       <nav
         aria-label={t.nav.main}
         className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >
-        <ul className="mx-auto grid max-w-lg grid-cols-5">
+        <ul className="mx-auto grid max-w-lg grid-cols-6">
           {NAV_ITEMS.map((item) => (
             <li key={item.to}>
               <NavLink

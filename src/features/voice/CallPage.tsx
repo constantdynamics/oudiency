@@ -21,6 +21,7 @@ import { createElevenLabsApi, VoiceApiError } from '@/voice/api';
 import { CallSession, type CallState } from '@/voice/callSession';
 import { elevenLabsStarter } from '@/voice/elevenlabsCall';
 import { ensureAgent, lookUpCallCost, verifyVoice } from '@/voice/setup';
+import { pausePodcast } from '@/podcast/playerActions';
 import { CallEnded, CallLobby, LiveCall } from './callParts';
 
 const IDLE: CallState = {
@@ -188,6 +189,7 @@ export function CallPage() {
     if (!next) return;
     setTrialId(null);
     setSession(next);
+    pausePodcast();
     void next.start();
   };
 

@@ -21,6 +21,7 @@ import { useSessionStore } from '@/store/sessionStore';
 import { tp } from '@/i18n/podcast';
 import { dailyEpisodeDue } from './daily';
 import { toSegments } from './script';
+import { markWriting } from './writingState';
 
 /** Waar je je mee bezighoudt, uit je colleges, likes, timeline en sessies. */
 export function currentInterests(): Map<string, number> {
@@ -50,7 +51,11 @@ const writing = new Map<string, Promise<void>>();
 export function writeEpisode(episodeId: string): Promise<void> {
   const pending = writing.get(episodeId);
   if (pending) return pending;
-  const promise = write(episodeId).finally(() => writing.delete(episodeId));
+  markWriting(episodeId, true);
+  const promise = write(episodeId).finally(() => {
+    writing.delete(episodeId);
+    markWriting(episodeId, false);
+  });
   writing.set(episodeId, promise);
   return promise;
 }

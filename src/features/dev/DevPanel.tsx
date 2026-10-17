@@ -58,7 +58,7 @@ export default function DevPanel() {
   const active = sessions.find((s) => s.status === 'actief');
 
   return (
-    <div className="fixed bottom-20 left-3 z-40 md:bottom-4">
+    <div className="fixed bottom-[calc(5rem_+_var(--player-h))] left-3 z-40 md:bottom-[calc(1rem_+_var(--player-h))]">
       {!open && (
         <button
           type="button"
