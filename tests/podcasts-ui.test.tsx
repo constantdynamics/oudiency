@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EpisodePage } from '@/features/podcasts/EpisodePage';
+import { PodcastCallPage } from '@/features/podcasts/PodcastCallPage';
 import { NewEpisodePage } from '@/features/podcasts/NewEpisodePage';
 import { PodcastsPage } from '@/features/podcasts/PodcastsPage';
 import { MiniPlayer } from '@/podcast/MiniPlayer';
@@ -27,6 +28,54 @@ vi.mock('@/podcast/player', () => player);
 
 const writer = vi.hoisted(() => ({ writeEpisode: vi.fn(async (_id: string) => {}) }));
 vi.mock('@/podcast/podcastAi', () => writer);
+
+const questions = vi.hoisted(() => ({
+  submitQuestion: vi.fn(async (_id: string, _input: unknown) => {}),
+}));
+vi.mock('@/podcast/listenerQuestion', () => questions);
+
+/** Een nep-belgesprek: dezelfde vorm als CallSession, met de toestand in de hand van de test. */
+const calls = vi.hoisted(() => {
+  type Listener = () => void;
+  const state = { current: null as unknown as Record<string, unknown> };
+  const listeners = new Set<Listener>();
+  const api = {
+    onEnded: undefined as undefined | ((s: never) => void),
+    set(patch: Record<string, unknown>) {
+      state.current = { ...state.current, ...patch };
+      for (const listener of listeners) listener();
+    },
+    reset() {
+      state.current = {
+        status: 'klaar',
+        mode: 'luistert',
+        muted: false,
+        transcript: [],
+        crisis: false,
+      };
+      listeners.clear();
+      api.onEnded = undefined;
+    },
+    session: {
+      getSnapshot: () => state.current,
+      subscribe: (listener: Listener) => {
+        listeners.add(listener);
+        return () => listeners.delete(listener);
+      },
+      start: async () => api.set({ status: 'live', startedAt: 0, endsAt: 300_000 }),
+      toggleMute: () => {},
+      hangUp: async () => {},
+    },
+  };
+  api.reset();
+  return api;
+});
+vi.mock('@/podcast/podcastCall', () => ({
+  createPodcastCall: vi.fn((_id: string, onEnded?: (s: never) => void) => {
+    calls.onEnded = onEnded;
+    return calls.session;
+  }),
+}));
 
 function episode(id: string, patch: Partial<PodcastEpisode> = {}): PodcastEpisode {
   return {
@@ -63,6 +112,7 @@ function renderAt(path: string) {
         <Route path="/podcasts" element={<PodcastsPage />} />
         <Route path="/podcasts/nieuw" element={<NewEpisodePage />} />
         <Route path="/podcasts/:id" element={<EpisodePage />} />
+        <Route path="/podcasts/:id/bellen" element={<PodcastCallPage />} />
         <Route path="*" element={<p>Andere pagina</p>} />
       </Routes>
       <MiniPlayer />
@@ -81,8 +131,9 @@ function withKeys({ claude = true, elevenLabs = true } = {}) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  calls.reset();
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue(undefined);
-  usePlayer.setState(initialPlayerState());
+  usePlayer.setState(initialPlayerState(), true);
   setEpisodes([], []);
   useProfileStore.setState({ profile: { ...initialProfile(), displayName: 'Sanne' } });
   useSettingsStore.getState().update({ aiSource: 'demo' });
@@ -329,6 +380,116 @@ describe('tekst van een aflevering', () => {
     renderAt('/podcasts/bestaat-niet');
     expect(
       screen.getByText('Deze aflevering staat niet (meer) op dit apparaat.'),
+    ).toBeInTheDocument();
+  });
+});
+
+describe('vraag stellen tijdens een aflevering', () => {
+  it('typen: de vraag gaat naar de denker; bij nood eerst de hulpkaart', async () => {
+    const user = userEvent.setup();
+    withKeys();
+    setEpisodes([episode('e1')], ['e1']);
+    renderAt('/podcasts');
+    await user.click(screen.getByRole('button', { name: 'Stel een vraag' }));
+    const field = screen.getByLabelText('Je vraag aan Socrates');
+    await user.type(field, 'Ik wil niet meer leven');
+    await user.click(screen.getByRole('button', { name: 'Verstuur je vraag' }));
+    expect(
+      screen.getByRole('note', { name: 'Je hoeft dit niet alleen te dragen' }),
+    ).toBeInTheDocument();
+    expect(questions.submitQuestion).not.toHaveBeenCalled();
+
+    await user.clear(field);
+    await user.type(field, 'Is moed aangeleerd?');
+    await user.click(screen.getByRole('button', { name: 'Verstuur je vraag' }));
+    await vi.waitFor(() =>
+      expect(questions.submitQuestion).toHaveBeenCalledWith('e1', {
+        question: 'Is moed aangeleerd?',
+      }),
+    );
+    expect(screen.getByRole('link', { name: 'Bel Socrates' })).toHaveAttribute(
+      'href',
+      '/podcasts/e1/bellen',
+    );
+  });
+
+  it('bij een gesprek tussen twee denkers bel je in bij Sophie', async () => {
+    const user = userEvent.setup();
+    withKeys();
+    setEpisodes([episode('e1', { format: 'gesprek', figureIds: ['socrates', 'kant'] })], ['e1']);
+    renderAt('/podcasts');
+    await user.click(screen.getByRole('button', { name: 'Stel een vraag' }));
+    expect(screen.getByLabelText('Je vraag aan Socrates en Kant')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Bel in bij Sophie' })).toHaveAttribute(
+      'href',
+      '/podcasts/e1/bellen',
+    );
+  });
+});
+
+describe('inbellen', () => {
+  it('bij de denker: de aflevering pauzeert, je belt live en luistert daarna verder', async () => {
+    const user = userEvent.setup();
+    withKeys();
+    setEpisodes([episode('e1')], ['e1']);
+    usePlayer.setState({ episodeId: 'e1', segment: 1, status: 'speelt' });
+    renderAt('/podcasts/e1/bellen');
+    expect(screen.getByRole('heading', { level: 1, name: 'Socrates' })).toBeInTheDocument();
+    expect(screen.getByText(/AI-simulatie van Socrates/)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Bel Socrates' }));
+    await vi.waitFor(() => expect(player.pause).toHaveBeenCalled());
+    expect(await screen.findByRole('button', { name: 'Ophangen' })).toBeInTheDocument();
+
+    act(() =>
+      calls.set({
+        status: 'beeindigd',
+        endReason: 'gebruiker',
+        transcript: [{ id: 'r1', role: 'figure', text: 'Wat wil je me vragen?', at: 0 }],
+      }),
+    );
+    expect(screen.getByRole('heading', { name: 'Opgehangen' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Verder luisteren' }));
+    await vi.waitFor(() => expect(player.play).toHaveBeenCalledWith('e1'));
+    expect(screen.getByTestId('pad')).toHaveTextContent('/podcasts/e1');
+    expect(questions.submitQuestion).not.toHaveBeenCalled();
+  });
+
+  it('bij Sophie: na het gesprek wordt je vraag een luistervraag (niet bij een crisissignaal)', async () => {
+    const user = userEvent.setup();
+    withKeys();
+    setEpisodes([episode('e1', { format: 'gesprek', figureIds: ['socrates', 'kant'] })], ['e1']);
+    renderAt('/podcasts/e1/bellen');
+    expect(screen.getByRole('heading', { level: 1, name: 'Sophie' })).toBeInTheDocument();
+    expect(screen.getByText(/AI-presentator van Oudiency: geen echt mens/)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Bel Sophie' }));
+    const transcript = [
+      { id: 'r1', role: 'figure', text: 'Wat wil je de denkers vragen?', at: 0 },
+      { id: 'r2', role: 'user', text: 'Mag je liegen om iemand te redden?', at: 1 },
+      { id: 'r3', role: 'system', text: 'Opgehangen', at: 2 },
+    ];
+    act(() => {
+      calls.onEnded?.({ status: 'beeindigd', crisis: false, transcript } as never);
+      calls.set({ status: 'beeindigd', endReason: 'gebruiker', transcript });
+    });
+    expect(questions.submitQuestion).toHaveBeenCalledWith('e1', {
+      call: [
+        { role: 'host', text: 'Wat wil je de denkers vragen?' },
+        { role: 'user', text: 'Mag je liegen om iemand te redden?' },
+      ],
+    });
+    expect(screen.getByText(/Sophie geeft je vraag door/)).toBeInTheDocument();
+
+    questions.submitQuestion.mockClear();
+    act(() => calls.onEnded?.({ status: 'beeindigd', crisis: true, transcript } as never));
+    expect(questions.submitQuestion).not.toHaveBeenCalled();
+  });
+
+  it('zonder ElevenLabs-sleutel: eerst de sleutels', () => {
+    withKeys({ elevenLabs: false });
+    setEpisodes([episode('e1')], ['e1']);
+    renderAt('/podcasts/e1/bellen');
+    expect(
+      screen.getByText(/Inbellen kan met je eigen Claude- en ElevenLabs-sleutel/),
     ).toBeInTheDocument();
   });
 });

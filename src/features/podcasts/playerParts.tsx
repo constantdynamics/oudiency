@@ -32,6 +32,7 @@ import { usePodcastStore } from '@/store/podcastStore';
 import type { PodcastEpisode } from '@/store/schemas';
 import { formatDuration } from '@/voice/format';
 import { episodeFigures, formatSpeed, speakerLabel } from './format';
+import { QuestionPanel } from './QuestionPanel';
 
 /** Eén of twee medaillons, de tweede half over de eerste. */
 export function AvatarStack({ figures, size = 56 }: { figures: FigureMeta[]; size?: number }) {
@@ -183,7 +184,13 @@ export function PlayerCard({
         {episode.title}
       </Heading>
       <p className="mt-1 min-h-6 text-ink-2">
-        {status === 'laden' ? tp.card.loading : speaker ? tp.card.speaking(speaker) : null}
+        {status === 'laden'
+          ? tp.card.loading
+          : status === 'speelt' && speaker
+            ? tp.card.speaking(speaker)
+            : status === 'pauze'
+              ? tp.card.paused
+              : tp.card.ready}
       </p>
 
       <div className="mt-4">
@@ -292,6 +299,8 @@ export function PlayerCard({
           </Link>
         </p>
       )}
+
+      {episode.status === 'klaar' && <QuestionPanel episode={episode} />}
     </Card>
   );
 }

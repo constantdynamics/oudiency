@@ -22,6 +22,12 @@ export const PODCAST = {
   skipSeconds: 15,
   speeds: [0.75, 1, 1.25, 1.5, 1.75, 2] as const,
   sleepMinutes: [5, 10, 15, 30, 45, 60] as const,
+  /** Inbellen tijdens een aflevering: hooguit zoveel minuten. */
+  callMinutes: 5,
+  /** Lengte van een getypte luistervraag. */
+  questionMaxLength: 300,
+  /** Zoveel fragmenten krijgt Claude mee als "wat de luisteraar net hoorde". */
+  contextSegments: 6,
   /** Zoveel fragmenten maakt de speler alvast klaar. */
   prefetchSegments: 2,
 } as const;

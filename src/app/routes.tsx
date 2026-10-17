@@ -55,6 +55,9 @@ const NewEpisodePage = lazyPage(() =>
 const EpisodePage = lazyPage(() =>
   import('@/features/podcasts/EpisodePage').then((m) => m.EpisodePage),
 );
+const PodcastCallPage = lazyPage(() =>
+  import('@/features/podcasts/PodcastCallPage').then((m) => m.PodcastCallPage),
+);
 
 function page(path: string, Page: LazyPage): RouteObject {
   return { path, element: <Page />, handle: Page };
@@ -77,6 +80,7 @@ export const routes: RouteObject[] = [
       page('podcasts', PodcastsPage),
       page('podcasts/nieuw', NewEpisodePage),
       page('podcasts/:id', EpisodePage),
+      page('podcasts/:id/bellen', PodcastCallPage),
       page('profiel', ProfilePage),
       page('profiel/stem', VoiceSettingsPage),
       page('bellen/:figureId', CallPage),

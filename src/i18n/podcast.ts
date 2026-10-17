@@ -100,6 +100,8 @@ export const tp = {
     play: 'Afspelen',
     pause: 'Pauze',
     loading: 'De stemmen worden gemaakt …',
+    paused: 'Gepauzeerd',
+    ready: 'Klaar om te luisteren',
     progress: 'Voortgang van de aflevering',
     speed: 'Snelheid',
     sleep: 'Slaaptimer',
@@ -173,6 +175,43 @@ export const tp = {
   host: {
     title: 'Stem van Sophie',
     body: 'Sophie is de AI-presentator: geen echt mens en geen denker. Kies een eigen stem voor haar uit drie ontworpen voorbeelden, of laat het zo: dan krijgt ze een kant-en-klare stem van ElevenLabs.',
+  },
+  question: {
+    open: 'Stel een vraag',
+    close: 'Vraag sluiten',
+    label: (names: string) => `Je vraag aan ${names}`,
+    hint: 'Je vraag klinkt direct na het fragment dat nu speelt. Sophie leest hem voor.',
+    placeholder: 'Wat zou u doen als …?',
+    send: 'Verstuur je vraag',
+    writing: 'Je vraag wordt beantwoord …',
+    done: 'Je vraag staat in de aflevering, direct na dit fragment.',
+    failed: 'Het antwoord op je vraag kwam niet goed door. Probeer het opnieuw.',
+    empty: 'Typ eerst je vraag.',
+    crisis: 'Daar maken we geen luistervraag van. Je hoeft dit niet alleen te dragen.',
+    fallbackIntro: 'Er belde een luisteraar in met een vraag.',
+    orCall: 'Of bel live in:',
+    callFigure: (name: string) => `Bel ${name}`,
+    callHost: 'Bel in bij Sophie',
+    callHostHint: (names: string) =>
+      `Sophie neemt je vraag aan de telefoon aan en geeft hem door aan ${names}; het antwoord hoor je daarna in de aflevering.`,
+    callFigureHint: 'De aflevering wacht; na het gesprek luister je verder.',
+  },
+  call: {
+    eyebrow: 'Inbellen · podcast',
+    subtitle: (minutes: number) => `Live aan de lijn · hooguit ${minutes} minuten`,
+    note: (name: string) =>
+      `Je praat met een AI-simulatie van ${name}: geen echt mens. Je stem gaat naar ElevenLabs om het gesprek mogelijk te maken.`,
+    hostNote:
+      'Je praat met Sophie, de AI-presentator van Oudiency: geen echt mens. Je stem gaat naar ElevenLabs om het gesprek mogelijk te maken.',
+    back: 'Terug naar de aflevering',
+    thinking: (name: string) => `${name} denkt na …`,
+    ended: 'Opgehangen',
+    resume: 'Verder luisteren',
+    passedOn: 'Sophie geeft je vraag door. Het antwoord hoor je zo in de aflevering.',
+    nothingToPass: 'Er is geen vraag doorgegeven.',
+    notFound: 'Deze aflevering staat niet (meer) op dit apparaat.',
+    needsKeys:
+      'Inbellen kan met je eigen Claude- en ElevenLabs-sleutel (de sleutel heeft ook toegang tot ElevenLabs Agents nodig).',
   },
   player: {
     album: 'Oudiency · podcast · AI-simulatie',

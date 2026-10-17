@@ -24,3 +24,8 @@ export function episodeProgress(
   const within = duration > 0 ? Math.min(1, Math.max(0, seconds / duration)) : 0;
   return Math.min(1, (Math.min(segment, count) + within) / count);
 }
+
+/** Wie je belt als je inbelt: bij een gesprek tussen twee denkers Sophie, anders de denker. */
+export function calleeOf(episode: Pick<PodcastEpisode, 'format' | 'figureIds'>): string {
+  return episode.format === 'gesprek' ? HOST_ID : (episode.figureIds[0] ?? HOST_ID);
+}

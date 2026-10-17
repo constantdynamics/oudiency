@@ -73,7 +73,7 @@ export function VoiceSession({
     return (
       <LiveCall
         meta={meta}
-        figure={figure}
+        thinking={figure.microcopy.thinking}
         state={state}
         eyebrow={t.sessions.title}
         onToggleMute={() => call?.toggleMute()}

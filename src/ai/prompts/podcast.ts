@@ -43,6 +43,14 @@ export const FORMAT_LABELS: Record<PodcastFormat, string> = {
   interview: 'interview (Sophie interviewt de denker)',
 };
 
+/** Wat de denkers van de luisteraar weten (keuze 8c): eerdere sessies en de eigen timeline. */
+export interface ListenerMemory {
+  /** Samenvattingen van eerdere sessies, per denker (meest recente eerst). */
+  sessions: readonly { figureId: string; summaries: readonly string[] }[];
+  /** Recente berichten van de luisteraar op de timeline (nieuwste eerst). */
+  posts: readonly string[];
+}
+
 export interface PodcastContext {
   format: PodcastFormat;
   figures: readonly Figure[];
@@ -52,6 +60,34 @@ export interface PodcastContext {
   listenerName?: string;
   /** Bij een dagaflevering: waar de luisteraar zich mee bezighoudt (trefwoorden). */
   interests?: readonly string[];
+  memory?: ListenerMemory;
+}
+
+/** Het geheugen als regels voor de opdracht (leeg als er niets is). */
+export function memoryLines(
+  memory: ListenerMemory | undefined,
+  figures: readonly Pick<Figure, 'id' | 'name'>[],
+): string[] {
+  if (!memory) return [];
+  const lines: string[] = [];
+  for (const entry of memory.sessions) {
+    const figure = figures.find((f) => f.id === entry.figureId);
+    if (!figure || entry.summaries.length === 0) continue;
+    lines.push(
+      `EERDERE SESSIES van de luisteraar met ${figure.name} (samenvattingen, meest recente eerst):`,
+    );
+    for (const summary of entry.summaries) lines.push(`- ${summary.trim()}`);
+  }
+  if (memory.posts.length > 0) {
+    lines.push('RECENTE BERICHTEN van de luisteraar op de timeline (nieuwste eerst):');
+    for (const post of memory.posts) lines.push(`- ${post.trim().replace(/\s+/g, ' ')}`);
+  }
+  if (lines.length > 0) {
+    lines.push(
+      'Verwijs hier hooguit één keer naar als het past ("Je schreef laatst …"); herhaal het niet en maak het niet het onderwerp.',
+    );
+  }
+  return lines;
 }
 
 /** Woorden voor de gevraagde lengte (gesproken tempo). */
@@ -80,6 +116,7 @@ export function podcastInstruction(ctx: PodcastContext): string {
       `Dit is de aflevering van vandaag, gekozen bij wat de luisteraar bezighoudt: ${ctx.interests.join(', ')}. Noem die trefwoorden niet als lijstje; laat ze terugkomen in voorbeelden.`,
     );
   }
+  lines.push(...memoryLines(ctx.memory, ctx.figures));
   return lines.join('\n');
 }
 
@@ -93,5 +130,83 @@ export function podcastRequest(ctx: PodcastContext, episodeId: string): TextRequ
     ],
     messages: [{ role: 'user', content: podcastInstruction(ctx) }],
     demo: { kind: 'podcast', episodeId },
+  };
+}
+
+/* ---------- Luistervragen (keuzes 7c en 8d) ---------- */
+
+export const LISTENER_RULES = `LUISTERVRAAG
+Een luisteraar stelt tijdens de aflevering een vraag. Schrijf de fragmenten die direct na het fragment klinken dat nu speelt:
+1. Het eerste fragment is van Sophie: ze leest de vraag voor, kort en met de naam van de luisteraar als die bekend is. Belde de luisteraar in, dan vat ze de vraag in één of twee zinnen samen.
+2. Dan antwoorden de denker of denkers: één tot drie fragmenten van elk hooguit 120 woorden, in karakter en concreet, met de aflevering als achtergrond. Bij twee denkers mogen ze kort op elkaar reageren.
+3. Het laatste fragment brengt de aflevering in één of twee zinnen terug bij het onderwerp, gesproken door de denker die net sprak (of door Sophie in een interview). Is de aflevering afgelopen, dan sluit Sophie kort af.
+- Verder dezelfde regels: schrijven voor het oor, geen opmaak, alleen geverifieerde citaten, en het blijft een AI-simulatie.
+- Gaat de vraag nergens over of is hij ongepast, beantwoord hem dan kort en vriendelijk en ga terug naar het onderwerp.`;
+
+export interface HeardSegment {
+  /** Naam van de spreker. */
+  speaker: string;
+  text: string;
+}
+
+export interface ListenerQuestionContext extends PodcastContext {
+  /** Wat de luisteraar net hoorde (de laatste fragmenten, oudste eerst). */
+  heard: readonly HeardSegment[];
+  /** Hoe de aflevering hierna verdergaat; leeg als hij afgelopen is. */
+  next?: HeardSegment;
+  /** De getypte vraag. */
+  question?: string;
+  /** Of: het gesprek met Sophie toen de luisteraar inbelde. */
+  call?: readonly { role: 'user' | 'host'; text: string }[];
+}
+
+const clip = (text: string, max: number) => {
+  const flat = text.trim().replace(/\s+/g, ' ');
+  return flat.length > max ? `${flat.slice(0, max - 1)}…` : flat;
+};
+
+export function listenerQuestionInstruction(ctx: ListenerQuestionContext): string {
+  const lines = [
+    'Schrijf de fragmenten voor deze luistervraag.',
+    `VORM: ${FORMAT_LABELS[ctx.format]}`,
+    `ONDERWERP: ${ctx.topic}`,
+    speakerLine(ctx),
+  ];
+  if (ctx.listenerName) lines.push(`LUISTERAAR: ${ctx.listenerName}`);
+  if (ctx.heard.length > 0) {
+    lines.push('WAT DE LUISTERAAR NET HOORDE (oudste eerst):');
+    for (const part of ctx.heard) lines.push(`${part.speaker}: ${clip(part.text, 600)}`);
+  }
+  lines.push(
+    ctx.next
+      ? `HIERNA GAAT DE AFLEVERING ZO VERDER: ${ctx.next.speaker}: ${clip(ctx.next.text, 240)}`
+      : 'DE AFLEVERING IS HIERNA AFGELOPEN.',
+  );
+  if (ctx.call && ctx.call.length > 0) {
+    lines.push('DE LUISTERAAR BELDE IN BIJ SOPHIE. Het gesprek:');
+    for (const line of ctx.call.slice(-16)) {
+      lines.push(`${line.role === 'user' ? 'Luisteraar' : 'Sophie'}: ${clip(line.text, 400)}`);
+    }
+  } else if (ctx.question) {
+    lines.push(`DE VRAAG: "${clip(ctx.question, 400)}"`);
+  }
+  lines.push(...memoryLines(ctx.memory, ctx.figures));
+  lines.push('', LISTENER_RULES);
+  return lines.join('\n');
+}
+
+/**
+ * Zelfde systeemprompt als bij het schrijven van de aflevering (dus uit de cache als die nog
+ * warm is); de opdracht voor de luistervraag staat in het bericht.
+ */
+export function listenerQuestionRequest(
+  ctx: ListenerQuestionContext,
+  episodeId: string,
+): TextRequest {
+  const base = podcastRequest(ctx, episodeId);
+  return {
+    ...base,
+    task: 'podcastQuestion',
+    messages: [{ role: 'user', content: listenerQuestionInstruction(ctx) }],
   };
 }

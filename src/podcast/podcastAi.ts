@@ -20,6 +20,7 @@ import { useProfileStore } from '@/store/profileStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { tp } from '@/i18n/podcast';
 import { dailyEpisodeDue } from './daily';
+import { listenerMemory } from './memory';
 import { toSegments } from './script';
 import { markWriting } from './writingState';
 
@@ -82,6 +83,7 @@ async function write(episodeId: string): Promise<void> {
         minutes: episode.minutes,
         listenerName: displayName || undefined,
         interests: episode.source === 'dagelijks' ? topInterests() : undefined,
+        memory: listenerMemory(episode.figureIds),
       },
       episode.id,
     );

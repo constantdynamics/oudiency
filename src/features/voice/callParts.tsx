@@ -7,7 +7,6 @@ import { Card } from '@/components/Card';
 import { CrisisCard } from '@/components/CrisisCard';
 import { SessionClock } from '@/components/SessionClock';
 import { VOICE } from '@/config/voice';
-import type { FigureMeta } from '@/data/figures';
 import type { Figure } from '@/data/types';
 import { tv } from '@/i18n/voice';
 import { cx } from '@/lib/cx';
@@ -16,6 +15,12 @@ import type { CallErrorKind, CallState, TranscriptLine } from '@/voice/callSessi
 import { formatDuration } from '@/voice/format';
 import { missingScope } from '@/voice/permissions';
 import { CostLine, PermissionHelp } from './settingsParts';
+
+/** Wie je belt: een denker, of Sophie (de presentator van de podcasts). */
+export type CallPartner = Pick<Figure, 'id' | 'name' | 'theme' | 'nativeScript'> & {
+  shortName?: string;
+  monogram?: string;
+};
 
 function CallHeader({ eyebrow = tv.call.eyebrow }: { eyebrow?: string }) {
   return (
@@ -54,15 +59,18 @@ export function CallLobby({
   onStart,
   eyebrow,
   subtitle,
+  note,
   backTo = '/profiel/stem',
   backLabel = tv.call.toSettings,
   onBack,
 }: {
-  meta: FigureMeta;
+  meta: CallPartner;
   error?: CallState['error'];
   onStart: () => void;
   eyebrow?: string;
   subtitle?: string;
+  /** Wat er met je stem gebeurt (standaard: de tekst voor een denker). */
+  note?: string;
   backTo?: string;
   backLabel?: string;
   /** Terug zonder te navigeren (bijvoorbeeld van bellen naar typen). */
@@ -78,7 +86,9 @@ export function CallLobby({
         <p className="mt-2 text-ink-2">
           {subtitle ?? `${tv.call.eyebrow} · hooguit ${VOICE.trialMinutes} minuten`}
         </p>
-        <p className="mt-4 max-w-prose text-sm text-ink-2">{tv.call.lobbyNote(meta.name)}</p>
+        <p className="mt-4 max-w-prose text-sm text-ink-2">
+          {note ?? tv.call.lobbyNote(meta.name)}
+        </p>
         <p className="mt-2 max-w-sm text-sm text-ink-2">
           <Headphones aria-hidden className="mr-1.5 inline size-4 align-[-3px] text-fig" />
           {tv.call.earphones}
@@ -166,27 +176,28 @@ function avatarStateFor(state: CallState): AvatarState {
   return 'listening';
 }
 
-function statusText(state: CallState, name: string, figure: Figure): string {
+function statusText(state: CallState, name: string, thinking: string): string {
   if (state.status === 'verbinden') return tv.call.connecting(name);
   if (state.status === 'afscheid') return tv.call.farewell(name);
   if (state.muted) return tv.call.muted;
   if (state.mode === 'spreekt') return tv.call.speaking(name);
-  if (state.mode === 'denkt') return figure.microcopy.thinking;
+  if (state.mode === 'denkt') return thinking;
   return tv.call.listening(name);
 }
 
 /** Tijdens het gesprek: de denker, de status, de tijd, dempen en ophangen. */
 export function LiveCall({
   meta,
-  figure,
+  thinking,
   state,
   onToggleMute,
   onHangUp,
   eyebrow,
   children,
 }: {
-  meta: FigureMeta;
-  figure: Figure;
+  meta: CallPartner;
+  /** Wat er staat terwijl de denker nadenkt (zijn eigen microcopy). */
+  thinking: string;
   state: CallState;
   onToggleMute: () => void;
   onHangUp: () => void;
@@ -203,7 +214,7 @@ export function LiveCall({
         <Avatar figure={meta} size={160} state={avatarStateFor(state)} decorative={false} />
         <h1 className="mt-4 font-fig text-5xl leading-none text-fig">{meta.name}</h1>
         <p className="mt-2 min-h-6 text-ink-2" aria-live="polite">
-          {statusText(state, name, figure)}
+          {statusText(state, name, thinking)}
         </p>
         {state.startedAt !== undefined && state.endsAt !== undefined && (
           <SessionClock
@@ -267,7 +278,7 @@ export function CallEnded({
   costPending,
   onAgain,
 }: {
-  meta: FigureMeta;
+  meta: CallPartner;
   state: CallState;
   trial?: TrialCall;
   costPending: boolean;

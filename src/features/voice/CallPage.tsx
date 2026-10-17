@@ -208,7 +208,7 @@ export function CallPage() {
       ) : (
         <LiveCall
           meta={meta}
-          figure={figure}
+          thinking={figure.microcopy.thinking}
           state={state}
           onToggleMute={() => session?.toggleMute()}
           onHangUp={() => void session?.hangUp('gebruiker')}

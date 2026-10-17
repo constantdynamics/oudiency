@@ -3,6 +3,7 @@
  * geen denker: een eigen AI-stem van Oudiency die zegt wat ze is. Ze leidt afleveringen in en
  * af, stelt in interviews de vragen en geeft luistervragen door.
  */
+import type { FigureTheme } from './types';
 import type { VoiceSpec } from './voices';
 
 export const HOST_ID = 'sophie';
@@ -26,4 +27,23 @@ export const HOST = {
   /** Haar rol in de schrijfopdracht voor een aflevering en bij inbellen. */
   persona:
     'Sophie is de AI-presentator van Oudiency: warm, nieuwsgierig, helder en kort van stof. Ze weet dat ze een AI is en zegt dat ook. Ze stelt vragen namens de luisteraar, vat soms in één zin samen en bewaakt de tijd. Ze geeft geen eigen mening over de onderwerpen en laat de denkers aan het woord.',
+} as const;
+
+/** Sophies medaillon: geen denker, dus een eigen thema in de kleuren van Oudiency. */
+export const HOST_THEME: FigureTheme = {
+  primary: '#5a4632',
+  secondary: '#8c7355',
+  accent: '#c8a45c',
+  surface: '#f7f1e6',
+  motif: 'wave',
+  displayFont: 'cormorant',
+};
+
+/** Sophie als gesprekspartner bij inbellen (naam en medaillon). */
+export const HOST_PARTNER = {
+  id: HOST_ID,
+  name: HOST_NAME,
+  shortName: HOST_NAME,
+  theme: HOST_THEME,
+  monogram: 'S',
 } as const;

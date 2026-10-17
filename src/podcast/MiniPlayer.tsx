@@ -17,11 +17,12 @@ export function MiniPlayer() {
   const location = useLocation();
   const player = usePlayer();
   const current = useCurrentEpisode();
-  // Op de Podcasts-pagina en bij de tekst van deze aflevering staat de grote speler al.
+  // Op de Podcasts-pagina, bij de tekst en bij inbellen staat de grote speler of het gesprek al.
   const hidden =
     !current ||
     location.pathname === '/podcasts' ||
-    location.pathname === `/podcasts/${current.id}`;
+    location.pathname === `/podcasts/${current.id}` ||
+    location.pathname === `/podcasts/${current.id}/bellen`;
 
   // Pagina's houden ruimte vrij voor de miniplayer (zie --player-h in index.css).
   useEffect(() => {

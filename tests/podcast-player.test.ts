@@ -124,7 +124,7 @@ beforeEach(async () => {
   await clearAudio();
   usePodcastStore.setState(initialPodcastState());
   useVoiceStore.setState(initialVoiceState());
-  usePlayer.setState(initialPlayerState());
+  usePlayer.setState(initialPlayerState(), true);
   let n = 0;
   configurePlayer({
     audio: () => fake,

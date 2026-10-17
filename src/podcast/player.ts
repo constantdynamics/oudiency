@@ -315,6 +315,13 @@ export async function playFrom(episodeId: string, index: number): Promise<void> 
   await load(episode, index, 0, true);
 }
 
+/** Ingevoegde fragmenten (een luistervraag) alvast laten inspreken. */
+export function warmUp(episodeId: string, from: number): void {
+  const episode = episodeById(episodeId);
+  if (!episode || prepared?.episodeId !== episodeId) return;
+  prefetch(prepared.api, episode, prepared.voices, from);
+}
+
 /** Een aflevering weg: uit de speler, de wachtrij, de bibliotheek en de opslag. */
 export async function deleteEpisode(episodeId: string): Promise<void> {
   if (get().episodeId === episodeId) stop();

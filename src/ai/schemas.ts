@@ -87,3 +87,21 @@ export const PodcastScriptSchema = z.object({
     .describe('Alle fragmenten in volgorde; het eerste en het laatste zijn van Sophie.'),
 });
 export type PodcastScriptOutput = z.infer<typeof PodcastScriptSchema>;
+
+export const ListenerAnswerSchema = z.object({
+  segments: z
+    .array(
+      z.object({
+        speaker: z
+          .string()
+          .describe('Id van de spreker: "sophie" of een denker-id uit de opdracht.'),
+        text: z
+          .string()
+          .describe('Wat de spreker zegt: gesproken tekst, hooguit 120 woorden, zonder opmaak.'),
+      }),
+    )
+    .describe(
+      'De fragmenten in volgorde: Sophie met de vraag, het antwoord, en de weg terug naar het onderwerp.',
+    ),
+});
+export type ListenerAnswerOutput = z.infer<typeof ListenerAnswerSchema>;

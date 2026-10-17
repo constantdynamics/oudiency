@@ -12,7 +12,8 @@ export type AiTask =
   | 'helper'
   | 'thoughtOfTheDay'
   | 'dailyQuestion'
-  | 'podcast';
+  | 'podcast'
+  | 'podcastQuestion';
 
 export type Effort = 'low' | 'medium' | 'high';
 
@@ -34,6 +35,8 @@ export const DEFAULT_TASK_MODELS: Record<AiTask, TaskModelConfig> = {
   dailyQuestion: { model: 'claude-haiku-5-5', effort: 'low', maxTokens: 1_500 },
   // Een heel script in één antwoord (tot 30 minuten); groter kan niet zonder te streamen.
   podcast: { model: 'claude-sonnet-5-5', effort: 'medium', maxTokens: 16_000 },
+  // Een luistervraag moet snel klinken: kort antwoord, weinig denken.
+  podcastQuestion: { model: 'claude-sonnet-5-5', effort: 'low', maxTokens: 6_000 },
 };
 
 export const TASK_LABELS: Record<AiTask, string> = {
@@ -46,6 +49,7 @@ export const TASK_LABELS: Record<AiTask, string> = {
   thoughtOfTheDay: 'Gedachte van vandaag',
   dailyQuestion: 'Dagvraag in stijl',
   podcast: 'Podcasts',
+  podcastQuestion: 'Luistervragen (podcasts)',
 };
 
 /** Modellen die in de instellingen te kiezen zijn. */
