@@ -59,12 +59,14 @@ class FakeAudio implements AudioLike {
 
 let fake: FakeAudio;
 let spoken: string[];
+let calls: { text: string; voiceId: string; model: string }[];
 let speechError: Error | null;
 
 const fakeApi = {
-  speech: vi.fn(async (input: { text: string }) => {
+  speech: vi.fn(async (input: { text: string; voiceId: string; model: string }) => {
     if (speechError) throw speechError;
     spoken.push(input.text);
+    calls.push({ text: input.text, voiceId: input.voiceId, model: input.model });
     return new Blob([input.text], { type: 'audio/mpeg' });
   }),
   libraryVoices: vi.fn(async () => [
@@ -117,6 +119,7 @@ let key: string | null;
 beforeEach(async () => {
   fake = new FakeAudio();
   spoken = [];
+  calls = [];
   speechError = null;
   timers = [];
   now = 1_000_000;
@@ -284,5 +287,28 @@ describe('de speler', () => {
     usePodcastStore.getState().addEpisode({ ...episode('bezig', ['x']), status: 'schrijven' });
     refillQueue();
     expect(usePodcastStore.getState().queue).toEqual(['nieuw']);
+  });
+
+  it('het gekozen stemmodel gaat mee; een andere stem geldt meteen (fragment opnieuw)', async () => {
+    usePodcastStore.setState(initialPodcastState());
+    add(episode('e1', ['Intro.', 'Wat is moed?', 'Slot.']));
+    usePodcastStore.getState().updateSettings({ ttsModel: 'eleven_v4' });
+    await play('e1');
+    fake.emit('ended');
+    await flush();
+    await flush();
+    expect(usePlayer.getState().segment).toBe(1);
+    expect(calls.every((c) => c.model === 'eleven_v4')).toBe(true);
+    const before = calls.find((c) => c.text === 'Wat is moed?')!.voiceId;
+
+    fake.currentTime = 7;
+    useVoiceStore.getState().setOverride('socrates', 'man', 'Man');
+    await flush();
+    await flush();
+    const again = calls.filter((c) => c.text === 'Wat is moed?');
+    expect(again.at(-1)!.voiceId).toBe('man');
+    expect(before).not.toBe('man');
+    expect(usePlayer.getState()).toMatchObject({ segment: 1, status: 'speelt' });
+    expect(fake.currentTime).toBe(7);
   });
 });

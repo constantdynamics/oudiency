@@ -8,7 +8,7 @@ import { CrisisCard } from '@/components/CrisisCard';
 import { TextField } from '@/components/Field';
 import { PageHeader } from '@/components/PageHeader';
 import { toast } from '@/components/toastStore';
-import { PODCAST } from '@/config/podcast';
+import { PODCAST, ttsModelInfo } from '@/config/podcast';
 import { FIGURES_META, findMeta } from '@/data/figures';
 import { useDiscovered } from '@/features/figures/discovery';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -19,7 +19,6 @@ import { capitalize, normalize } from '@/lib/text';
 import { startWriting } from '@/podcast/writingState';
 import {
   type EpisodeProblem,
-  estimatedCreditsFor,
   episodeProblem,
   figuresFor,
   newEpisode,
@@ -27,7 +26,7 @@ import {
 } from '@/services/podcast.service';
 import { usePodcastStore } from '@/store/podcastStore';
 import type { PodcastFormat } from '@/store/schemas';
-import { formatCredits } from '@/voice/format';
+import { charsForMinutes, formatEur, scriptEur, ttsEur } from '@/podcast/costs';
 import { SetupCard } from './libraryParts';
 import { BackToPodcasts } from './playerParts';
 import { usePodcastKeys } from './usePodcastKeys';
@@ -153,6 +152,7 @@ export function NewEpisodePage() {
   const [minutes, setMinutes] = useState<number>(PODCAST.defaultMinutes);
   const [placement, setPlacement] = useState<'hierna' | 'achteraan'>('achteraan');
   const [problem, setProblem] = useState<EpisodeProblem>();
+  const ttsModel = usePodcastStore((s) => s.settings.ttsModel) ?? PODCAST.defaultTtsModel;
   const count = figuresFor(format);
   const ideas = [...new Set(figureIds.flatMap((id) => findMeta(id)?.helpsWith ?? []))].slice(0, 6);
 
@@ -258,7 +258,11 @@ export function NewEpisodePage() {
             }))}
           />
           <p className="mt-2 text-sm text-ink-3">
-            {tp.form.estimate(formatCredits(estimatedCreditsFor(minutes)))}
+            {tp.form.estimate(
+              formatEur(scriptEur(minutes, figureIds.length || 1)),
+              formatEur(ttsEur(charsForMinutes(minutes), ttsModel)),
+              ttsModelInfo(ttsModel).label,
+            )}
           </p>
         </div>
 

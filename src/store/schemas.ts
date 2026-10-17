@@ -333,6 +333,16 @@ export const VoiceStateSchema = z.object({
   ),
   /** Gekozen stem per denker (id in het ElevenLabs-account). */
   voices: z.record(z.string(), z.object({ voiceId: z.string(), createdAt: isoDate })),
+  /**
+   * Met "andere stem" gekozen stem per spreker (denker of Sophie): gaat overal voor, ook boven
+   * een ontworpen stem. Weg = weer automatisch.
+   */
+  overrides: z.optional(
+    z.record(
+      z.string(),
+      z.object({ voiceId: z.string(), name: z.optional(z.string()), updatedAt: isoDate }),
+    ),
+  ),
   trials: z.array(TrialCallSchema),
   /** Laatst opgevraagde accountgegevens (abonnement en tegoed). */
   account: z.optional(
@@ -389,6 +399,8 @@ export const PodcastSettingsSchema = z.object({
   dailyMinutes: count(),
   speed: z.number(),
   autoplay: z.boolean(),
+  /** Gekozen stemmodel na het vergelijken; zonder keuze het goedkoopste. */
+  ttsModel: z.optional(z.string()),
 });
 export type PodcastSettings = z.infer<typeof PodcastSettingsSchema>;
 

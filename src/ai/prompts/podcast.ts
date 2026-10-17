@@ -17,8 +17,11 @@ export const PODCAST_RULES = `TAAK: PODCASTAFLEVERING
 Je schrijft het volledige script van een aflevering van de podcast van ${APP.name}. Elk fragment wordt uitgesproken door de stem van de spreker; de luisteraar ziet niets, hoort alleen.
 
 SCHRIJVEN VOOR HET OOR
-- Gesproken taal: korte zinnen, natuurlijke overgangen, af en toe een vraag aan de luisteraar.
-- Geen opmaak: geen kopjes, lijstjes, sterretjes, emoji, en geen regieaanwijzingen tussen haakjes.
+- Spreektaal, geen schrijftaal: korte zinnen (meestal onder de vijftien woorden), weinig bijzinnen, geen opsommingen. Zoals mensen echt praten, met af en toe "nou", "kijk", "hm" of "weet je".
+- Laat sprekers op elkaar reageren: "Precies.", "Wacht even…", "Ja, maar…". Een korte onderbreking mag, als die past.
+- Natuurlijke overgangen, en af en toe een vraag aan de luisteraar.
+- Geen opmaak: geen kopjes, lijstjes, sterretjes of emoji.
+- Hooguit één emotie-aanwijzing per fragment, alleen waar het echt iets toevoegt: een Engels woord tussen blokhaken, zoals [laughs], [sighs], [thoughtful], [whispers] of [excited]. Verder geen regieaanwijzingen.
 - Elk fragment is één beurt van één spreker, meestal 40 tot 180 woorden.
 - Herhaal geen namen en woorden in elke zin; laat de sprekers elkaar af en toe bij naam noemen, zodat de luisteraar weet wie er spreekt.
 
