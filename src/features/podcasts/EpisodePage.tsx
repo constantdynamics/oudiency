@@ -7,7 +7,8 @@ import { tp } from '@/i18n/podcast';
 import { usePlayer } from '@/podcast/playerState';
 import { usePodcastStore } from '@/store/podcastStore';
 import { EpisodeStatus } from './libraryParts';
-import { BackToPodcasts, PlayerCard, Transcript } from './playerParts';
+import { BackToPodcasts, PlayerCard } from './playerParts';
+import { Transcript } from './Transcript';
 
 /** Eén aflevering: de speler en de tekst, die meeloopt met wat je hoort. */
 export function EpisodePage() {

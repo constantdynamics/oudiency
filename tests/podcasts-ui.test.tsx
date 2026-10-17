@@ -226,7 +226,7 @@ describe('Podcasts-pagina', () => {
     expect(screen.getByText('Nog geen afleveringen')).toBeInTheDocument();
   });
 
-  it('met sleutels: geen uitleg, wel de speler, de wachtrij en je afleveringen', () => {
+  it('met sleutels: geen uitleg, wel de speler, de wachtrij en je afleveringen', async () => {
     withKeys();
     setEpisodes(
       [episode('e1'), episode('e2', { status: 'fout', error: 'Tegoed op' }), episode('e3')],
@@ -239,7 +239,7 @@ describe('Podcasts-pagina', () => {
     expect(screen.getByText(/Tegoed op/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Opnieuw schrijven' })).toBeInTheDocument();
     // De stem van Sophie kun je hier ontwerpen.
-    expect(screen.getByRole('heading', { name: 'Stem van Sophie' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Stem van Sophie' })).toBeInTheDocument();
   });
 
   it('wachtrij: hierna of achteraan, en verplaatsen met de knoppen', async () => {

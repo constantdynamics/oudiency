@@ -1,4 +1,4 @@
-import { BookOpenText, CalendarClock, Landmark } from 'lucide-react';
+import { BookOpenText, CalendarClock, Landmark, Podcast } from 'lucide-react';
 import { type ReactNode, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Avatar } from '@/components/Avatar';
@@ -73,6 +73,13 @@ function ProfileHeader({ meta }: { meta: FigureMeta }) {
               icon={<BookOpenText aria-hidden className="size-4" />}
             >
               {t.figures.requestLecture}
+            </ButtonLink>
+            <ButtonLink
+              to={`/podcasts/nieuw?denker=${meta.id}`}
+              variant="figure-outline"
+              icon={<Podcast aria-hidden className="size-4" />}
+            >
+              {t.figures.makePodcast}
             </ButtonLink>
           </div>
         </div>

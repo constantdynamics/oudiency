@@ -10,10 +10,11 @@ import { EXAMPLE_LECTURES } from '@/data/seed/lectures';
 import { discoveredSet } from '@/features/figures/discovery';
 import { clock } from '@/lib/clock';
 import { localDateKey } from '@/lib/dates';
+import { uid } from '@/lib/ids';
 import { interestsFrom } from '@/services/discover.service';
 import { dailyPlan, newEpisode } from '@/services/podcast.service';
 import { useLectureStore } from '@/store/lectureStore';
-import { useLibraryStore } from '@/store/miscStores';
+import { useLibraryStore, useNotificationStore } from '@/store/miscStores';
 import { usePodcastStore } from '@/store/podcastStore';
 import { usePostStore } from '@/store/postStore';
 import { useProfileStore } from '@/store/profileStore';
@@ -122,4 +123,17 @@ export async function ensureDailyEpisode(now: number): Promise<void> {
   store.addEpisode(episode);
   store.enqueue(episode.id, 'achteraan');
   await writeEpisode(episode.id);
+  const written = usePodcastStore.getState().episodes.find((e) => e.id === episode.id);
+  if (written?.status === 'klaar') {
+    useNotificationStore.getState().add({
+      id: uid('melding'),
+      kind: 'systeem',
+      text: tp.dailyReady(written.title),
+      link: `/podcasts/${written.id}`,
+      figureId: written.figureIds[0],
+      visibleAt: clock.iso(),
+      read: false,
+      sourceId: `podcast:${day}`,
+    });
+  }
 }

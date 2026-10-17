@@ -1,4 +1,4 @@
-import { HeartHandshake, KeyRound, Landmark, Lock, Sparkles } from 'lucide-react';
+import { HeartHandshake, KeyRound, Landmark, Lock, Podcast, Sparkles } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { AiLabel } from '@/components/Badges';
@@ -97,6 +97,25 @@ export function AboutPage() {
           denkers echt; met een ElevenLabs-sleutel kun je ze bellen. Sleutels staan alleen in deze
           browser, gaan alleen naar de dienst zelf (api.anthropic.com of api.elevenlabs.io) en nooit
           mee in een export. Bij bellen bewaart ElevenLabs geen opname en wist het gesprek direct.
+        </p>
+      </Section>
+      <Section
+        id="podcasts"
+        icon={<Podcast aria-hidden className="size-5 text-gold" />}
+        title="Podcasts"
+      >
+        <p>
+          Podcasts werken alleen met je eigen sleutels; in de demomodus zijn er geen podcasts.
+          Claude schrijft de tekst. Daarbij gaan het onderwerp, je naam, samenvattingen van je
+          eerdere sessies met die denkers en je recente berichten op de timeline mee, zodat de
+          denkers je kennen. Sophie, de presentator, is een AI en zegt dat aan het begin van elke
+          aflevering.
+        </p>
+        <p>
+          ElevenLabs maakt er stemmen van. De audio staat daarna alleen op dit apparaat (wissen kan
+          op de Podcasts-pagina) en gaat niet mee in een export. ElevenLabs bewaart wat het
+          voorleest in de geschiedenis van je eigen ElevenLabs-account; daar kun je het ook wissen.
+          Inbellen werkt zoals bellen: geen opname, en het gesprek wordt direct gewist.
         </p>
       </Section>
       <Section

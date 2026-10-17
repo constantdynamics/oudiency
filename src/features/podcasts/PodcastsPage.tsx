@@ -1,5 +1,5 @@
 import { Plus, Podcast } from 'lucide-react';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { AiLabel } from '@/components/Badges';
 import { Button, ButtonLink } from '@/components/Button';
 import { Dialog } from '@/components/Dialog';
@@ -11,16 +11,14 @@ import { tp } from '@/i18n/podcast';
 import { useCurrentEpisode } from '@/podcast/hooks';
 import { usePodcastStore } from '@/store/podcastStore';
 import type { PodcastEpisode } from '@/store/schemas';
-import {
-  DailyCard,
-  EpisodeRow,
-  HostVoiceCard,
-  QueueSection,
-  SetupCard,
-  StorageCard,
-} from './libraryParts';
+import { DailyCard, EpisodeRow, QueueSection, SetupCard, StorageCard } from './libraryParts';
 import { PlayerCard } from './playerParts';
 import { usePodcastKeys } from './usePodcastKeys';
+
+// Alleen met een ElevenLabs-sleutel, en onderaan: hoeft niet mee met de eerste paint.
+const HostVoiceCard = lazy(() =>
+  import('./HostVoiceCard').then((m) => ({ default: m.HostVoiceCard })),
+);
 
 /** Podcasts: de speler, je wachtrij, je afleveringen en de instellingen. */
 export function PodcastsPage() {
@@ -90,7 +88,11 @@ export function PodcastsPage() {
         <aside aria-label={tp.page.settings} className="min-w-0 space-y-6">
           <DailyCard />
           <StorageCard />
-          {keys.elevenLabs && <HostVoiceCard />}
+          {keys.elevenLabs && (
+            <Suspense fallback={null}>
+              <HostVoiceCard />
+            </Suspense>
+          )}
         </aside>
       </div>
       <Dialog

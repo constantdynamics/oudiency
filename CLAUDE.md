@@ -96,6 +96,27 @@ GitHub Pages.
   minuut, vraagt om het afscheid en stopt direct bij een crisissignaal.
 - Stemmen per kerndenker in `src/data/voices.ts` (geen citaten; `validate:data` controleert ze).
 
+## Podcasts
+
+- Alleen met eigen sleutels (geen demomodus): Claude schrijft het script (`src/ai/prompts/podcast.ts`,
+  structured output), ElevenLabs leest voor (`eleven_flash_v2_5`, één MP3 per fragment). Logica in
+  `src/podcast` en `src/services/podcast.service.ts` (getest), UI in `src/features/podcasts`.
+- **Sophie** (`src/data/podcastHost.ts`) is de AI-presentator en zegt in het eerste fragment dat het
+  een AI-simulatie is; ontbreekt dat, dan zet `toSegments` `FIXED_INTRO` vooraan. Geen aflevering
+  zonder die melding.
+- De aflevering van vandaag schrijft bij het openen van de app (achtergrondtaak in `daily.ts`); de
+  stemmen pas bij afspelen. Audio staat in IndexedDB (`audioCache.ts`), nooit in een export; CSP
+  heeft daarvoor `media-src blob:`.
+- De speler (`player.ts`) laadt lazy; in de startbundel zitten alleen `playerState.ts`, de
+  `MiniPlayer` en kleine hulpjes. De miniplayer zet `--player-h`: alles wat onderaan vastzit
+  (composer, toasts) rekent die hoogte mee. Acties altijd via `withPlayer` (geeft audio vrij in de
+  tik). Bellen pauzeert de podcast (`pausePodcast`).
+- Luistervragen en inbellen: het antwoord komt direct na het fragment dat speelt
+  (`listenerQuestion.ts`). Eén denker → je belt die denker, een gesprek → je belt Sophie, die de
+  vraag doorgeeft (`podcastCall.ts`, zelfde agent als bellen). Crisissignalen geven de hulpkaart,
+  nooit een luistervraag.
+- De denkers kennen je eerdere sessies en recente timelineberichten (`memory.ts`).
+
 ## Werkwijze
 
 Kleine werkende stappen, commit per mijlpaal met 3–5 regels status. Werk op de toegewezen

@@ -130,6 +130,7 @@ export const nl = {
     following: 'Volgend',
     planSession: 'Plan een sessie',
     requestLecture: 'Vraag een college aan',
+    makePodcast: 'Maak een podcast',
     keyConcepts: 'Kernbegrippen',
     network_: 'Geestverwanten',
     lifeline: 'Levenslijn',

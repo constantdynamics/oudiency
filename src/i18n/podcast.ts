@@ -19,6 +19,7 @@ export const tp = {
     interview: 'Sophie interviewt een denker',
   } satisfies Record<PodcastFormat, string>,
   writeFailed: 'Het script van deze aflevering kwam niet goed door. Probeer het opnieuw.',
+  dailyReady: (title: string) => `Je podcast van vandaag staat klaar: “${title}”.`,
   page: {
     title: 'Podcasts',
     intro:

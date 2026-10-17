@@ -14,6 +14,7 @@ import { dailyEpisodeDue } from '@/podcast/daily';
 import { ensureDailyEpisode, writeEpisode } from '@/podcast/podcastAi';
 import { cleanSpokenText, FIXED_INTRO, resolveSpeaker, toSegments } from '@/podcast/script';
 import { dailyPlan, episodeProblem, newEpisode } from '@/services/podcast.service';
+import { useNotificationStore } from '@/store/miscStores';
 import { initialPodcastState, usePodcastStore } from '@/store/podcastStore';
 import { initialProfile, useProfileStore } from '@/store/profileStore';
 import { apiKeyStorage, initialSettings, useSettingsStore } from '@/store/settingsStore';
@@ -306,5 +307,12 @@ describe('schrijven', () => {
     expect(daily[0]).toMatchObject({ day: '2026-10-16', status: 'klaar' });
     expect(queue.at(-1)).toBe(daily[0]!.id);
     expect(dailyEpisodeDue(NOW)).toBe(false);
+    // Een melding dat hij klaarstaat (één keer), met een link naar de aflevering.
+    const notices = useNotificationStore
+      .getState()
+      .notifications.filter((n) => n.sourceId === 'podcast:2026-10-16');
+    expect(notices).toHaveLength(1);
+    expect(notices[0]).toMatchObject({ link: `/podcasts/${daily[0]!.id}`, read: false });
+    expect(notices[0]!.text).toContain('Je podcast van vandaag staat klaar');
   });
 });

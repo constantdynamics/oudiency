@@ -1,6 +1,5 @@
 /**
- * De grote podcastspeler (op de Podcasts-pagina en bij de tekst van een aflevering) en de tekst
- * zelf, die meeloopt met wat je hoort.
+ * De grote podcastspeler, op de Podcasts-pagina en bij de tekst van een aflevering.
  */
 import {
   ChevronLeft,
@@ -13,15 +12,13 @@ import {
   SkipBack,
   SkipForward,
 } from 'lucide-react';
-import { type ReactNode, useEffect, useId } from 'react';
+import { lazy, type ReactNode, Suspense, useId } from 'react';
 import { Link } from 'react-router';
 import { Avatar } from '@/components/Avatar';
-import { AiLabel, Pill } from '@/components/Badges';
+import { AiLabel } from '@/components/Badges';
 import { Card } from '@/components/Card';
-import { RichText } from '@/components/RichText';
 import { PODCAST } from '@/config/podcast';
 import type { FigureMeta } from '@/data/figures';
-import { VoiceErrorNote } from '@/features/voice/settingsParts';
 import { useNow } from '@/hooks/useNow';
 import { tp } from '@/i18n/podcast';
 import { cx } from '@/lib/cx';
@@ -31,8 +28,13 @@ import { usePlayer } from '@/podcast/playerState';
 import { usePodcastStore } from '@/store/podcastStore';
 import type { PodcastEpisode } from '@/store/schemas';
 import { formatDuration } from '@/voice/format';
-import { episodeFigures, formatSpeed, speakerLabel } from './format';
+import { episodeFigures, formatSpeed } from './format';
 import { QuestionPanel } from './QuestionPanel';
+
+// Alleen bij een fout van ElevenLabs nodig: niet meeladen met de pagina.
+const VoiceErrorNote = lazy(() =>
+  import('@/features/voice/settingsParts').then((m) => ({ default: m.VoiceErrorNote })),
+);
 
 /** Eén of twee medaillons, de tweede half over de eerste. */
 export function AvatarStack({ figures, size = 56 }: { figures: FigureMeta[]; size?: number }) {
@@ -280,7 +282,9 @@ export function PlayerCard({
 
       {error &&
         (error.voice ? (
-          <VoiceErrorNote error={error.voice} />
+          <Suspense fallback={<p role="alert">{error.message}</p>}>
+            <VoiceErrorNote error={error.voice} />
+          </Suspense>
         ) : (
           <p
             role="alert"
@@ -302,72 +306,6 @@ export function PlayerCard({
 
       {episode.status === 'klaar' && <QuestionPanel episode={episode} />}
     </Card>
-  );
-}
-
-const fragmentId = (segmentId: string) => `fragment-${segmentId}`;
-
-function prefersReducedMotion(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    typeof window.matchMedia === 'function' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-}
-
-/** De tekst van de aflevering; het fragment dat je hoort is gemarkeerd en blijft in beeld. */
-export function Transcript({ episode, current }: { episode: PodcastEpisode; current?: number }) {
-  const currentId = current === undefined ? undefined : episode.segments[current]?.id;
-
-  useEffect(() => {
-    if (!currentId) return;
-    const element = document.getElementById(fragmentId(currentId));
-    if (!element || typeof element.scrollIntoView !== 'function') return;
-    const rect = element.getBoundingClientRect();
-    if (rect.top >= 96 && rect.bottom <= window.innerHeight - 160) return;
-    element.scrollIntoView({
-      block: 'center',
-      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-    });
-  }, [currentId]);
-
-  return (
-    <ol className="space-y-3">
-      {episode.segments.map((segment, index) => {
-        const name = speakerLabel(segment.speaker);
-        const isCurrent = segment.id === currentId;
-        const kind = tp.transcript.kinds[segment.kind];
-        return (
-          <li
-            key={segment.id}
-            id={fragmentId(segment.id)}
-            aria-current={isCurrent ? 'true' : undefined}
-            className={cx(
-              'rounded-xl border p-3 sm:p-4',
-              isCurrent ? 'border-gold bg-gold-soft/50' : 'border-line bg-card',
-            )}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <p className="flex flex-wrap items-center gap-2 font-semibold">
-                {name}
-                {kind && <Pill tone="info">{kind}</Pill>}
-                {isCurrent && <Pill tone="gold">{tp.transcript.now}</Pill>}
-              </p>
-              <button
-                type="button"
-                aria-label={tp.transcript.playFrom(name)}
-                title={tp.transcript.playFrom(name)}
-                onClick={() => withPlayer((p) => p.playFrom(episode.id, index))}
-                className="inline-flex size-10 shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-paper-2 hover:text-ink"
-              >
-                <Play aria-hidden className="size-4" />
-              </button>
-            </div>
-            <RichText text={segment.text} className="mt-1 text-ink-2" />
-          </li>
-        );
-      })}
-    </ol>
   );
 }
 

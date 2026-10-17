@@ -26,8 +26,6 @@ import { Toggle } from '@/components/Field';
 import { Thinking } from '@/components/Thinking';
 import { toast } from '@/components/toastStore';
 import { PODCAST } from '@/config/podcast';
-import { HOST, HOST_ID, HOST_NAME } from '@/data/podcastHost';
-import { VoiceDesignCard } from '@/features/voice/settingsParts';
 import { tp } from '@/i18n/podcast';
 import { cx } from '@/lib/cx';
 import { formatShortDate } from '@/lib/dates';
@@ -485,16 +483,5 @@ export function StorageCard() {
       )}
       <p className="mt-2 text-sm text-ink-3">{tp.storage.note}</p>
     </Card>
-  );
-}
-
-export function HostVoiceCard() {
-  return (
-    <VoiceDesignCard
-      meta={{ id: HOST_ID, name: HOST_NAME }}
-      spec={HOST.voice}
-      title={tp.host.title}
-      body={tp.host.body}
-    />
   );
 }
