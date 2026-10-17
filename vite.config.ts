@@ -9,7 +9,8 @@ import { defineConfig, type Plugin } from 'vite';
  * omdat HMR inline scripts gebruikt.
  *
  * - connect-src: Anthropic (eigen key) en ElevenLabs (bellen: REST en de gespreks-WebSocket).
- * - media-src data: voor de stemvoorbeelden; de audio-worklets en resampler komen van 'self'.
+ * - media-src data: voor de stemvoorbeelden, blob: voor de podcastfragmenten (op het apparaat
+ *   bewaard); de audio-worklets en resampler komen van 'self'.
  *
  * Fase 2: voeg het Supabase-domein toe aan connect-src.
  */
@@ -22,7 +23,7 @@ export const CONTENT_SECURITY_POLICY = [
   "connect-src 'self' https://api.anthropic.com https://api.elevenlabs.io wss://api.elevenlabs.io",
   "manifest-src 'self'",
   "worker-src 'self'",
-  "media-src 'self' data:",
+  "media-src 'self' data: blob:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -41,11 +42,38 @@ function cspPlugin(): Plugin {
   };
 }
 
+/**
+ * Laad de broodletter en de standaard-displayletter vooraf, zodat ze tegelijk met het script
+ * binnenkomen in plaats van pas na de CSS (sneller beeld, minder verspringen).
+ */
+const PRELOADED_FONTS =
+  /(literata-latin-wght-normal|cormorant-garamond-latin-wght-normal)-[\w-]+\.woff2$/;
+
+function fontPreloadPlugin(): Plugin {
+  return {
+    name: 'oudiency-font-preload',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        const fonts = Object.keys(ctx.bundle ?? {}).filter((file) => PRELOADED_FONTS.test(file));
+        const links = fonts
+          .map(
+            (file) =>
+              `<link rel="preload" href="./${file}" as="font" type="font/woff2" crossorigin />`,
+          )
+          .join('\n    ');
+        return links ? html.replace('</head>', `    ${links}\n  </head>`) : html;
+      },
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   // Relatieve paden + HashRouter: de site werkt onder elke reponaam op GitHub Pages.
   base: './',
-  plugins: [react(), tailwindcss(), cspPlugin()],
+  plugins: [react(), tailwindcss(), cspPlugin(), fontPreloadPlugin()],
   resolve: {
     alias: [
       { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },

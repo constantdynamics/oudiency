@@ -4,6 +4,7 @@ import {
   Compass,
   Landmark,
   MessagesSquare,
+  Podcast,
   ShieldCheck,
   UserRound,
 } from 'lucide-react';
@@ -11,6 +12,8 @@ import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { Toasts } from '@/components/Toasts';
 import { APP } from '@/config/app';
+import { registerDailyEpisodeTask } from '@/podcast/daily';
+import { MiniPlayer } from '@/podcast/MiniPlayer';
 import { useBackgroundTasks } from '@/services/background';
 import { t } from '@/i18n/nl';
 import { clock } from '@/lib/clock';
@@ -21,8 +24,9 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { DemoBanner } from './DemoBanner';
 import { ErrorBoundary } from './ErrorBoundary';
 import { NotificationBell } from './NotificationBell';
+import { PageFallback } from './PageFallback';
 import { isDevPanelAllowed } from './devAccess';
-import { useScrollRestoration } from './scroll';
+import { useHeaderHeight, useScrollRestoration } from './scroll';
 
 const DevPanel = lazy(() => import('@/features/dev/DevPanel'));
 
@@ -32,6 +36,7 @@ const NAV_ITEMS = [
   { to: '/denkers', label: t.nav.figures, icon: Landmark, end: false },
   { to: '/sessies', label: t.nav.sessions, icon: CalendarClock, end: false },
   { to: '/colleges', label: t.nav.lectures, icon: BookOpenText, end: false },
+  { to: '/podcasts', label: t.nav.podcasts, icon: Podcast, end: false },
 ] as const;
 
 function Logo() {
@@ -48,7 +53,8 @@ function Logo() {
         <path d="M20 7.5v25M7.5 20h25" className="stroke-gold" strokeWidth="1" />
         <circle cx="20" cy="20" r="3" className="fill-ink" />
       </svg>
-      <span className="font-display text-[1.65rem] leading-none font-semibold tracking-tight">
+      {/* Op tabletbreedte alleen het beeldmerk: dan past de navigatie ernaast. */}
+      <span className="font-display text-[1.65rem] leading-none font-semibold tracking-tight md:max-lg:hidden">
         {APP.name}
       </span>
     </Link>
@@ -77,16 +83,6 @@ function ProfileLink() {
   );
 }
 
-/** Terwijl een pagina-chunk laadt (alleen zichtbaar bij een trage verbinding). */
-function PageFallback() {
-  return (
-    <div className="flex justify-center py-24" role="status" aria-live="polite">
-      <span className="size-8 animate-spin rounded-full border-2 border-line-strong border-t-ink motion-reduce:animate-none" />
-      <span className="sr-only">{t.app.loading}</span>
-    </div>
-  );
-}
-
 function DevTimeIndicator() {
   const now = useNow(30_000);
   const offset = clock.offset();
@@ -106,13 +102,18 @@ function DevTimeIndicator() {
 export function AppLayout() {
   const location = useLocation();
   const mainRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const firstRenderRef = useRef(true);
   const moderatorMode = useSettingsStore((s) => s.settings.moderatorMode);
   const devPanelEnabled = useSettingsStore((s) => s.settings.devPanelEnabled);
   const showDev = isDevPanelAllowed() || devPanelEnabled;
 
+  // De podcastaflevering van vandaag (alleen met je eigen Claude-sleutel). Vóór de
+  // achtergrondtaken, zodat hij al bij de eerste ronde meedoet.
+  useEffect(() => registerDailyEpisodeTask(), []);
   useBackgroundTasks();
   useScrollRestoration();
+  useHeaderHeight(headerRef);
 
   // Focus naar de hoofdinhoud bij navigatie (schermlezers horen de nieuwe pagina).
   useEffect(() => {
@@ -124,7 +125,7 @@ export function AppLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col pb-[var(--player-h)]">
       <button
         type="button"
         onClick={() => mainRef.current?.focus()}
@@ -133,7 +134,10 @@ export function AppLayout() {
         {t.app.skipToContent}
       </button>
       <DevTimeIndicator />
-      <header className="sticky top-0 z-30 border-b border-line bg-paper/92 backdrop-blur supports-[backdrop-filter]:bg-paper/80">
+      <header
+        ref={headerRef}
+        className="sticky top-0 z-30 border-b border-line bg-paper/92 backdrop-blur supports-[backdrop-filter]:bg-paper/80"
+      >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <Logo />
           <nav aria-label={t.nav.main} className="hidden md:block">
@@ -145,7 +149,7 @@ export function AppLayout() {
                     end={item.end}
                     className={({ isActive }) =>
                       cx(
-                        'rounded-full px-3.5 py-2 text-[0.95rem] font-medium transition-colors',
+                        'rounded-full px-2.5 py-2 text-sm font-medium transition-colors lg:px-3.5 lg:text-[0.95rem]',
                         isActive
                           ? 'bg-ink text-paper'
                           : 'text-ink-2 hover:bg-paper-2 hover:text-ink',
@@ -157,7 +161,7 @@ export function AppLayout() {
                 </li>
               ))}
               {moderatorMode && (
-                <li>
+                <li className="hidden lg:block">
                   <NavLink
                     to="/moderatie"
                     className={({ isActive }) =>
@@ -179,7 +183,7 @@ export function AppLayout() {
               <NavLink
                 to="/moderatie"
                 aria-label={t.nav.moderation}
-                className="inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-paper-2 md:hidden"
+                className="inline-flex size-11 items-center justify-center rounded-full text-ink-2 hover:bg-paper-2 lg:hidden"
               >
                 <ShieldCheck aria-hidden className="size-5" />
               </NavLink>
@@ -226,11 +230,13 @@ export function AppLayout() {
         </div>
       </footer>
 
+      <MiniPlayer />
+
       <nav
         aria-label={t.nav.main}
         className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >
-        <ul className="mx-auto grid max-w-lg grid-cols-5">
+        <ul className="mx-auto grid max-w-lg grid-cols-6">
           {NAV_ITEMS.map((item) => (
             <li key={item.to}>
               <NavLink

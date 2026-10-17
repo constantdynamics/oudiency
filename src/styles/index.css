@@ -16,7 +16,7 @@
   --color-ink-3: #665c4e;
   --color-line: #dcd0bb;
   --color-line-strong: #b9aa90;
-  --color-gold: #7f5c12;
+  --color-gold: #72520f;
   --color-gold-soft: #e9d9b0;
   --color-terracotta: #983c20;
   --color-ok: #20603a;
@@ -82,6 +82,8 @@
 }
 
 :root {
+  /* Hoogte van de miniplayer (0 als die er niet is); pagina's houden er ruimte voor vrij. */
+  --player-h: 0px;
   --fig-primary: #3b3226;
   --fig-secondary: #7a6a52;
   --fig-accent: #b08d4a;
@@ -89,6 +91,8 @@
   --fig-ink: #1e1a15;
   --fig-font: var(--font-display);
   --fig-native-font: var(--font-display);
+  /* Hoogte van de vaste kop; bijgewerkt door useHeaderHeight (groeit met de demomelding). */
+  --header-h: 4rem;
   color-scheme: light;
 }
 
@@ -96,6 +100,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--header-h) + 0.5rem);
   }
   body {
     background-color: var(--color-paper);

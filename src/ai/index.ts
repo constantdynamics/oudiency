@@ -1,37 +1,56 @@
 /**
  * Kiest de actieve AI-provider: eigen key (BYOK) als die is ingesteld, anders de demomodus.
+ * De providers zelf (demo-inhoud, Anthropic-koppeling) laden pas bij de eerste aanroep, zodat ze
+ * niet in de startbundel zitten.
  */
 import { useSyncExternalStore } from 'react';
+import { t } from '@/i18n/nl';
 import { apiKeyStorage, subscribeApiKey, useSettingsStore } from '@/store/settingsStore';
-import { AnthropicBrowserProvider } from './anthropicBrowserProvider';
-import { DemoProvider } from './demoProvider';
-import type { AIProvider, ProviderId } from './provider';
+import { AiError, type AiErrorKind, type AIProvider, type ProviderId } from './provider';
 
-let demo: DemoProvider | null = null;
-let anthropic: { key: string; provider: AnthropicBrowserProvider } | null = null;
+let demo: Promise<AIProvider> | null = null;
+let anthropic: { key: string; provider: Promise<AIProvider> } | null = null;
 
 export function activeProviderId(): ProviderId {
   const { aiSource } = useSettingsStore.getState().settings;
   return aiSource === 'anthropic-browser' && apiKeyStorage.get() ? 'anthropic-browser' : 'demo';
 }
 
-export function getProvider(): AIProvider {
-  if (activeProviderId() === 'anthropic-browser') {
-    const key = apiKeyStorage.get();
-    if (key) {
-      if (!anthropic || anthropic.key !== key) {
-        anthropic = { key, provider: new AnthropicBrowserProvider(key) };
-      }
-      return anthropic.provider;
-    }
-  }
-  demo ??= new DemoProvider();
+function loadDemo(): Promise<AIProvider> {
+  demo ??= import('./demoProvider').then((m) => new m.DemoProvider());
   return demo;
 }
 
-export function getDemoProvider(): DemoProvider {
-  demo ??= new DemoProvider();
-  return demo;
+function loadAnthropic(key: string): Promise<AIProvider> {
+  if (!anthropic || anthropic.key !== key) {
+    anthropic = {
+      key,
+      provider: import('./anthropicBrowserProvider').then(
+        (m) => new m.AnthropicBrowserProvider(key),
+      ),
+    };
+  }
+  return anthropic.provider;
+}
+
+/** Laadt de actieve provider alvast, voor een pagina die hem meteen nodig heeft. */
+export function preloadProvider(): void {
+  const key = activeProviderId() === 'anthropic-browser' ? apiKeyStorage.get() : null;
+  (key ? loadAnthropic(key) : loadDemo()).catch(() => {
+    // Mislukt: de echte aanroep meldt het straks zelf.
+  });
+}
+
+/** De provider voor deze aanroep (de keuze ligt vast op het moment van vragen). */
+export function getProvider(): AIProvider {
+  const id = activeProviderId();
+  const key = id === 'anthropic-browser' ? apiKeyStorage.get() : null;
+  const load = () => (key ? loadAnthropic(key) : loadDemo());
+  return {
+    id: key ? 'anthropic-browser' : 'demo',
+    streamText: async (req, onDelta, signal) => (await load()).streamText(req, onDelta, signal),
+    structured: async (req) => (await load()).structured(req),
+  };
 }
 
 /** Hook: draait de app in demomodus? (reageert op instellingen én het wissen van de key) */
@@ -45,5 +64,37 @@ export function useAiMode(): ProviderId {
   return aiSource === 'anthropic-browser' && hasKey ? 'anthropic-browser' : 'demo';
 }
 
+/** Voor de UI: soort fout, Nederlandse uitleg en de melding van de dienst zelf. */
+export interface AiErrorInfo {
+  kind: AiErrorKind;
+  message: string;
+  detail?: string;
+}
+
+export function describeAiError(error: unknown): AiErrorInfo {
+  if (error instanceof AiError) {
+    return { kind: error.kind, message: error.message, detail: error.detail };
+  }
+  return {
+    kind: 'other',
+    message: t.ai.errors.other,
+    detail: error instanceof Error ? error.message : undefined,
+  };
+}
+
+/** Test een nieuwe Anthropic-key met een korte, goedkope aanroep, vóórdat hij wordt bewaard. */
+export async function testAnthropicKey(key: string): Promise<void> {
+  const { AnthropicBrowserProvider } = await import('./anthropicBrowserProvider');
+  await new AnthropicBrowserProvider(key).streamText(
+    {
+      task: 'dailyQuestion',
+      system: [{ text: 'Antwoord met alleen het woord: ok.' }],
+      messages: [{ role: 'user', content: 'Test' }],
+      demo: { kind: 'test' },
+    },
+    () => {},
+  );
+}
+
 export { AiError, isAbort } from './provider';
-export type { AIProvider, ProviderId } from './provider';
+export type { AiErrorKind, AIProvider, ProviderId } from './provider';

@@ -206,6 +206,7 @@ registerStore({
 
 interface CacheState extends ContentCache {
   setThought: (key: string, value: { text: string; provider: string }) => void;
+  setFigureOfTheDay: (dateKey: string, figureId: string) => void;
 }
 
 export const useCacheStore = create<CacheState>()(
@@ -218,12 +219,13 @@ export const useCacheStore = create<CacheState>()(
           const entries = Object.entries({ ...s.thoughts, [key]: value }).slice(-120);
           return { thoughts: Object.fromEntries(entries) };
         }),
+      setFigureOfTheDay: (dateKey, figureId) => set({ figureOfTheDay: { dateKey, figureId } }),
     }),
     persistOptions<CacheState, ContentCache>({
       name: 'cache',
       version: 1,
       schema: ContentCacheSchema,
-      partialize: (s) => ({ thoughts: s.thoughts }),
+      partialize: (s) => ({ thoughts: s.thoughts, figureOfTheDay: s.figureOfTheDay }),
     }),
   ),
 );

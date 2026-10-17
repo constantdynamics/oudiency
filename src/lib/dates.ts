@@ -119,6 +119,20 @@ export function formatCountdown(ms: number): string {
   return `${pad(minutes)}:${pad(seconds)}`;
 }
 
+/** 'over 3 u 19 min', 'over 25 min', 'over 2 dagen' of 'zo meteen' — hoe lang nog tot `ms`. */
+export function timeUntil(ms: number, now: number): string {
+  const diff = ms - now;
+  const minutes = Math.ceil(diff / MINUTE);
+  if (minutes <= 1) return 'zo meteen';
+  if (minutes < 60) return `over ${minutes} min`;
+  if (diff < DAY) {
+    const rest = minutes % 60;
+    return `over ${Math.floor(minutes / 60)} u${rest ? ` ${rest} min` : ''}`;
+  }
+  const days = Math.round(diff / DAY);
+  return `over ${days} ${days === 1 ? 'dag' : 'dagen'}`;
+}
+
 /** '5 minuten geleden' — relatief ten opzichte van `now` (afgerond naar beneden). */
 export function timeAgo(ms: number, now: number): string {
   const diff = now - ms;

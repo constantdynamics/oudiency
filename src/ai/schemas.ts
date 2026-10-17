@@ -27,6 +27,12 @@ export const LecturePlanOutputSchema = z.object({
       }),
     )
     .describe('Precies drie delen.'),
+  furtherReading: z
+    .array(z.number().int())
+    .describe('1–3 nummers uit de lijst LEESTIPS die het best bij dit college passen.'),
+  tags: z
+    .array(z.string())
+    .describe('2–4 korte trefwoorden (één of twee woorden), kleine letters.'),
 });
 export type LecturePlanOutput = z.infer<typeof LecturePlanOutputSchema>;
 
@@ -64,3 +70,38 @@ export const HelperSchema = z.object({
     .describe('Precies drie verschillende denkers.'),
 });
 export type HelperOutput = z.infer<typeof HelperSchema>;
+
+export const PodcastScriptSchema = z.object({
+  title: z.string().describe('Titel van de aflevering, max. 70 tekens.'),
+  segments: z
+    .array(
+      z.object({
+        speaker: z
+          .string()
+          .describe('Id van de spreker: "sophie" of een denker-id uit de opdracht.'),
+        text: z
+          .string()
+          .describe('Wat de spreker zegt: gesproken tekst, 40–180 woorden, zonder opmaak.'),
+      }),
+    )
+    .describe('Alle fragmenten in volgorde; het eerste en het laatste zijn van Sophie.'),
+});
+export type PodcastScriptOutput = z.infer<typeof PodcastScriptSchema>;
+
+export const ListenerAnswerSchema = z.object({
+  segments: z
+    .array(
+      z.object({
+        speaker: z
+          .string()
+          .describe('Id van de spreker: "sophie" of een denker-id uit de opdracht.'),
+        text: z
+          .string()
+          .describe('Wat de spreker zegt: gesproken tekst, hooguit 120 woorden, zonder opmaak.'),
+      }),
+    )
+    .describe(
+      'De fragmenten in volgorde: Sophie met de vraag, het antwoord, en de weg terug naar het onderwerp.',
+    ),
+});
+export type ListenerAnswerOutput = z.infer<typeof ListenerAnswerSchema>;

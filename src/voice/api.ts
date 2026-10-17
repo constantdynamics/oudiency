@@ -5,6 +5,7 @@
  */
 import * as z from 'zod/mini';
 import { VOICE } from '@/config/voice';
+import { missingScope } from './permissions';
 
 export type VoiceErrorKind =
   | 'auth'
@@ -22,16 +23,19 @@ export class VoiceApiError extends Error {
   readonly status?: number;
   /** Foutcode van ElevenLabs, bijvoorbeeld `missing_permissions`. */
   readonly code?: string;
+  /** Ontbrekende toestemmingen (technische namen, bijv. `convai_read`), als ElevenLabs ze noemt. */
+  readonly missing: readonly string[];
   constructor(
     kind: VoiceErrorKind,
     message: string,
-    options: { status?: number; code?: string; cause?: unknown } = {},
+    options: { status?: number; code?: string; missing?: readonly string[]; cause?: unknown } = {},
   ) {
     super(message, { cause: options.cause });
     this.name = 'VoiceApiError';
     this.kind = kind;
     this.status = options.status;
     this.code = options.code;
+    this.missing = options.missing ?? [];
   }
 }
 
@@ -71,10 +75,11 @@ async function toError(response: Response): Promise<VoiceApiError> {
   } catch {
     // geen JSON in de foutmelding
   }
+  const scope = missingScope(message);
   return new VoiceApiError(
     classifyError(response.status, code, message),
     message || `ElevenLabs antwoordde met status ${response.status}.`,
-    { status: response.status, code },
+    { status: response.status, code, missing: scope ? [scope] : [] },
   );
 }
 
@@ -122,6 +127,19 @@ const ConversationSchema = z.object({
   ),
 });
 
+const VoiceListSchema = z.object({
+  voices: z.array(
+    z.object({
+      voice_id: z.string(),
+      name: z.string(),
+      category: z.nullish(z.string()),
+      labels: z.nullish(z.record(z.string(), z.nullish(z.string()))),
+    }),
+  ),
+});
+
+export type RawVoice = z.infer<typeof VoiceListSchema>['voices'][number];
+
 export interface SubscriptionInfo {
   tier: string;
   creditsUsed: number;
@@ -161,7 +179,7 @@ export function createElevenLabsApi(
   key: string,
   fetchImpl: typeof fetch = (input, init) => fetch(input, init),
 ) {
-  async function request(path: string, options: RequestOptions = {}): Promise<unknown> {
+  async function send(path: string, options: RequestOptions = {}): Promise<Response> {
     const url = new URL(path, VOICE.apiBase);
     for (const [name, value] of Object.entries(options.query ?? {})) {
       if (value !== undefined) url.searchParams.set(name, String(value));
@@ -182,7 +200,11 @@ export function createElevenLabsApi(
       throw new VoiceApiError('network', 'ElevenLabs is niet bereikbaar.', { cause: error });
     }
     if (!response.ok) throw await toError(response);
-    const text = await response.text();
+    return response;
+  }
+
+  async function request(path: string, options: RequestOptions = {}): Promise<unknown> {
+    const text = await (await send(path, options)).text();
     return text ? (JSON.parse(text) as unknown) : undefined;
   }
 
@@ -316,6 +338,50 @@ export function createElevenLabsApi(
       await request(`/v1/voices/${encodeURIComponent(voiceId)}`, { method: 'DELETE' });
     },
 
+    /**
+     * Tekst naar spraak (podcasts): één fragment als MP3. Kost tegoed per teken; de app bewaart
+     * het resultaat op het apparaat, zodat het maar één keer gemaakt hoeft te worden.
+     */
+    async speech(input: {
+      voiceId: string;
+      text: string;
+      model: string;
+      languageCode?: string;
+      outputFormat: string;
+      settings?: { stability?: number; speed?: number };
+      signal?: AbortSignal;
+    }): Promise<Blob> {
+      const response = await send(`/v1/text-to-speech/${encodeURIComponent(input.voiceId)}`, {
+        method: 'POST',
+        query: { output_format: input.outputFormat },
+        body: {
+          text: input.text,
+          model_id: input.model,
+          ...(input.languageCode ? { language_code: input.languageCode } : {}),
+          ...(input.settings
+            ? {
+                voice_settings: {
+                  similarity_boost: 0.75,
+                  ...(input.settings.stability === undefined
+                    ? {}
+                    : { stability: input.settings.stability }),
+                  ...(input.settings.speed === undefined ? {} : { speed: input.settings.speed }),
+                },
+              }
+            : {}),
+        },
+        signal: input.signal,
+      });
+      const blob = await response.blob();
+      return blob.type ? blob : new Blob([blob], { type: 'audio/mpeg' });
+    },
+
+    /** De stemmen in het account, met de kant-en-klare stemmen (premade) van ElevenLabs. */
+    async libraryVoices(signal?: AbortSignal): Promise<RawVoice[]> {
+      const data = parse(VoiceListSchema, await request('/v1/voices', { signal }));
+      return data.voices;
+    },
+
     /** Kosten van een afgerond gesprek (zolang ElevenLabs het gesprek nog kent). */
     async conversationCost(conversationId: string): Promise<ConversationCost> {
       const data = parse(
@@ -333,6 +399,13 @@ export function createElevenLabsApi(
 }
 
 export type ElevenLabsApi = ReturnType<typeof createElevenLabsApi>;
+
+/** Meerdere weigeringen samen (de sleuteltest): alle ontbrekende toestemmingen in één melding. */
+export function mergePermissionErrors(errors: readonly VoiceApiError[]): VoiceApiError {
+  return new VoiceApiError('permission', [...new Set(errors.map((e) => e.message))].join(' · '), {
+    missing: [...new Set(errors.flatMap((e) => e.missing))],
+  });
+}
 
 /** Elke fout als VoiceApiError (onbekende fouten worden 'other'). */
 export function toVoiceError(error: unknown): VoiceApiError {

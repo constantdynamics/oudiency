@@ -77,4 +77,6 @@ export type DemoContext =
   | { kind: 'helper'; query: string; candidates: LectureCandidate[] }
   | { kind: 'thought'; figureId: string; dateKey: string }
   | { kind: 'daily-question'; figureId: string; questionId: string; question: string }
+  /** Podcasts werken alleen met je eigen sleutels; de demomodus heeft hier geen tekst voor. */
+  | { kind: 'podcast'; episodeId: string }
   | { kind: 'test' };

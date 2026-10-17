@@ -62,14 +62,26 @@ export interface AIProvider {
 }
 
 export type AiErrorKind =
-  'auth' | 'rate' | 'overloaded' | 'network' | 'refusal' | 'aborted' | 'invalid' | 'other';
+  | 'auth'
+  | 'billing'
+  | 'model'
+  | 'rate'
+  | 'overloaded'
+  | 'network'
+  | 'refusal'
+  | 'aborted'
+  | 'invalid'
+  | 'other';
 
 export class AiError extends Error {
   readonly kind: AiErrorKind;
-  constructor(kind: AiErrorKind, message: string, options?: { cause?: unknown }) {
-    super(message, options);
+  /** De melding van de AI-dienst zelf (meestal Engels), als die er is. */
+  readonly detail?: string;
+  constructor(kind: AiErrorKind, message: string, options?: { cause?: unknown; detail?: string }) {
+    super(message, { cause: options?.cause });
     this.name = 'AiError';
     this.kind = kind;
+    this.detail = options?.detail;
   }
   get retryable(): boolean {
     return (

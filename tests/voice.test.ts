@@ -11,15 +11,28 @@ import { storageKey } from '@/store/persist';
 import { apiKeyStorage, elevenLabsKeyStorage } from '@/store/settingsStore';
 import { initialVoiceState, useVoiceStore } from '@/store/voiceStore';
 import { agentPayload } from '@/voice/agentConfig';
-import { classifyError, createElevenLabsApi, VoiceApiError } from '@/voice/api';
+import {
+  classifyError,
+  createElevenLabsApi,
+  mergePermissionErrors,
+  VoiceApiError,
+} from '@/voice/api';
 import {
   CallSession,
   type CallConnection,
   type CallEvents,
   classifyStartError,
 } from '@/voice/callSession';
+import { missingScope, permissionOf } from '@/voice/permissions';
 import { createResampler } from '@/voice/resampler';
-import { designPreviews, ensureAgent, lookUpCallCost, saveVoice, seedFor } from '@/voice/setup';
+import {
+  designPreviews,
+  ensureAgent,
+  keyCheckOutcome,
+  lookUpCallCost,
+  saveVoice,
+  seedFor,
+} from '@/voice/setup';
 
 const MIN = 60_000;
 /** Laat alle openstaande beloftes (ophangen is asynchroon) eerst afronden. */
@@ -439,7 +452,59 @@ describe('ElevenLabs-API', () => {
     await expect(denied.signedUrl('a')).rejects.toMatchObject({
       kind: 'permission',
       message: 'missing the permission convai_write',
+      missing: ['convai_write'],
     });
+  });
+});
+
+/* ---------- Toegang van de sleutel ---------- */
+
+describe('toegang van de sleutel', () => {
+  it('leest de ontbrekende toestemming uit de melding en koppelt hem aan het sleutelscherm', () => {
+    const message =
+      'The API key you used is missing the permission convai_read to execute this operation.';
+    expect(missingScope(message)).toBe('convai_read');
+    expect(missingScope('missing the permission to do that')).toBeUndefined();
+    expect(missingScope(undefined)).toBeUndefined();
+    expect(permissionOf('convai_read')).toBe('agents');
+    expect(permissionOf('convai_write')).toBe('agents');
+    expect(permissionOf('voices_write')).toBe('voices');
+    expect(permissionOf('text_to_voice')).toBe('textToVoice');
+    expect(permissionOf('text_to_speech')).toBe('textToSpeech');
+    expect(permissionOf('user_read')).toBe('user');
+    expect(permissionOf('dubbing_read')).toBeUndefined();
+  });
+
+  const refused = (scope: string) =>
+    new VoiceApiError('permission', `The API key you used is missing the permission ${scope}`, {
+      missing: [scope],
+    });
+
+  it('sleuteltest: een verkeerde sleutel gaat voor, daarna alle weigeringen in één melding', () => {
+    const wrong = new VoiceApiError('auth', 'Invalid API key');
+    expect(keyCheckOutcome(wrong, wrong)).toEqual({ ok: false, error: wrong });
+
+    const outcome = keyCheckOutcome(refused('user_read'), refused('convai_read'));
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) {
+      expect(outcome.error.kind).toBe('permission');
+      expect(outcome.error.missing).toEqual(['user_read', 'convai_read']);
+    }
+  });
+
+  it('sleuteltest: zonder leesrecht op het tegoed werkt de sleutel nog, zonder Agents niet', () => {
+    expect(keyCheckOutcome(undefined, undefined)).toEqual({ ok: true, account: true });
+    expect(keyCheckOutcome(refused('user_read'), undefined)).toEqual({ ok: true, account: false });
+    expect(keyCheckOutcome(undefined, refused('convai_read')).ok).toBe(false);
+    // Een storing weegt zwaarder dan een gemiste leesrecht op het tegoed.
+    const down = new VoiceApiError('server', 'Internal error');
+    expect(keyCheckOutcome(refused('user_read'), down)).toEqual({ ok: false, error: down });
+  });
+
+  it('samengevoegde weigeringen houden elke toestemming één keer', () => {
+    const merged = mergePermissionErrors([refused('convai_read'), refused('convai_read')]);
+    expect(merged.missing).toEqual(['convai_read']);
+    expect(merged.message).toBe('The API key you used is missing the permission convai_read');
   });
 });
 

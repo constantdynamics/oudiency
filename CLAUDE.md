@@ -8,9 +8,10 @@ genummerd (max. 10), per vraag ≥ 5 suggesties als a, b, c … (witregel vóór
 ## Stack
 
 Vite 8 + React 19 + TypeScript (strict) · Tailwind 4 (`@theme`-tokens + CSS-variabelen per denker) ·
-React Router (`HashRouter`, declaratief, pagina's via `React.lazy`) · Zustand persist + Zod
-(`zod/mini` in de opslag, klassiek `zod` alleen in lazy AI-code) · `@anthropic-ai/sdk` (BYOK, lazy
-geladen) · lucide-react · @fontsource · Vitest + Testing Library · ESLint + Prettier · Node 24.
+React Router (`HashRouter`, declaratief; routes in `src/app/routes.tsx`, pagina's via `lazyPage`) ·
+Zustand persist + Zod (`zod/mini` in de opslag, klassiek `zod` alleen in lazy AI-code) ·
+`@anthropic-ai/sdk` (BYOK, lazy geladen) · lucide-react · @fontsource · Vitest + Testing Library ·
+ESLint + Prettier · Node 24.
 
 ## Commando's
 
@@ -75,7 +76,9 @@ GitHub Pages.
 - Denkers: één bestand per denker in `src/data/figures/{core,network}/`, export-naam = id; daarna
   `npm run gen:index`. Volledige profielen laden lazy (eigen chunk per denker).
 - Houd de startbundel klein (Lighthouse mobiel ≥ 90): zware dingen (`@anthropic-ai/sdk`, klassiek
-  `zod`, extra fonts, pagina's) alleen via dynamische imports.
+  `zod`, extra fonts, pagina's) alleen via dynamische imports. Een nieuwe pagina gaat via
+  `lazyPage` in `routes.tsx` (deeplinks halen hun chunk vooraf op); displayletters laden pas na
+  de eerste paint (`src/lib/fonts.ts`).
 - Modellen per taak: `src/config/models.ts`. Zet nooit het model-ID van de bouwende sessie in
   commits, PR's of code.
 
@@ -92,6 +95,27 @@ GitHub Pages.
 - `CallSession` (los van React, getest) rekent vanaf `endsAt`, stuurt tijdsignalen bij 3 en 1
   minuut, vraagt om het afscheid en stopt direct bij een crisissignaal.
 - Stemmen per kerndenker in `src/data/voices.ts` (geen citaten; `validate:data` controleert ze).
+
+## Podcasts
+
+- Alleen met eigen sleutels (geen demomodus): Claude schrijft het script (`src/ai/prompts/podcast.ts`,
+  structured output), ElevenLabs leest voor (`eleven_flash_v2_5`, één MP3 per fragment). Logica in
+  `src/podcast` en `src/services/podcast.service.ts` (getest), UI in `src/features/podcasts`.
+- **Sophie** (`src/data/podcastHost.ts`) is de AI-presentator en zegt in het eerste fragment dat het
+  een AI-simulatie is; ontbreekt dat, dan zet `toSegments` `FIXED_INTRO` vooraan. Geen aflevering
+  zonder die melding.
+- De aflevering van vandaag schrijft bij het openen van de app (achtergrondtaak in `daily.ts`); de
+  stemmen pas bij afspelen. Audio staat in IndexedDB (`audioCache.ts`), nooit in een export; CSP
+  heeft daarvoor `media-src blob:`.
+- De speler (`player.ts`) laadt lazy; in de startbundel zitten alleen `playerState.ts`, de
+  `MiniPlayer` en kleine hulpjes. De miniplayer zet `--player-h`: alles wat onderaan vastzit
+  (composer, toasts) rekent die hoogte mee. Acties altijd via `withPlayer` (geeft audio vrij in de
+  tik). Bellen pauzeert de podcast (`pausePodcast`).
+- Luistervragen en inbellen: het antwoord komt direct na het fragment dat speelt
+  (`listenerQuestion.ts`). Eén denker → je belt die denker, een gesprek → je belt Sophie, die de
+  vraag doorgeeft (`podcastCall.ts`, zelfde agent als bellen). Crisissignalen geven de hulpkaart,
+  nooit een luistervraag.
+- De denkers kennen je eerdere sessies en recente timelineberichten (`memory.ts`).
 
 ## Werkwijze
 

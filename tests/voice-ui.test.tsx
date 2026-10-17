@@ -79,9 +79,11 @@ describe('Stem & bellen (instellingen)', () => {
   });
 
   it('bewaart een sleutel pas als hij werkt, en toont het tegoed', async () => {
-    const fetchMock = vi.fn(() =>
+    const fetchMock = vi.fn((input: URL | RequestInfo) =>
       Promise.resolve(
-        jsonResponse(200, { tier: 'creator', character_count: 2500, character_limit: 100000 }),
+        String(input).includes('/v1/convai/agents')
+          ? jsonResponse(200, { agents: [] })
+          : jsonResponse(200, { tier: 'creator', character_count: 2500, character_limit: 100000 }),
       ),
     );
     vi.stubGlobal('fetch', fetchMock);
@@ -114,6 +116,48 @@ describe('Stem & bellen (instellingen)', () => {
       'ElevenLabs herkent deze sleutel niet',
     );
     expect(elevenLabsKeyStorage.get()).toBeNull();
+  });
+
+  it('mist de sleutel toegang, dan staat in één keer alles wat aan moet', async () => {
+    const refuse = (scope: string) =>
+      jsonResponse(401, {
+        detail: {
+          status: 'missing_permissions',
+          message: `The API key you used is missing the permission ${scope} to execute this operation.`,
+        },
+      });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((input: URL | RequestInfo) =>
+        Promise.resolve(
+          String(input).includes('/v1/convai/agents') ? refuse('convai_read') : refuse('user_read'),
+        ),
+      ),
+    );
+    const user = userEvent.setup();
+    renderAt('/profiel/stem');
+    await user.type(screen.getByLabelText('ElevenLabs-sleutel'), 'sk_beperkt0123456789');
+    await user.click(screen.getByRole('button', { name: 'Opslaan en testen' }));
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('Deze sleutel mist toegang bij ElevenLabs.');
+    const list = within(alert).getByRole('list', { name: 'Toegang die de sleutel nodig heeft' });
+    const items = within(list).getAllByRole('listitem');
+    expect(items.map((item) => item.textContent?.includes('ontbreekt'))).toEqual([
+      true, // ElevenLabs Agents
+      false, // Voices
+      false, // Text to Voice
+      false, // Text to Speech
+      true, // User
+    ]);
+    expect(items[0]).toHaveTextContent(
+      'ElevenLabs Agents (heette eerder Conversational AI): Write',
+    );
+    expect(
+      within(alert).getByRole('link', { name: 'Open de API-sleutels bij ElevenLabs' }),
+    ).toHaveAttribute('href', 'https://elevenlabs.io/app/developers/api-keys');
+    // Niet bewaard, maar wel nog in het veld: na het aanpassen kun je meteen opnieuw testen.
+    expect(elevenLabsKeyStorage.get()).toBeNull();
+    expect(screen.getByLabelText('ElevenLabs-sleutel')).toHaveValue('sk_beperkt0123456789');
   });
 
   it('met sleutel en stem kun je Socrates bellen', () => {

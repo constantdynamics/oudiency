@@ -12,9 +12,11 @@
  */
 import type Anthropic from '@anthropic-ai/sdk';
 import { FALLBACK_BETA, FALLBACK_CAPABLE_MODELS } from '@/config/models';
+import { t } from '@/i18n/nl';
 import { clock } from '@/lib/clock';
 import { useUsageStore } from '@/store/miscStores';
 import { taskModel, useSettingsStore } from '@/store/settingsStore';
+import { aiErrorKindOf, isFallbackRejection } from './apiErrors';
 import {
   AiError,
   type AIProvider,
@@ -93,42 +95,49 @@ function recordUsage(task: string, model: string, usage: UsageLike): TokenUsage 
   return tokens;
 }
 
+/** Type en melding uit de foutbody van de API (`{ type: 'error', error: { type, message } }`). */
+function apiErrorInfo(error: { error?: unknown; type?: string | null }): {
+  type?: string;
+  message?: string;
+} {
+  const nested = (error.error as { error?: { type?: unknown; message?: unknown } } | undefined)
+    ?.error;
+  return {
+    type: error.type ?? (typeof nested?.type === 'string' ? nested.type : undefined),
+    message: typeof nested?.message === 'string' ? nested.message : undefined,
+  };
+}
+
+/** Elke fout als AiError: een soort die de app uitlegt, plus de melding van Claude zelf. */
 function toAiError(error: unknown, sdk: AnthropicModule): AiError {
   const A = sdk.default;
   if (error instanceof AiError) return error;
   if (error instanceof A.APIUserAbortError) {
-    return new AiError('aborted', 'Afgebroken.', { cause: error });
-  }
-  if (error instanceof A.AuthenticationError || error instanceof A.PermissionDeniedError) {
-    return new AiError(
-      'auth',
-      'Je API-key wordt niet geaccepteerd. Controleer hem in Profiel → Instellingen.',
-      { cause: error },
-    );
-  }
-  if (error instanceof A.RateLimitError) {
-    return new AiError('rate', 'Even te veel tegelijk (rate limit). Probeer het zo opnieuw.', {
-      cause: error,
-    });
-  }
-  if (error instanceof A.NotFoundError) {
-    return new AiError('invalid', 'Het gekozen model is niet beschikbaar voor deze key.', {
-      cause: error,
-    });
-  }
-  if (error instanceof A.BadRequestError) {
-    return new AiError('invalid', 'De aanvraag werd niet geaccepteerd.', { cause: error });
-  }
-  if (error instanceof A.InternalServerError) {
-    return new AiError('overloaded', 'De AI-dienst is even overbelast.', { cause: error });
+    return new AiError('aborted', t.ai.errors.aborted, { cause: error });
   }
   if (error instanceof A.APIConnectionError) {
-    return new AiError('network', 'Geen verbinding met de AI-dienst.', { cause: error });
+    return new AiError('network', t.ai.errors.network, { cause: error });
   }
   if (error instanceof A.APIError) {
-    return new AiError('other', 'Er ging iets mis bij de AI-dienst.', { cause: error });
+    const info = apiErrorInfo(error);
+    const kind = aiErrorKindOf(error.status, info.type, info.message);
+    return new AiError(kind, t.ai.errors[kind], { cause: error, detail: info.message });
   }
-  return new AiError('other', 'Er ging iets mis.', { cause: error });
+  return new AiError('other', t.ai.errors.other, {
+    cause: error,
+    detail: error instanceof Error ? error.message : undefined,
+  });
+}
+
+/**
+ * Lag het aan de fallback zelf? Een geweigerde beta of parameter, of een geblokkeerde aanvraag
+ * (CORS staat de beta-header misschien niet toe). Dan zonder fallback opnieuw; bij een andere fout
+ * (tegoed, key, model) helpt dat niet.
+ */
+function isFallbackProblem(error: unknown, sdk: AnthropicModule): boolean {
+  const A = sdk.default;
+  if (error instanceof A.APIConnectionError) return true;
+  return error instanceof A.BadRequestError && isFallbackRejection(apiErrorInfo(error).message);
 }
 
 export class AnthropicBrowserProvider implements AIProvider {
@@ -214,13 +223,7 @@ export class AnthropicBrowserProvider implements AIProvider {
         model: final.model,
       };
     } catch (error) {
-      const A = sdk.default;
-      const fallbackProblem =
-        useFallback &&
-        !emitted &&
-        !(error instanceof A.APIUserAbortError) &&
-        (error instanceof A.BadRequestError || error instanceof A.APIConnectionError);
-      if (fallbackProblem) {
+      if (useFallback && !emitted && !signal?.aborted && isFallbackProblem(error, sdk)) {
         fallbackUnavailable = true;
         return this.streamText(req, onDelta, signal);
       }
@@ -249,7 +252,7 @@ export class AnthropicBrowserProvider implements AIProvider {
         });
         recordUsage(req.task, response.model, response.usage);
         if (response.stop_reason === 'refusal') {
-          throw new AiError('refusal', 'Hier kan de simulatie niet op ingaan.');
+          throw new AiError('refusal', t.ai.errors.refusal);
         }
         if (response.parsed_output == null) throw new AiError('invalid', 'Onleesbaar antwoord.');
         return req.schema.parse(response.parsed_output);
@@ -261,20 +264,15 @@ export class AnthropicBrowserProvider implements AIProvider {
       });
       recordUsage(req.task, response.model, response.usage);
       if (response.stop_reason === 'refusal') {
-        throw new AiError('refusal', 'Hier kan de simulatie niet op ingaan.');
+        throw new AiError('refusal', t.ai.errors.refusal);
       }
       if (response.parsed_output == null) throw new AiError('invalid', 'Onleesbaar antwoord.');
       return req.schema.parse(response.parsed_output);
     } catch (error) {
-      const A = sdk.default;
-      if (
-        useFallback &&
-        (error instanceof A.BadRequestError || error instanceof A.APIConnectionError)
-      ) {
+      if (useFallback && isFallbackProblem(error, sdk)) {
         fallbackUnavailable = true;
         return this.structured(req);
       }
-      if (error instanceof AiError) throw error;
       throw toAiError(error, sdk);
     }
   }

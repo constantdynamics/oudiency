@@ -5,6 +5,7 @@
  */
 import { detectCrisisSignals } from '@/ai/prompts/safety';
 import { TIME_CUES } from '@/ai/prompts/voice';
+import { LIMITS } from '@/config/limits';
 import { VOICE } from '@/config/voice';
 import { clock } from '@/lib/clock';
 import { timerState } from '@/services/session-timer';
@@ -62,6 +63,8 @@ export type StartCall = (events: CallEvents) => Promise<CallConnection>;
 export interface CallSessionOptions {
   start: StartCall;
   durationMs: number;
+  /** Vaste eindtijd (een geboekte sessie); anders `durationMs` vanaf het verbinden. */
+  endsAt?: number;
   now?: () => number;
   /** Herhaalt `fn` elke `ms` milliseconden; geeft een stopfunctie terug. */
   every?: (fn: () => void, ms: number) => () => void;
@@ -102,7 +105,7 @@ export class CallSession {
   private readonly listeners = new Set<() => void>();
   private connection?: CallConnection;
   private stopTimer?: () => void;
-  private readonly cues = { afronden: false, slot: false };
+  private cues = { afronden: false, slot: false };
   private farewell?: { since: number; spoken: boolean; doneAt?: number };
   private ending = false;
   private lineCounter = 0;
@@ -160,7 +163,7 @@ export class CallSession {
         status: 'live',
         conversationId,
         startedAt,
-        endsAt: startedAt + this.options.durationMs,
+        endsAt: this.options.endsAt ?? startedAt + this.options.durationMs,
       });
       this.stopTimer = (this.options.every ?? defaultEvery)(() => this.tick(), 500);
     },
@@ -248,6 +251,23 @@ export class CallSession {
       const spokenAndDone = doneAt !== undefined && now - doneAt >= VOICE.farewellGraceMs;
       if (spokenAndDone || now - since >= VOICE.farewellMaxMs) void this.hangUp('tijd');
     }
+  }
+
+  /**
+   * Verleng het gesprek (bijvoorbeeld +5 minuten voor een credit). De denker hoort dat de tijd is
+   * verlengd; de tijdsignalen gaan opnieuw zodra de nieuwe eindtijd nadert.
+   */
+  extend(extraMs: number): void {
+    const { status, endsAt } = this.state;
+    if (status !== 'live' || endsAt === undefined || extraMs <= 0) return;
+    const next = Math.max(endsAt, this.now()) + extraMs;
+    const remaining = next - this.now();
+    this.cues = {
+      afronden: remaining <= LIMITS.session.warnAtRemainingMinutes * 60_000,
+      slot: remaining <= LIMITS.session.finalThoughtAtRemainingMinutes * 60_000,
+    };
+    this.set({ endsAt: next });
+    this.connection?.sendContext(TIME_CUES.verlengd);
   }
 
   toggleMute(): void {

@@ -3,8 +3,9 @@
  * komt hij uit de eigen gedachten van de denker; met een eigen key schrijft het lichte model hem.
  */
 import { useCallback, useEffect, useState } from 'react';
-import { AiError, getProvider, useAiMode } from '@/ai';
+import { activeProviderId, AiError, getProvider, preloadProvider, useAiMode } from '@/ai';
 import { thoughtRequest } from '@/ai/prompts/thought';
+import { loadDemoContent } from '@/data/demo';
 import type { Figure } from '@/data/types';
 import { clock } from '@/lib/clock';
 import { localDateKey } from '@/lib/dates';
@@ -53,6 +54,19 @@ export function fetchThought(figure: Figure): Promise<Thought> {
     .finally(() => inFlight.delete(key));
   inFlight.set(key, promise);
   return promise;
+}
+
+/**
+ * Demomodus: haal provider en demotekst van de denker alvast op, tegelijk met het profiel. Zo
+ * staat de gedachte er zodra het profiel er is, in plaats van drie laadstappen later.
+ */
+export function prefetchThought(figureId: string): void {
+  if (activeProviderId() !== 'demo') return;
+  if (useCacheStore.getState().thoughts[thoughtKey(figureId, localDateKey(clock.now()))]) return;
+  preloadProvider();
+  loadDemoContent(figureId).catch(() => {
+    // Mislukt: fetchThought probeert het straks opnieuw en meldt het zelf.
+  });
 }
 
 export type ThoughtStatus = 'idle' | 'loading' | 'ready' | 'error';

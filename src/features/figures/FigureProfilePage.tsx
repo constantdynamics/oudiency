@@ -1,4 +1,4 @@
-import { BookOpenText, CalendarClock, Landmark } from 'lucide-react';
+import { BookOpenText, CalendarClock, Landmark, Podcast } from 'lucide-react';
 import { type ReactNode, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Avatar } from '@/components/Avatar';
@@ -15,6 +15,7 @@ import { lifespanOf } from '@/data/figures/format';
 import type { Figure } from '@/data/types';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { t } from '@/i18n/nl';
+import { prefetchThought } from '@/services/thought.service';
 import { useProfileStore } from '@/store/profileStore';
 import { LectureRow } from '../lectures/LectureRow';
 import { isInLibrary, useAllLectureSummaries } from '../lectures/summary';
@@ -67,11 +68,18 @@ function ProfileHeader({ meta }: { meta: FigureMeta }) {
               {t.figures.planSession}
             </ButtonLink>
             <ButtonLink
-              to={`/colleges?docent=${meta.id}`}
+              to={`/colleges/aanvragen/${meta.id}`}
               variant="figure-outline"
               icon={<BookOpenText aria-hidden className="size-4" />}
             >
               {t.figures.requestLecture}
+            </ButtonLink>
+            <ButtonLink
+              to={`/podcasts/nieuw?denker=${meta.id}`}
+              variant="figure-outline"
+              icon={<Podcast aria-hidden className="size-4" />}
+            >
+              {t.figures.makePodcast}
             </ButtonLink>
           </div>
         </div>
@@ -225,6 +233,9 @@ export function FigureProfilePage() {
 
   // Een profiel openen (via een link, de denker van de dag of een reactie) is ontdekken.
   const metaId = meta?.id;
+  useEffect(() => {
+    if (metaId) prefetchThought(metaId);
+  }, [metaId]);
   const alreadyKnown = metaId ? isDiscovered(metaId, discovered) : true;
   useEffect(() => {
     if (!metaId || alreadyKnown) return;

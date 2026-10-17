@@ -302,6 +302,45 @@ const QUOTE_MARKS_RE = /[“”„"«»]/;
  * Stemmen van de kerndenkers: elke kerndenker heeft er één; de teksten passen binnen de grenzen
  * van ElevenLabs en bevatten geen citaten (alleen eigen woorden) en geen {{variabelen}}.
  */
+/** De regels voor één stemontwerp (kerndenker of presentator). */
+function checkVoiceSpec(id: string, spec: VoiceSpec, scope: string): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  if (spec.design.length < 20 || spec.design.length > 1000)
+    issues.push({
+      level: 'error',
+      scope,
+      message: `${id}: stembeschrijving moet 20–1000 tekens zijn`,
+    });
+  if (spec.sample.length < 100 || spec.sample.length > 1000)
+    issues.push({
+      level: 'error',
+      scope,
+      message: `${id}: proeftekst moet 100–1000 tekens zijn`,
+    });
+  if (!spec.sample.includes('AI-simulatie') && !spec.sample.includes('AI-presentator'))
+    issues.push({
+      level: 'error',
+      scope,
+      message: `${id}: proeftekst noemt de AI-simulatie niet`,
+    });
+  if (spec.greeting.length > 220)
+    issues.push({ level: 'error', scope, message: `${id}: begroeting is te lang voor de stem` });
+  for (const [field, text] of [
+    ['proeftekst', spec.sample],
+    ['begroeting', spec.greeting],
+  ] as const) {
+    if (QUOTE_MARKS_RE.test(text))
+      issues.push({ level: 'error', scope, message: `${id}: ${field} bevat aanhalingstekens` });
+    if (text.includes('{{'))
+      issues.push({ level: 'error', scope, message: `${id}: ${field} bevat {{…}}` });
+  }
+  if (spec.speed < 0.7 || spec.speed > 1.2)
+    issues.push({ level: 'error', scope, message: `${id}: spreektempo buiten 0,7–1,2` });
+  if (spec.stability < 0 || spec.stability > 1)
+    issues.push({ level: 'error', scope, message: `${id}: stabiliteit buiten 0–1` });
+  return issues;
+}
+
 export function validateVoiceSpecs(
   voices: Readonly<Record<string, VoiceSpec>>,
   figures: readonly Figure[],
@@ -313,44 +352,34 @@ export function validateVoiceSpecs(
       issues.push({ level: 'error', scope, message: `${figure.id}: geen stem` });
   }
   for (const [id, spec] of Object.entries(voices)) {
-    const figure = figures.find((f) => f.id === id);
-    if (!figure) {
+    if (!figures.some((f) => f.id === id)) {
       issues.push({ level: 'error', scope, message: `${id}: onbekende denker` });
       continue;
     }
-    if (spec.design.length < 20 || spec.design.length > 1000)
-      issues.push({
-        level: 'error',
-        scope,
-        message: `${id}: stembeschrijving moet 20–1000 tekens zijn`,
-      });
-    if (spec.sample.length < 100 || spec.sample.length > 1000)
-      issues.push({
-        level: 'error',
-        scope,
-        message: `${id}: proeftekst moet 100–1000 tekens zijn`,
-      });
-    if (!spec.sample.includes('AI-simulatie'))
-      issues.push({
-        level: 'error',
-        scope,
-        message: `${id}: proeftekst noemt de AI-simulatie niet`,
-      });
-    if (spec.greeting.length > 220)
-      issues.push({ level: 'error', scope, message: `${id}: begroeting is te lang voor de stem` });
-    for (const [field, text] of [
-      ['proeftekst', spec.sample],
-      ['begroeting', spec.greeting],
-    ] as const) {
-      if (QUOTE_MARKS_RE.test(text))
-        issues.push({ level: 'error', scope, message: `${id}: ${field} bevat aanhalingstekens` });
-      if (text.includes('{{'))
-        issues.push({ level: 'error', scope, message: `${id}: ${field} bevat {{…}}` });
-    }
-    if (spec.speed < 0.7 || spec.speed > 1.2)
-      issues.push({ level: 'error', scope, message: `${id}: spreektempo buiten 0,7–1,2` });
-    if (spec.stability < 0 || spec.stability > 1)
-      issues.push({ level: 'error', scope, message: `${id}: stabiliteit buiten 0–1` });
+    issues.push(...checkVoiceSpec(id, spec, scope));
+  }
+  return issues;
+}
+
+/** De stem van de presentator (podcasts) volgt dezelfde regels. */
+export function validateHostVoice(id: string, spec: VoiceSpec): ValidationIssue[] {
+  return checkVoiceSpec(id, spec, 'presentator');
+}
+
+/** Elke denker heeft een stemtype (voor een kant-en-klare stem), en geen onbekende denkers. */
+export function validateVoiceTypes(
+  genders: Readonly<Record<string, string>>,
+  figures: readonly Figure[],
+): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const scope = 'stemtypes';
+  for (const figure of figures) {
+    if (!genders[figure.id])
+      issues.push({ level: 'error', scope, message: `${figure.id}: geen stemtype` });
+  }
+  for (const id of Object.keys(genders)) {
+    if (!figures.some((f) => f.id === id))
+      issues.push({ level: 'error', scope, message: `${id}: onbekende denker` });
   }
   return issues;
 }

@@ -14,6 +14,7 @@ import type {
 import { normalize, keywordScore, salientWord, tokenize } from '@/lib/text';
 import { pick, seededRng, type Rng } from '@/lib/seeded-rng';
 import type { DemoContext, DemoHistoryItem } from '../demoContext';
+import { ruleCheck } from '../prompts/moderation';
 import { asksIfReal, authenticityReply, crisisReply, detectCrisisSignals } from '../prompts/safety';
 import type {
   HelperOutput,
@@ -201,12 +202,25 @@ function rankBlocks(blocks: readonly LectureBlock[], text: string): LectureBlock
 async function lecturePlan(
   ctx: Extract<DemoContext, { kind: 'lecture-plan' }>,
 ): Promise<LecturePlanOutput> {
-  const { demo } = await loadAll(ctx.figureId);
-  const chosen = rankBlocks(demo.lecture.blocks, `${ctx.topic} ${ctx.mainQuestion}`).slice(0, 3);
+  const { demo, figure } = await loadAll(ctx.figureId);
+  const request = `${ctx.topic} ${ctx.mainQuestion}`;
+  const chosen = rankBlocks(demo.lecture.blocks, request).slice(0, 3);
   const title = ctx.topic.trim().replace(/[.!?]+$/, '');
+  // Leestips: de werken die het best bij de vraag passen, aangevuld met de hoofdwerken.
+  const works = figure.keyWorks
+    .map((work, index) => ({
+      number: index + 1,
+      score: keywordScore(request, tokenize(`${work.title} ${work.note ?? ''}`)),
+    }))
+    .sort((a, b) => b.score - a.score || a.number - b.number);
+  const reading = works.filter((w) => w.score > 0).slice(0, 3);
+  for (const work of works) if (reading.length < 2 && !reading.includes(work)) reading.push(work);
+  const tags = [...new Set(tokenize(ctx.topic))].slice(0, 3);
   return {
     title: title.charAt(0).toUpperCase() + title.slice(1),
     segments: chosen.map((block) => ({ heading: block.heading, keyPoints: [block.lesson] })),
+    furtherReading: reading.map((w) => w.number),
+    tags: tags.length ? tags : (chosen[0]?.keywords.slice(0, 2) ?? []),
   };
 }
 
@@ -323,36 +337,8 @@ async function timelineReactions(
 
 /* ---------- Overig ---------- */
 
-const RISKY_WORDS = [
-  'kanker',
-  'tering',
-  'klootzak',
-  'kut',
-  'hoer',
-  'nazi',
-  'neuk',
-  'mongool',
-  'flikker',
-];
-
 function moderation(ctx: Extract<DemoContext, { kind: 'moderation' }>): ModerationOutput {
-  const reasons: string[] = [];
-  if (/[\w.+-]+@[\w-]+\.[\w.]+/.test(ctx.text))
-    reasons.push('Bevat een e-mailadres (persoonsgegevens).');
-  if (/(\+31|\b0)[1-9](?:[\s-]?\d){8}\b/.test(ctx.text))
-    reasons.push('Bevat mogelijk een telefoonnummer.');
-  if (/\bhttps?:\/\//i.test(ctx.text)) reasons.push('Bevat een link; controleer of die gepast is.');
-  const words = new Set(tokenize(ctx.text));
-  if (RISKY_WORDS.some((w) => words.has(w)))
-    reasons.push('Bevat mogelijk kwetsend of grof taalgebruik.');
-  if (detectCrisisSignals(ctx.text)) reasons.push('Bevat signalen van een persoonlijke crisis.');
-  const verdict: ModerationOutput['verdict'] =
-    reasons.length === 0
-      ? 'ok'
-      : reasons.some((r) => r.includes('kwetsend'))
-        ? 'afwijzen'
-        : 'twijfel';
-  return { verdict, reasons };
+  return ruleCheck(ctx.text);
 }
 
 function helper(ctx: Extract<DemoContext, { kind: 'helper' }>): HelperOutput {

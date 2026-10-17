@@ -4,7 +4,7 @@
  */
 import { useMemo } from 'react';
 import { EXAMPLE_LECTURES, type ExampleLectureMeta } from '@/data/seed/lectures';
-import { readingMinutes, wordCount } from '@/lib/text';
+import { readingMinutes, truncate, wordCount } from '@/lib/text';
 import { useLectureStore } from '@/store/lectureStore';
 import { useLibraryStore } from '@/store/miscStores';
 import type { Lecture, ShareStatus } from '@/store/schemas';
@@ -24,6 +24,8 @@ export interface LectureSummary {
   /** Publicatie- of aanmaakdatum (ISO). */
   date: string;
   liked: boolean;
+  /** Begin van de opening, voor kaarten. */
+  teaser?: string;
 }
 
 export function fromExample(meta: ExampleLectureMeta, liked = false): LectureSummary {
@@ -38,11 +40,13 @@ export function fromExample(meta: ExampleLectureMeta, liked = false): LectureSum
     isExample: true,
     date: meta.publishedAt,
     liked,
+    teaser: meta.teaser,
   };
 }
 
 export function fromLecture(lecture: Lecture, liked = lecture.likedByMe): LectureSummary {
   const words = lecture.segments.reduce((sum, s) => sum + wordCount(s.text), 0);
+  const opening = lecture.segments.find((s) => s.kind === 'opening')?.text;
   return {
     id: lecture.id,
     figureId: lecture.figureId,
@@ -56,6 +60,7 @@ export function fromLecture(lecture: Lecture, liked = lecture.likedByMe): Lectur
     share: lecture.share,
     date: lecture.publishedAt ?? lecture.completedAt ?? lecture.createdAt,
     liked,
+    teaser: opening ? truncate(opening.split('\n\n')[0] ?? '', 180) : undefined,
   };
 }
 

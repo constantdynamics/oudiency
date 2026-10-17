@@ -1,7 +1,9 @@
 import {
   AlertTriangle,
   AudioLines,
+  Circle,
   CircleCheck,
+  CircleX,
   ExternalLink,
   Headphones,
   History,
@@ -23,6 +25,7 @@ import { figureName, type FigureMeta } from '@/data/figures';
 import type { VoiceSpec } from '@/data/voices';
 import { tv } from '@/i18n/voice';
 import { formatLongDate, formatTime } from '@/lib/dates';
+import { cx } from '@/lib/cx';
 import { capitalize } from '@/lib/text';
 import type { TrialCall } from '@/store/schemas';
 import { elevenLabsKeyStorage, maskApiKey, useHasSecret } from '@/store/settingsStore';
@@ -34,7 +37,14 @@ import {
   type VoicePreview,
 } from '@/voice/api';
 import { formatCredits, formatDuration, formatMoney } from '@/voice/format';
-import { designPreviews, ensureAgent, refreshAccount, saveVoice } from '@/voice/setup';
+import { KEY_PERMISSIONS, permissionOf } from '@/voice/permissions';
+import {
+  designPreviews,
+  ensureAgent,
+  keyCheckOutcome,
+  refreshAccount,
+  saveVoice,
+} from '@/voice/setup';
 
 function StepCard({
   id,
@@ -67,9 +77,71 @@ function StepCard({
   );
 }
 
+/** De toegang die de sleutel nodig heeft; wat volgens ElevenLabs ontbreekt, staat erbij. */
+export function PermissionList({ missing = [] }: { missing?: readonly string[] }) {
+  const lacking = new Set(missing.map(permissionOf));
+  return (
+    <ul className="mt-2 space-y-1.5" aria-label={tv.permissions.title}>
+      {KEY_PERMISSIONS.map((id) => {
+        const item = tv.permissions.items[id];
+        const isMissing = lacking.has(id);
+        const Icon = isMissing ? CircleX : Circle;
+        return (
+          <li key={id} className="flex gap-2">
+            <Icon
+              aria-hidden
+              className={cx('mt-1 size-4 shrink-0', isMissing ? 'text-danger' : 'text-ink-3')}
+            />
+            <span>
+              <strong className="font-semibold">{item.area}</strong>
+              {item.alias && <span className="text-ink-2"> ({item.alias})</span>}: {item.level}
+              <span className="text-ink-2"> · {item.use}</span>
+              {isMissing && (
+                <strong className="font-semibold text-danger"> · {tv.permissions.missing}</strong>
+              )}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+/** Bij een weigering: wat er aan moet, waar je dat doet, en de melding van ElevenLabs zelf. */
+export function PermissionHelp({
+  missing,
+  message,
+}: {
+  missing: readonly string[];
+  message?: string;
+}) {
+  const unknown = missing.filter((scope) => !permissionOf(scope));
+  return (
+    <>
+      <p className="mt-1">{tv.permissions.where}</p>
+      <PermissionList missing={missing} />
+      {unknown.map((scope) => (
+        <p key={scope} className="mt-1 text-sm">
+          {tv.permissions.other(scope)}
+        </p>
+      ))}
+      <a
+        href={tv.key.keysUrl}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="mt-2 inline-flex items-center gap-1.5 font-medium text-info underline"
+      >
+        {tv.key.openKeys}
+        <ExternalLink aria-hidden className="size-4" />
+      </a>
+      {message && <p className="mt-2 text-sm text-ink-2">ElevenLabs: {message}</p>}
+    </>
+  );
+}
+
 /** Foutmelding in gewone taal, met de toelichting van ElevenLabs waar die helpt. */
 export function VoiceErrorNote({ error }: { error: VoiceApiError }) {
-  const showDetail = ['permission', 'invalid', 'other', 'quota'].includes(error.kind);
+  const showDetail = ['invalid', 'other', 'quota'].includes(error.kind);
   return (
     <div
       role="alert"
@@ -78,8 +150,11 @@ export function VoiceErrorNote({ error }: { error: VoiceApiError }) {
       <AlertTriangle aria-hidden className="mt-0.5 size-5 shrink-0 text-danger" />
       <div>
         <p>{tv.errors[error.kind]}</p>
-        {showDetail && error.message && (
-          <p className="mt-1 text-sm text-ink-2">ElevenLabs: {error.message}</p>
+        {error.kind === 'permission' ? (
+          <PermissionHelp missing={error.missing} message={error.message} />
+        ) : (
+          showDetail &&
+          error.message && <p className="mt-1 text-sm text-ink-2">ElevenLabs: {error.message}</p>
         )}
       </div>
     </div>
@@ -110,33 +185,23 @@ export function KeyCard() {
   const [status, setStatus] = useState<KeyStatus>('idle');
   const [error, setError] = useState<VoiceApiError | null>(null);
 
-  /** Test de sleutel; bewaart hem pas als hij werkt. */
+  /** Test de sleutel (tegoed en agenten tegelijk); bewaart hem pas als hij werkt. */
   async function test(key: string): Promise<boolean> {
     setStatus('testing');
     setError(null);
     const api = createElevenLabsApi(key);
-    try {
-      await refreshAccount(api);
-      setStatus('ok');
-      return true;
-    } catch (caught) {
-      const first = toVoiceError(caught);
-      if (first.kind === 'permission') {
-        // Zonder leesrecht op het account kan de sleutel nog prima bellen.
-        try {
-          await api.findAgentId();
-          setStatus('okNoAccount');
-          return true;
-        } catch (second) {
-          setError(toVoiceError(second));
-          setStatus('error');
-          return false;
-        }
-      }
-      setError(first);
+    const [account, agents] = await Promise.allSettled([refreshAccount(api), api.findAgentId()]);
+    const outcome = keyCheckOutcome(
+      account.status === 'rejected' ? toVoiceError(account.reason) : undefined,
+      agents.status === 'rejected' ? toVoiceError(agents.reason) : undefined,
+    );
+    if (!outcome.ok) {
+      setError(outcome.error);
       setStatus('error');
       return false;
     }
+    setStatus(outcome.account ? 'ok' : 'okNoAccount');
+    return true;
   }
 
   async function save(event: FormEvent) {
@@ -203,6 +268,8 @@ export function KeyCard() {
               <li key={step}>{step}</li>
             ))}
           </ol>
+          <h4 className="mt-3 font-semibold">{tv.permissions.title}</h4>
+          <PermissionList />
           <a
             href={tv.key.keysUrl}
             target="_blank"
@@ -299,8 +366,26 @@ function PreviewPlayer({ preview, index }: { preview: VoicePreview; index: numbe
 
 type DesignPhase = 'idle' | 'designing' | 'choosing' | 'saving';
 
-/** Stap 3: de stem van een denker, gekozen uit drie ontworpen voorbeelden. */
-export function VoiceDesignCard({ meta, spec }: { meta: FigureMeta; spec: VoiceSpec }) {
+/** Wie een stem krijgt: een denker, of Sophie, de presentator van de podcasts. */
+interface VoiceOwner {
+  id: string;
+  name: string;
+  shortName?: string;
+}
+
+/** Stap 3: de stem van een denker (of Sophie), gekozen uit drie ontworpen voorbeelden. */
+export function VoiceDesignCard({
+  meta,
+  spec,
+  title,
+  body = tv.design.body,
+}: {
+  meta: VoiceOwner;
+  spec: VoiceSpec;
+  /** Andere kop of uitleg (bijv. voor Sophie, buiten de stappen van de spraakproef). */
+  title?: string;
+  body?: string;
+}) {
   const hasKey = useHasSecret(elevenLabsKeyStorage);
   const voice = useVoiceStore((s) => s.voices[meta.id]);
   const [phase, setPhase] = useState<DesignPhase>('idle');
@@ -345,10 +430,10 @@ export function VoiceDesignCard({ meta, spec }: { meta: FigureMeta; spec: VoiceS
     <StepCard
       id="stem"
       icon={<AudioLines aria-hidden className="size-5 text-fig" />}
-      title={tv.design.title(name)}
+      title={title ?? tv.design.title(name)}
       done={Boolean(voice) && phase === 'idle'}
     >
-      <p className="text-ink-2">{tv.design.body}</p>
+      <p className="text-ink-2">{body}</p>
       <details className="mt-2 text-sm text-ink-3">
         <summary className="cursor-pointer">{tv.design.description}</summary>
         <p className="mt-1" lang="en">

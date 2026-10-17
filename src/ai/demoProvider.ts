@@ -16,6 +16,9 @@ function instant(): boolean {
   return useSettingsStore.getState().settings.devInstantReactions;
 }
 
+/** Geen gesprek, dus geen typetijd: de gedachte van vandaag staat er meteen (een briefje). */
+const WITHOUT_TYPING: ReadonlySet<TextRequest['demo']['kind']> = new Set(['thought']);
+
 function wait(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     if (signal?.aborted) {
@@ -43,7 +46,7 @@ export class DemoProvider implements AIProvider {
     signal?: AbortSignal,
   ): Promise<TextResult> {
     const text = await composeText(req.demo);
-    if (instant()) {
+    if (instant() || WITHOUT_TYPING.has(req.demo.kind)) {
       onDelta(text);
       return { text, stopReason: 'end_turn' };
     }
