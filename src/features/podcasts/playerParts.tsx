@@ -17,6 +17,7 @@ import { Link } from 'react-router';
 import { Avatar } from '@/components/Avatar';
 import { AiLabel } from '@/components/Badges';
 import { Card } from '@/components/Card';
+import { toast } from '@/components/toastStore';
 import { PODCAST } from '@/config/podcast';
 import type { FigureMeta } from '@/data/figures';
 import { useNow } from '@/hooks/useNow';
@@ -29,7 +30,20 @@ import { usePodcastStore } from '@/store/podcastStore';
 import type { PodcastEpisode } from '@/store/schemas';
 import { formatDuration } from '@/voice/format';
 import { episodeFigures, formatSpeed } from './format';
+import { usePodcastKeys } from './usePodcastKeys';
 import { QuestionPanel } from './QuestionPanel';
+
+/** "Andere stem" voor wie er nu spreekt: geldt meteen (het fragment begint opnieuw). */
+function anotherVoice(speakerId: string, name: string): Promise<void> {
+  return import('@/podcast/voiceChoice')
+    .then((m) => m.chooseAnotherVoice(speakerId))
+    .then(
+      (voice) => {
+        if (voice) toast(tp.voices.changed(name, voice.name ?? ''), 'ok');
+      },
+      () => toast(tp.voices.failed, 'warn'),
+    );
+}
 
 // Alleen bij een fout van ElevenLabs nodig: niet meeladen met de pagina.
 const VoiceErrorNote = lazy(() =>
@@ -169,6 +183,8 @@ export function PlayerCard({
     ? episodeProgress(episode, player.segment, player.seconds, player.duration)
     : episodeProgress(episode, segment, 0, 0);
   const speaker = speakerName(episode, segment);
+  const speakerId = episode.segments[segment]?.speaker;
+  const keys = usePodcastKeys();
   const error = active && status === 'fout' ? player.error : undefined;
 
   return (
@@ -185,14 +201,25 @@ export function PlayerCard({
       <Heading id={titleId} className="mt-3 text-2xl leading-tight sm:text-3xl">
         {episode.title}
       </Heading>
-      <p className="mt-1 min-h-6 text-ink-2">
-        {status === 'laden'
-          ? tp.card.loading
-          : status === 'speelt' && speaker
-            ? tp.card.speaking(speaker)
-            : status === 'pauze'
-              ? tp.card.paused
-              : tp.card.ready}
+      <p className="mt-1 flex min-h-6 flex-wrap items-baseline gap-x-3 text-ink-2">
+        <span>
+          {status === 'laden'
+            ? tp.card.loading
+            : status === 'speelt' && speaker
+              ? tp.card.speaking(speaker)
+              : status === 'pauze'
+                ? tp.card.paused
+                : tp.card.ready}
+        </span>
+        {active && speakerId && speaker && keys.elevenLabs && (
+          <button
+            type="button"
+            onClick={() => void anotherVoice(speakerId, speaker)}
+            className="text-sm font-medium text-info underline underline-offset-2"
+          >
+            {tp.voices.anotherFor(speaker)}
+          </button>
+        )}
       </p>
 
       <div className="mt-4">

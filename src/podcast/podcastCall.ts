@@ -37,9 +37,10 @@ async function calleeVoice(
   calleeId: string,
 ): Promise<SpeakerVoice> {
   const speakers = [...new Set([...episode.segments.map((s) => s.speaker), calleeId])];
-  const designed = useVoiceStore.getState().voices;
-  const library = speakers.some((s) => !designed[s]) ? await loadLibrary(api, key) : [];
-  const voice = assignVoices(speakers, designed, library)[calleeId];
+  const { voices: designed, overrides = {} } = useVoiceStore.getState();
+  const needsLibrary = speakers.some((s) => !overrides[s] && !designed[s]);
+  const library = needsLibrary ? await loadLibrary(api, key) : [];
+  const voice = assignVoices(speakers, designed, library, overrides)[calleeId];
   if (!voice) throw new VoiceApiError('not_found', tp.player.noVoice);
   return voice;
 }

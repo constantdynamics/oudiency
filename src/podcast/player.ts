@@ -78,6 +78,11 @@ const durations = new Map<string, number>();
 const set = usePlayer.setState;
 const get = usePlayer.getState;
 
+/** Het stemmodel dat je na het vergelijken koos (anders het goedkoopste). */
+function currentModel(): string {
+  return usePodcastStore.getState().settings.ttsModel ?? PODCAST.defaultTtsModel;
+}
+
 function episodeById(id: string | undefined): PodcastEpisode | undefined {
   return id ? usePodcastStore.getState().episodes.find((e) => e.id === id) : undefined;
 }
@@ -105,10 +110,10 @@ async function prepare(episode: PodcastEpisode) {
   if (prepared?.episodeId === episode.id && prepared.key === key) return prepared;
   const api = deps.createApi(key);
   const speakers = [...new Set(episode.segments.map((s) => s.speaker))];
-  const designed = useVoiceStore.getState().voices;
-  const needsLibrary = speakers.some((speaker) => !designed[speaker]);
+  const { voices: designed, overrides = {} } = useVoiceStore.getState();
+  const needsLibrary = speakers.some((speaker) => !overrides[speaker] && !designed[speaker]);
   const library = needsLibrary ? await loadLibrary(api, key) : [];
-  const voices = assignVoices(speakers, designed, library);
+  const voices = assignVoices(speakers, designed, library, overrides);
   if (speakers.some((speaker) => !voices[speaker])) {
     throw new PlayerFailure({ message: tp.player.noVoice });
   }
@@ -166,7 +171,7 @@ async function load(episode: PodcastEpisode, index: number, startAt: number, aut
     const { api, voices } = await prepare(episode);
     const voice = voices[segment.speaker];
     if (!voice) throw new PlayerFailure({ message: tp.player.noVoice });
-    const blob = await segmentAudio(api, episode.id, segment, voice);
+    const blob = await segmentAudio(api, episode.id, segment, voice, currentModel());
     if (token !== loadToken) return;
     const element = audio();
     if (currentUrl) deps.revokeUrl(currentUrl);
@@ -207,7 +212,7 @@ function prefetch(
 ): void {
   for (const segment of episode.segments.slice(from, from + PODCAST.prefetchSegments)) {
     const voice = voices[segment.speaker];
-    if (voice) segmentAudio(api, episode.id, segment, voice).catch(() => undefined);
+    if (voice) segmentAudio(api, episode.id, segment, voice, currentModel()).catch(() => undefined);
   }
 }
 
@@ -321,6 +326,25 @@ export function warmUp(episodeId: string, from: number): void {
   if (!episode || prepared?.episodeId !== episodeId) return;
   prefetch(prepared.api, episode, prepared.voices, from);
 }
+
+/**
+ * Een andere stem of een ander stemmodel geldt meteen (keuze 8): het fragment dat speelt, begint
+ * opnieuw op dezelfde plek met de nieuwe stem.
+ */
+export function refreshVoices(): void {
+  prepared = null;
+  const { episodeId, segment, status, seconds } = get();
+  const episode = episodeById(episodeId);
+  if (!episode || (status !== 'speelt' && status !== 'pauze')) return;
+  void load(episode, segment, audio().currentTime || seconds, status === 'speelt');
+}
+
+useVoiceStore.subscribe((state, previous) => {
+  if (state.overrides !== previous.overrides || state.voices !== previous.voices) refreshVoices();
+});
+usePodcastStore.subscribe((state, previous) => {
+  if (state.settings.ttsModel !== previous.settings.ttsModel) refreshVoices();
+});
 
 /** Een aflevering weg: uit de speler, de wachtrij, de bibliotheek en de opslag. */
 export async function deleteEpisode(episodeId: string): Promise<void> {

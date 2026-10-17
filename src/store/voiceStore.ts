@@ -14,6 +14,10 @@ interface VoiceStoreState extends VoiceState {
   clearAgent: () => void;
   setVoice: (figureId: string, voiceId: string) => void;
   removeVoice: (figureId: string) => void;
+  /** "Andere stem": deze stem voor deze spreker, overal. */
+  setOverride: (speaker: string, voiceId: string, name?: string) => void;
+  /** Terug naar automatisch (of de ontworpen stem). */
+  clearOverride: (speaker: string) => void;
   addTrial: (trial: TrialCall) => void;
   setTrialCost: (id: string, cost: CallCost) => void;
   clearTrials: () => void;
@@ -27,7 +31,7 @@ interface VoiceStoreState extends VoiceState {
 }
 
 export function initialVoiceState(): VoiceState {
-  return { agent: undefined, voices: {}, trials: [], account: undefined };
+  return { agent: undefined, voices: {}, overrides: {}, trials: [], account: undefined };
 }
 
 export const useVoiceStore = create<VoiceStoreState>()(
@@ -37,7 +41,28 @@ export const useVoiceStore = create<VoiceStoreState>()(
       setAgent: (agent) => set({ agent: { ...agent, updatedAt: clock.iso() } }),
       clearAgent: () => set({ agent: undefined }),
       setVoice: (figureId, voiceId) =>
-        set((s) => ({ voices: { ...s.voices, [figureId]: { voiceId, createdAt: clock.iso() } } })),
+        set((s) => {
+          // Een nieuw ontworpen stem is een bewuste keuze: die gaat dan weer voor.
+          const overrides = { ...s.overrides };
+          delete overrides[figureId];
+          return {
+            voices: { ...s.voices, [figureId]: { voiceId, createdAt: clock.iso() } },
+            overrides,
+          };
+        }),
+      setOverride: (speaker, voiceId, name) =>
+        set((s) => ({
+          overrides: {
+            ...s.overrides,
+            [speaker]: { voiceId, ...(name ? { name } : {}), updatedAt: clock.iso() },
+          },
+        })),
+      clearOverride: (speaker) =>
+        set((s) => {
+          const overrides = { ...s.overrides };
+          delete overrides[speaker];
+          return { overrides };
+        }),
       removeVoice: (figureId) =>
         set((s) => {
           const voices = { ...s.voices };
@@ -64,6 +89,7 @@ export const useVoiceStore = create<VoiceStoreState>()(
       partialize: (s) => ({
         agent: s.agent,
         voices: s.voices,
+        overrides: s.overrides,
         trials: s.trials,
         account: s.account,
       }),

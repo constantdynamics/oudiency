@@ -71,8 +71,8 @@ export function speakerVoiceType(speaker: string): VoiceType {
 
 export interface SpeakerVoice {
   voiceId: string;
-  /** Eigen ontworpen stem, of een kant-en-klare stem bij het type. */
-  source: 'eigen' | 'type';
+  /** Met "andere stem" gekozen, eigen ontworpen, of automatisch een kant-en-klare bij het type. */
+  source: 'gekozen' | 'eigen' | 'type';
   stability?: number;
   speed?: number;
 }
@@ -82,17 +82,28 @@ function designSettings(speaker: string): Pick<SpeakerVoice, 'stability' | 'spee
   return spec ? { stability: spec.stability, speed: spec.speed } : {};
 }
 
-/** Stemmen voor alle sprekers van een aflevering, allemaal verschillend. */
+/**
+ * Stemmen voor alle sprekers van een aflevering. Een met "andere stem" gekozen stem gaat voor,
+ * dan een ontworpen stem, dan automatisch een kant-en-klare (en dan klinkt iedereen anders).
+ */
 export function assignVoices(
   speakers: readonly string[],
   designed: Readonly<Record<string, { voiceId: string }>>,
   library: readonly LibraryVoice[],
+  overrides: Readonly<Record<string, { voiceId: string }>> = {},
 ): Record<string, SpeakerVoice> {
   const result: Record<string, SpeakerVoice> = {};
   const used = new Set<string>();
   for (const speaker of speakers) {
+    const chosen = overrides[speaker];
+    if (!chosen || result[speaker]) continue;
+    result[speaker] = { voiceId: chosen.voiceId, source: 'gekozen' };
+    used.add(chosen.voiceId);
+  }
+  for (const speaker of speakers) {
+    if (result[speaker]) continue;
     const own = designed[speaker];
-    if (!own || result[speaker]) continue;
+    if (!own) continue;
     result[speaker] = { voiceId: own.voiceId, source: 'eigen', ...designSettings(speaker) };
     used.add(own.voiceId);
   }
@@ -104,4 +115,23 @@ export function assignVoices(
     used.add(voiceId);
   }
   return result;
+}
+
+/**
+ * De volgende stem bij "andere stem" (keuze 2d): de eerstvolgende kant-en-klare stem van hetzelfde
+ * geslacht (eerst dezelfde leeftijd), rond en rond. Geen stemmen van dat geslacht? Dan alle.
+ */
+export function nextVoice(
+  type: VoiceType,
+  voices: readonly LibraryVoice[],
+  current: string | undefined,
+): LibraryVoice | undefined {
+  const sameGender = [
+    ...voices.filter((voice) => voice.gender === type.gender && voice.age === type.age),
+    ...voices.filter((voice) => voice.gender === type.gender && voice.age !== type.age),
+  ];
+  const pool = sameGender.length > 0 ? sameGender : [...voices];
+  if (pool.length === 0) return undefined;
+  const index = pool.findIndex((voice) => voice.voiceId === current);
+  return pool[(index + 1) % pool.length];
 }

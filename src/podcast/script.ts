@@ -7,20 +7,23 @@ import { PODCAST } from '@/config/podcast';
 import { findMeta } from '@/data/figures';
 import { HOST_ID } from '@/data/podcastHost';
 import { uid } from '@/lib/ids';
+import { keepOneTag, stripTags } from './audioTags';
 import type { PodcastSegment } from '@/store/schemas';
 
 /** Als Claude de AI-melding vergeet, zegt Sophie hem toch: geen aflevering zonder. */
 export const FIXED_INTRO =
   'Je luistert naar de podcast van Oudiency. Dit is een AI-simulatie: de stemmen en woorden van de denkers zijn nagebootst door AI. Het zijn geen echte uitspraken.';
 
-/** Gesproken tekst: zonder opmaak en zonder regieaanwijzingen tussen blokhaken. */
+/**
+ * Gesproken tekst: zonder opmaak. Van de blokhaken blijft alleen één emotie-aanwijzing over
+ * (keuze 9d); de rest (regieaanwijzingen, notities) verdwijnt.
+ */
 export function cleanSpokenText(text: string): string {
-  return text
-    .replace(/\[[^\]]*\]/g, ' ')
-    .replace(/^\s*(?:#{1,6}|[-*•]|\d+[.)])\s+/gm, '')
-    .replace(/(\*\*|__|\*|_)(\S(?:.*?\S)?)\1/g, '$2')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return keepOneTag(
+    text
+      .replace(/^\s*(?:#{1,6}|[-*•]|\d+[.)])\s+/gm, '')
+      .replace(/(\*\*|__|\*|_)(\S(?:.*?\S)?)\1/g, '$2'),
+  );
 }
 
 export function resolveSpeaker(raw: string, figureIds: readonly string[]): string | undefined {
@@ -65,7 +68,7 @@ export function toSegments(
 }
 
 export function wordCount(segments: readonly Pick<PodcastSegment, 'text'>[]): number {
-  return segments.reduce((sum, s) => sum + (s.text.match(/\S+/g)?.length ?? 0), 0);
+  return segments.reduce((sum, s) => sum + (stripTags(s.text).match(/\S+/g)?.length ?? 0), 0);
 }
 
 /** Geschatte speelduur in minuten (gesproken tempo). */

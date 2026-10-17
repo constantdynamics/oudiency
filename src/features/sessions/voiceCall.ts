@@ -22,7 +22,7 @@ import { useVoiceStore } from '@/store/voiceStore';
 import { createElevenLabsApi, VoiceApiError } from '@/voice/api';
 import { CallSession, type CallState } from '@/voice/callSession';
 import { elevenLabsStarter } from '@/voice/elevenlabsCall';
-import { ensureAgent, verifyVoice } from '@/voice/setup';
+import { callVoice, ensureAgent, hasCallVoice } from '@/voice/setup';
 
 const REASON: Record<NonNullable<CallState['endReason']>, NonNullable<Session['endReason']>> = {
   tijd: 'tijd',
@@ -41,7 +41,7 @@ export function canCallFigure(figureId: string): boolean {
   return (
     Boolean(elevenLabsKeyStorage.get()) &&
     Boolean(voiceSpecFor(figureId)) &&
-    Boolean(useVoiceStore.getState().voices[figureId])
+    hasCallVoice(useVoiceStore.getState(), figureId)
   );
 }
 
@@ -70,7 +70,7 @@ export function createSessionCall(
     endsAt: Date.parse(session.endsAt),
     start: elevenLabsStarter(async () => {
       const agentId = await ensureAgent(api);
-      const voiceId = await verifyVoice(api, figure.id);
+      const voiceId = await callVoice(api, figure.id);
       if (!voiceId) {
         throw new VoiceApiError(
           'not_found',

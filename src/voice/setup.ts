@@ -119,6 +119,24 @@ export async function saveVoice(
   return voiceId;
 }
 
+/**
+ * De stem voor een gesprek: een met "andere stem" gekozen stem gaat overal voor (keuze 8), anders
+ * de ontworpen stem (als die nog in het account staat).
+ */
+export async function callVoice(api: ElevenLabsApi, figureId: string): Promise<string | undefined> {
+  const chosen = useVoiceStore.getState().overrides?.[figureId];
+  if (chosen) return chosen.voiceId;
+  return verifyVoice(api, figureId);
+}
+
+/** Heeft deze denker een stem om mee te bellen (gekozen of ontworpen)? */
+export function hasCallVoice(
+  state: { voices: Record<string, unknown>; overrides?: Record<string, unknown> },
+  figureId: string,
+): boolean {
+  return Boolean(state.overrides?.[figureId] ?? state.voices[figureId]);
+}
+
 /** Bestaat de bewaarde stem nog in het account? Zo niet, dan vergeten we hem. */
 export async function verifyVoice(
   api: ElevenLabsApi,

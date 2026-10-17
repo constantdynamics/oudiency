@@ -20,7 +20,7 @@ import { useVoiceStore } from '@/store/voiceStore';
 import { createElevenLabsApi, VoiceApiError } from '@/voice/api';
 import { CallSession, type CallState } from '@/voice/callSession';
 import { elevenLabsStarter } from '@/voice/elevenlabsCall';
-import { ensureAgent, lookUpCallCost, verifyVoice } from '@/voice/setup';
+import { callVoice, ensureAgent, hasCallVoice, lookUpCallCost } from '@/voice/setup';
 import { pausePodcast } from '@/podcast/playerActions';
 import { CallEnded, CallLobby, LiveCall } from './callParts';
 
@@ -59,7 +59,7 @@ function createSession(
         ),
       ]);
       creditsBefore = before;
-      const voiceId = await verifyVoice(api, figure.id);
+      const voiceId = await callVoice(api, figure.id);
       if (!voiceId) {
         throw new VoiceApiError(
           'not_found',
@@ -111,7 +111,7 @@ export function CallPage() {
   const spec = meta ? voiceSpecFor(meta.id) : undefined;
   const { figure } = useFigure(spec ? meta?.id : undefined);
   const hasKey = useHasSecret(elevenLabsKeyStorage);
-  const hasVoice = useVoiceStore((s) => (meta ? Boolean(s.voices[meta.id]) : false));
+  const hasVoice = useVoiceStore((s) => (meta ? hasCallVoice(s, meta.id) : false));
   const [session, setSession] = useState<CallSession | null>(null);
   const [trialId, setTrialId] = useState<string | null>(null);
   const [costPending, setCostPending] = useState(false);
