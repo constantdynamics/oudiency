@@ -12,7 +12,7 @@ import {
   getAudio,
   putAudio,
 } from '@/podcast/audioCache';
-import { estimateCredits, segmentAudio, speakableText } from '@/podcast/speech';
+import { estimateTtsEur, segmentAudio, speakableText } from '@/podcast/speech';
 import {
   assignVoices,
   type LibraryVoice,
@@ -178,7 +178,7 @@ describe('gesproken fragmenten', () => {
     const blob = await api.speech({
       voiceId: 'stem 1',
       text: 'Goedemiddag.',
-      model: PODCAST.ttsModel,
+      model: PODCAST.defaultTtsModel,
       languageCode: 'nl',
       outputFormat: PODCAST.outputFormat,
       settings: { stability: 0.5, speed: 1 },
@@ -206,12 +206,12 @@ describe('gesproken fragmenten', () => {
     const voice = { voiceId: 'v1', source: 'type' as const };
     const s = segment('s1', 'Wat is *moed*?');
     const [first, second] = await Promise.all([
-      segmentAudio(api, 'e1', s, voice),
-      segmentAudio(api, 'e1', s, voice),
+      segmentAudio(api, 'e1', s, voice, 'eleven_flash_v2_5'),
+      segmentAudio(api, 'e1', s, voice, 'eleven_flash_v2_5'),
     ]);
     expect(first.size).toBe(2);
     expect(second).toBe(first);
-    await segmentAudio(api, 'e1', s, voice);
+    await segmentAudio(api, 'e1', s, voice, 'eleven_flash_v2_5');
     expect(fetchMock).toHaveBeenCalledTimes(1);
     // Zonder opmaak uitgesproken.
     const init = (fetchMock.mock.calls[0] as unknown as [unknown, RequestInit])[1];
@@ -219,18 +219,21 @@ describe('gesproken fragmenten', () => {
     expect(speakableText('Wat is *moed*?')).toBe('Wat is moed?');
   });
 
-  it('schat de kosten in credits (Flash: een halve credit per teken)', () => {
-    expect(estimateCredits([segment('s1', 'abcd'), segment('s2', 'ef')])).toBe(3);
+  it("schat de kosten in euro's, per model", () => {
+    const segments = [segment('s1', 'a'.repeat(600)), segment('s2', 'b'.repeat(400))];
+    // 1.000 tekens × $0,05 per 1.000 × 0,88
+    expect(estimateTtsEur(segments, 'eleven_flash_v2_5')).toBeCloseTo(0.044, 5);
+    expect(estimateTtsEur(segments, 'eleven_v4')).toBeCloseTo(0.0704, 5);
   });
 
   it('opslag op het apparaat: bewaren, per aflevering wissen en alles wissen', async () => {
-    await putAudio(audioKey('e1', 's1', 'v1'), new Blob([new Uint8Array(10)]));
-    await putAudio(audioKey('e1', 's2', 'v1'), new Blob([new Uint8Array(5)]));
-    await putAudio(audioKey('e2', 's1', 'v1'), new Blob([new Uint8Array(1)]));
+    await putAudio(audioKey('e1', 's1', 'v1', 'm'), new Blob([new Uint8Array(10)]));
+    await putAudio(audioKey('e1', 's2', 'v1', 'm'), new Blob([new Uint8Array(5)]));
+    await putAudio(audioKey('e2', 's1', 'v1', 'm'), new Blob([new Uint8Array(1)]));
     expect(await audioUsage()).toEqual({ fragments: 3, bytes: 16 });
     await deleteEpisodeAudio('e1');
-    expect(await getAudio(audioKey('e1', 's1', 'v1'))).toBeUndefined();
-    expect(await getAudio(audioKey('e2', 's1', 'v1'))).toBeDefined();
+    expect(await getAudio(audioKey('e1', 's1', 'v1', 'm'))).toBeUndefined();
+    expect(await getAudio(audioKey('e2', 's1', 'v1', 'm'))).toBeDefined();
     await clearAudio();
     expect(await audioUsage()).toEqual({ fragments: 0, bytes: 0 });
   });

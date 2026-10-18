@@ -1,6 +1,7 @@
 /** Kleine weergavehulpjes voor de podcastpagina's. */
 import { HOST_ID, HOST_NAME } from '@/data/podcastHost';
 import { findMeta, figureName, type FigureMeta } from '@/data/figures';
+import { tp } from '@/i18n/podcast';
 import type { PodcastEpisode } from '@/store/schemas';
 
 /** 1,25× */
@@ -27,6 +28,13 @@ export function listenState(episode: PodcastEpisode): { state: ListenState; perc
     state: 'bezig',
     percent: Math.min(99, Math.max(1, Math.round((segment / total) * 100))),
   };
+}
+
+/** De vorm zoals de luisteraar hem ziet; een gesprek kan ook met drie (een panel). */
+export function formatName(episode: Pick<PodcastEpisode, 'format' | 'figureIds'>): string {
+  return episode.format === 'gesprek' && episode.figureIds.length >= 3
+    ? tp.formatThree
+    : tp.formats[episode.format];
 }
 
 export function episodeFigures(episode: PodcastEpisode): FigureMeta[] {

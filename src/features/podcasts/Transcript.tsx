@@ -5,6 +5,7 @@ import { Pill } from '@/components/Badges';
 import { RichText } from '@/components/RichText';
 import { tp } from '@/i18n/podcast';
 import { cx } from '@/lib/cx';
+import { stripTags } from '@/podcast/audioTags';
 import { withPlayer } from '@/podcast/playerActions';
 import type { PodcastEpisode } from '@/store/schemas';
 import { speakerLabel } from './format';
@@ -67,7 +68,7 @@ export function Transcript({ episode, current }: { episode: PodcastEpisode; curr
                 <Play aria-hidden className="size-4" />
               </button>
             </div>
-            <RichText text={segment.text} className="mt-1 text-ink-2" />
+            <RichText text={stripTags(segment.text)} className="mt-1 text-ink-2" />
           </li>
         );
       })}

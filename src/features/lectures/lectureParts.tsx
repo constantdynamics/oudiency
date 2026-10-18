@@ -9,6 +9,7 @@ import type { FigureMeta } from '@/data/figures';
 import type { KeyWork } from '@/data/types';
 import { t } from '@/i18n/nl';
 import { cx } from '@/lib/cx';
+import { joinDutch } from '@/lib/text';
 import type { Chapter } from '@/services/lecture.service';
 import { useLibraryStore } from '@/store/miscStores';
 import type { LectureSegment } from '@/store/schemas';
@@ -23,6 +24,7 @@ export function LectureHall({
   state = 'idle',
   isExample = false,
   demo = false,
+  guests = [],
   children,
 }: {
   meta: FigureMeta;
@@ -32,6 +34,8 @@ export function LectureHall({
   state?: AvatarState;
   isExample?: boolean;
   demo?: boolean;
+  /** Gastdocenten (een college uit een onderzoek). */
+  guests?: readonly FigureMeta[];
   children?: ReactNode;
 }) {
   return (
@@ -48,6 +52,18 @@ export function LectureHall({
             <span className="font-semibold text-ink">{t.lectures.mainQuestion}: </span>
             {mainQuestion}
           </p>
+          {guests.length > 0 && (
+            <p className="mt-3 flex flex-wrap items-center gap-2 text-ink-2">
+              <span className="flex -space-x-2">
+                {guests.map((guest) => (
+                  <span key={guest.id} className="rounded-full ring-2 ring-fig-surface">
+                    <Avatar figure={guest} size={32} />
+                  </span>
+                ))}
+              </span>
+              {t.lectures.guests(joinDutch(guests.map((g) => g.name)), guests.length)}
+            </p>
+          )}
           <div className="mt-3 flex flex-wrap items-center gap-1.5">
             <AiLabel />
             {isExample && <ExampleBadge />}
@@ -60,6 +76,16 @@ export function LectureHall({
   );
 }
 
+/** Wie dit deel geeft, als het een gastdocent is. */
+export function GuestLabel({ guest }: { guest: FigureMeta }) {
+  return (
+    <p className="mb-2 flex items-center gap-2 text-sm font-medium text-ink-2">
+      <Avatar figure={guest} size={28} />
+      {t.lectures.guestPart(guest.name)}
+    </p>
+  );
+}
+
 /** Eén onderdeel van het college als hoofdstuk. Antwoorden van de docent via de veilige RichText. */
 export function SegmentBlock({
   segment,
@@ -68,6 +94,7 @@ export function SegmentBlock({
   streaming = false,
   live = false,
   footer,
+  guest,
 }: {
   segment: Pick<LectureSegment, 'kind' | 'heading' | 'text'>;
   index: number;
@@ -77,6 +104,8 @@ export function SegmentBlock({
   /** Lopend onderdeel: voorgelezen voor schermlezers. */
   live?: boolean;
   footer?: ReactNode;
+  /** Gegeven door een gastdocent. */
+  guest?: FigureMeta;
 }) {
   const answer = segment.kind === 'antwoord';
   return (
@@ -88,6 +117,7 @@ export function SegmentBlock({
       )}
     >
       <header className="mb-3">
+        {guest && <GuestLabel guest={guest} />}
         {segment.kind === 'deel' && part !== undefined && (
           <p className="text-sm font-semibold tracking-wide text-fig uppercase">
             {t.lectures.part(part)}

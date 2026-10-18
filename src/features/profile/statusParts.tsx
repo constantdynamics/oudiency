@@ -74,12 +74,13 @@ export function StatusCard() {
   );
 }
 
-/** Vandaag: sessies en colleges x/y. */
+/** Vandaag: sessies, colleges en onderzoeken x/y. */
 export function TodayCard({ now }: { now: number }) {
   const profile = useProfileStore((s) => s.profile);
   const day = localDateKey(now);
   const sessions = usedOn(profile.usageByDate, 'sessions', day);
   const lectures = usedOn(profile.usageByDate, 'lectures', day);
+  const research = usedOn(profile.usageByDate, 'research', day);
   return (
     <Card as="section" aria-labelledby="vandaag">
       <h2 id="vandaag" className="text-2xl">
@@ -88,6 +89,7 @@ export function TodayCard({ now }: { now: number }) {
       <ul className="mt-2 space-y-1">
         <li>{t.profile.todaySessions(sessions, dailyLimit('sessions', profile.tier))}</li>
         <li>{t.profile.todayLectures(lectures, dailyLimit('lectures', profile.tier))}</li>
+        <li>{t.profile.todayResearch(research, dailyLimit('research', profile.tier))}</li>
       </ul>
       <p className="mt-2 text-sm text-ink-3">{t.profile.resetsAtMidnight}</p>
     </Card>

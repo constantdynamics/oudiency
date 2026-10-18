@@ -6,6 +6,7 @@
 import { create } from 'zustand';
 import { type AiErrorInfo, describeAiError, isAbort } from '@/ai';
 import { toast } from '@/components/toastStore';
+import { loadFigures } from '@/data/figures';
 import type { Figure } from '@/data/types';
 import { t } from '@/i18n/nl';
 import { markdownToPlainText } from '@/lib/markdown';
@@ -47,15 +48,19 @@ export async function runNext(lectureId: string, figure: Figure, studentName?: s
   try {
     const ai = await import('@/services/lectureAi');
     const lecture = findLecture(lectureId);
+    // Gastdocenten spreken hun eigen deel: hun profielen gaan mee (de docent eerst).
+    const figures = lecture?.guestIds?.length
+      ? [figure, ...(await loadFigures(lecture.guestIds))]
+      : [figure];
     if (lecture && nextStep(lecture).kind === 'plan') {
       patch({ status: 'plant' });
-      await ai.generatePlan(lectureId, figure, studentName);
+      await ai.generatePlan(lectureId, figures, studentName);
       if (controller.signal.aborted) throw new DOMException('Afgebroken', 'AbortError');
       patch({ status: 'denkt' });
     }
     const segment = await ai.generateNextSegment(
       lectureId,
-      figure,
+      figures,
       (chunk) => {
         if (mine()) useLectureRun.setState((s) => ({ status: 'schrijft', text: s.text + chunk }));
       },

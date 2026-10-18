@@ -11,6 +11,7 @@ import { discoveredSet } from '@/features/figures/discovery';
 import { clock } from '@/lib/clock';
 import { localDateKey } from '@/lib/dates';
 import { uid } from '@/lib/ids';
+import { researchBlockFor } from '@/research/context';
 import { interestsFrom } from '@/services/discover.service';
 import { dailyPlan, newEpisode } from '@/services/podcast.service';
 import { useLectureStore } from '@/store/lectureStore';
@@ -85,6 +86,7 @@ async function write(episodeId: string): Promise<void> {
         listenerName: displayName || undefined,
         interests: episode.source === 'dagelijks' ? topInterests() : undefined,
         memory: listenerMemory(episode.figureIds),
+        research: researchBlockFor(episode.researchId),
       },
       episode.id,
     );

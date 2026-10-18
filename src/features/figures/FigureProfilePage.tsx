@@ -1,5 +1,5 @@
 import { BookOpenText, CalendarClock, Landmark, Podcast } from 'lucide-react';
-import { type ReactNode, useEffect } from 'react';
+import { lazy, type ReactNode, Suspense, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Avatar } from '@/components/Avatar';
 import { Pill } from '@/components/Badges';
@@ -17,6 +17,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { t } from '@/i18n/nl';
 import { prefetchThought } from '@/services/thought.service';
 import { useProfileStore } from '@/store/profileStore';
+import { elevenLabsKeyStorage, useHasSecret } from '@/store/settingsStore';
 import { LectureRow } from '../lectures/LectureRow';
 import { isInLibrary, useAllLectureSummaries } from '../lectures/summary';
 import { FollowButton } from './components';
@@ -31,7 +32,11 @@ import {
   WorksList,
 } from './profileParts';
 
+// Alleen met een ElevenLabs-sleutel: de stem van deze denker, en "Andere stem".
+const VoiceLine = lazy(() => import('./VoiceLine').then((m) => ({ default: m.VoiceLine })));
+
 function ProfileHeader({ meta }: { meta: FigureMeta }) {
+  const hasVoiceKey = useHasSecret(elevenLabsKeyStorage);
   return (
     <header
       className="rounded-3xl border border-line bg-fig-surface p-5 shadow-card motif-bg sm:p-8"
@@ -82,6 +87,11 @@ function ProfileHeader({ meta }: { meta: FigureMeta }) {
               {t.figures.makePodcast}
             </ButtonLink>
           </div>
+          {hasVoiceKey && (
+            <Suspense fallback={null}>
+              <VoiceLine figureId={meta.id} name={meta.shortName ?? meta.name} />
+            </Suspense>
+          )}
         </div>
       </div>
     </header>

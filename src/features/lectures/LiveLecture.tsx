@@ -7,7 +7,7 @@ import { Button, ButtonLink } from '@/components/Button';
 import { CrisisCard } from '@/components/CrisisCard';
 import { Thinking } from '@/components/Thinking';
 import { LIMITS } from '@/config/limits';
-import type { FigureMeta } from '@/data/figures';
+import { type FigureMeta, findMeta } from '@/data/figures';
 import type { Figure } from '@/data/types';
 import { t } from '@/i18n/nl';
 import {
@@ -18,12 +18,15 @@ import {
   nextStep,
   partNumbers,
   questionsLeft,
+  speakerOf,
   stepHeading,
 } from '@/services/lecture.service';
 import { useProfileStore } from '@/store/profileStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import type { Lecture } from '@/store/schemas';
+import { guestMetas } from './guests';
 import {
+  GuestLabel,
   LectureHall,
   ProgressSteps,
   QuestionBlock,
@@ -59,6 +62,8 @@ function LiveSegment({
   }, [scroll]);
   const part = step.kind === 'deel' ? step.part : undefined;
   const heading = stepHeading(lecture, step);
+  const speaker = speakerOf(lecture, step);
+  const guest = speaker !== lecture.figureId ? findMeta(speaker) : undefined;
   return (
     <div ref={ref} className="scroll-mt-[calc(var(--header-h)+1rem)]">
       {text && step.kind !== 'plan' && step.kind !== 'klaar' ? (
@@ -66,18 +71,23 @@ function LiveSegment({
           segment={{ kind: step.kind, heading, text }}
           index={lecture.segments.length}
           part={part}
+          guest={guest}
           streaming
           live
         />
       ) : (
         <div>
+          {guest && <GuestLabel guest={guest} />}
           {part !== undefined && (
             <p className="text-sm font-semibold tracking-wide text-fig uppercase">
               {t.lectures.part(part)}
             </p>
           )}
           <p className="font-fig text-2xl text-fig">{heading}</p>
-          <Thinking className="mt-3" text={thinking} />
+          <Thinking
+            className="mt-3"
+            text={guest ? t.lectures.guestPreparing(guest.shortName ?? guest.name) : thinking}
+          />
         </div>
       )}
     </div>
@@ -151,6 +161,7 @@ export function LiveLecture({
         eyebrow={t.lectures.hall(name)}
         state={avatar}
         demo={demo}
+        guests={guestMetas(lecture.guestIds)}
       >
         <div className="mt-5">
           <ProgressSteps done={progress.done} total={progress.total} />
@@ -159,7 +170,12 @@ export function LiveLecture({
 
       {lecture.segments.map((segment, index) => (
         <Fragment key={segment.index}>
-          <SegmentBlock segment={segment} index={index} part={parts[index]} />
+          <SegmentBlock
+            segment={segment}
+            index={index}
+            part={parts[index]}
+            guest={segment.figureId ? findMeta(segment.figureId) : undefined}
+          />
           {lecture.questions
             .filter((q) => q.afterSegment === index)
             .map((q) => (

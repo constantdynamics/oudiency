@@ -18,6 +18,7 @@ export const tp = {
     gesprek: 'Twee denkers in gesprek',
     interview: 'Sophie interviewt een denker',
   } satisfies Record<PodcastFormat, string>,
+  formatThree: 'Drie denkers in gesprek',
   writeFailed: 'Het script van deze aflevering kwam niet goed door. Probeer het opnieuw.',
   dailyReady: (title: string) => `Je podcast van vandaag staat klaar: “${title}”.`,
   page: {
@@ -151,8 +152,8 @@ export const tp = {
     length: 'Lengte',
     placement: 'In de wachtrij',
     placements: { hierna: 'Hierna', achteraan: 'Achteraan' },
-    estimate: (credits: string) =>
-      `Voorlezen kost ongeveer ${credits} ElevenLabs-credits; het schrijven gaat van je Claude-tegoed.`,
+    estimate: (write: string, read: string, model: string) =>
+      `Kosten ongeveer: schrijven ${write} (Claude), voorlezen ${read} (ElevenLabs, ${model}). Indicatie met je eigen sleutels.`,
     submit: 'Laat schrijven',
     created: 'De aflevering wordt geschreven en staat in je wachtrij.',
     noVoiceKey:
@@ -172,6 +173,49 @@ export const tp = {
     clear: 'Wis opgeslagen audio',
     cleared: 'Opgeslagen audio gewist.',
     note: 'De tekst blijft. Speel je daarna een aflevering af, dan worden de stemmen opnieuw gemaakt (dat kost weer credits).',
+  },
+  voices: {
+    title: 'Stemmen',
+    intro:
+      'De app kiest automatisch een passende stem. Met "Andere stem" kies je een andere; dat geldt meteen overal: in podcasts, bij inbellen en bij bellen.',
+    needsKey: 'Met je ElevenLabs-sleutel kun je hier stemmen kiezen en beluisteren.',
+    automatic: 'Automatisch',
+    chosen: 'Zelf gekozen',
+    designed: 'Eigen ontwerp',
+    unknown: 'nog niet bekend',
+    listen: (name: string) => `Beluister de stem van ${name}`,
+    another: 'Andere stem',
+    anotherFor: (name: string) => `Andere stem voor ${name}`,
+    reset: 'Automatisch',
+    resetFor: (name: string) => `Stem van ${name} weer automatisch`,
+    changed: (name: string, voice: string) => `${name} spreekt nu met de stem "${voice}".`,
+    resetDone: (name: string) => `${name} heeft weer de automatische stem.`,
+    failed: 'Dat lukte niet. Controleer je ElevenLabs-sleutel.',
+    note: 'Fragmenten die al waren ingesproken, worden met de nieuwe stem opnieuw gemaakt (dat kost credits).',
+    sampleHost: 'Hoi, ik ben Sophie, de AI-presentator van Oudiency.',
+    sample: (name: string) => `Hallo, dit is de AI-simulatie van ${name}.`,
+    profileLabel: 'Stem in podcasts en gesprekken',
+    loading: 'Even laden …',
+  },
+  model: {
+    title: 'Stemkwaliteit',
+    intro:
+      "Vergelijk hetzelfde fragment in drie stemmodellen en kies wat je het mooist vindt. Prijzen zijn een indicatie (API-tarief van ElevenLabs, omgerekend naar euro's).",
+    current: (label: string, perTen: string) => `Nu: ${label} · ongeveer ${perTen} per 10 minuten`,
+    episode: 'Fragment uit aflevering',
+    noEpisode: 'Laat eerst een aflevering schrijven; daarmee kun je vergelijken.',
+    fragment: (name: string) => `Het eerste fragment (${name})`,
+    costLine: (fragment: string, perTen: string) =>
+      `Dit fragment ${fragment} · 10 minuten ${perTen}`,
+    make: 'Maak voorbeeld',
+    makeFor: (label: string) => `Maak voorbeeld met ${label}`,
+    making: 'Wordt gemaakt …',
+    choose: 'Kies dit model',
+    chooseFor: (label: string) => `Kies dit model: ${label}`,
+    chosen: 'Gekozen',
+    saved: (label: string) => `Je podcasts gebruiken nu ${label}.`,
+    tags: 'Begrijpt emotie (zuchten, lachen).',
+    player: (label: string) => `Voorbeeld met ${label}`,
   },
   host: {
     title: 'Stem van Sophie',

@@ -12,6 +12,7 @@ import { loadFigures } from '@/data/figures';
 import { HOST_ID } from '@/data/podcastHost';
 import { tp } from '@/i18n/podcast';
 import { uid } from '@/lib/ids';
+import { researchBlockFor } from '@/research/context';
 import { usePodcastStore } from '@/store/podcastStore';
 import { useProfileStore } from '@/store/profileStore';
 import type { PodcastEpisode, PodcastSegment } from '@/store/schemas';
@@ -117,6 +118,7 @@ export async function askQuestion(episodeId: string, input: QuestionInput): Prom
       question: input.question,
       call: input.call,
       memory: listenerMemory(episode.figureIds),
+      research: researchBlockFor(episode.researchId),
     },
     episode.id,
   );

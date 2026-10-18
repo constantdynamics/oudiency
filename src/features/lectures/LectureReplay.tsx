@@ -14,7 +14,7 @@ import { Pill } from '@/components/Badges';
 import { Button, ButtonLink } from '@/components/Button';
 import { toast } from '@/components/toastStore';
 import { LIMITS } from '@/config/limits';
-import type { FigureMeta } from '@/data/figures';
+import { type FigureMeta, findMeta } from '@/data/figures';
 import type { Figure } from '@/data/types';
 import { t } from '@/i18n/nl';
 import { formatLongDate } from '@/lib/dates';
@@ -41,6 +41,7 @@ import {
 } from './lectureParts';
 import { ShareHighlightButton } from '../share/ShareHighlightButton';
 import { goToChapter } from './chapters';
+import { guestMetas } from './guests';
 import { usePlayback } from './usePlayback';
 
 /** Delen op het platform (alleen je eigen, afgeronde colleges). */
@@ -177,6 +178,7 @@ export function LectureReplay({
           eyebrow={view.isExample ? t.lectures.exampleHall(name) : t.lectures.hall(name)}
           isExample={view.isExample}
           demo={demo && !view.isExample}
+          guests={guestMetas(view.guestIds)}
         >
           <p className="mt-3 text-sm text-ink-3">
             {t.lectures.readingTime(readingMinutes(total))} · {dateLabel}
@@ -293,6 +295,7 @@ export function LectureReplay({
                 segment={partial ? { ...segment, text: takeWords(segment.text, shown) } : segment}
                 index={index}
                 part={parts[index]}
+                guest={segment.figureId ? findMeta(segment.figureId) : undefined}
                 streaming={partial}
                 footer={
                   partial ? (

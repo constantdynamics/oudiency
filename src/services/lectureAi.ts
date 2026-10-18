@@ -11,10 +11,20 @@ import {
   type SegmentStep,
 } from '@/ai/prompts/lecture';
 import { LecturePlanOutputSchema } from '@/ai/schemas';
+import { findMeta } from '@/data/figures';
 import type { Figure } from '@/data/types';
+import { researchBlockFor } from '@/research/context';
 import { useLectureStore } from '@/store/lectureStore';
 import type { Lecture, LectureSegment } from '@/store/schemas';
-import { addSegment, findLecture, nextStep, readingIndexes, stepHeading } from './lecture.service';
+import {
+  addSegment,
+  findLecture,
+  guestParts,
+  nextStep,
+  readingIndexes,
+  speakerOf,
+  stepHeading,
+} from './lecture.service';
 
 function current(lectureId: string): Lecture {
   const lecture = findLecture(lectureId);
@@ -22,24 +32,46 @@ function current(lectureId: string): Lecture {
   return lecture;
 }
 
-function contextOf(lecture: Lecture, figure: Figure, studentName?: string): LectureContext {
+/**
+ * De context voor één onderdeel: de spreker (docent of gastdocent), de gastdocenten met hun deel
+ * en, bij een college uit een onderzoek, de onderzoeksnotitie.
+ */
+function contextOf(lecture: Lecture, speaker: Figure, studentName?: string): LectureContext {
+  const guests = guestParts(lecture).map((g) => ({
+    part: g.part,
+    name: findMeta(g.figureId)?.name ?? g.figureId,
+  }));
   return {
-    figure,
+    figure: speaker,
     topic: lecture.topic,
     mainQuestion: lecture.mainQuestion,
     plan: lecture.plan,
     studentName,
+    ...(guests.length > 0 ? { guests } : {}),
+    ...(speaker.id !== lecture.figureId
+      ? { hostName: findMeta(lecture.figureId)?.name ?? lecture.figureId }
+      : {}),
+    research: researchBlockFor(lecture.researchId),
   };
 }
 
-/** Maak het collegeplan (één keer per college). */
+/** De volledige profielen van docent en gastdocenten; de docent eerst. */
+function speakerFigure(lecture: Lecture, figures: readonly Figure[], step: SegmentStep): Figure {
+  const id = speakerOf(lecture, step);
+  const figure = figures.find((f) => f.id === id) ?? figures.find((f) => f.id === lecture.figureId);
+  if (!figure) throw new Error('Docent niet geladen');
+  return figure;
+}
+
+/** Maak het collegeplan (één keer per college), door de docent van het college. */
 export async function generatePlan(
   lectureId: string,
-  figure: Figure,
+  figures: Figure | readonly Figure[],
   studentName?: string,
 ): Promise<void> {
   const lecture = current(lectureId);
   if (lecture.plan) return;
+  const figure = speakerFigure(lecture, ([] as Figure[]).concat(figures), { kind: 'opening' });
   const request = lecturePlanRequest(contextOf(lecture, figure, studentName), {
     kind: 'lecture-plan',
     figureId: lecture.figureId,
@@ -83,7 +115,7 @@ function partIndex(lecture: Lecture, step: SegmentStep): number {
  */
 export async function generateNextSegment(
   lectureId: string,
-  figure: Figure,
+  figures: Figure | readonly Figure[],
   onDelta: (chunk: string) => void,
   signal?: AbortSignal,
   studentName?: string,
@@ -92,6 +124,7 @@ export async function generateNextSegment(
   const next = nextStep(lecture);
   if (next.kind === 'plan' || next.kind === 'klaar') return undefined;
   const step: SegmentStep = next;
+  const figure = speakerFigure(lecture, ([] as Figure[]).concat(figures), step);
   const heading = stepHeading(lecture, step);
   let text: string;
   if (step.kind === 'antwoord' && detectCrisisSignals(step.question)) {
@@ -124,7 +157,12 @@ export async function generateNextSegment(
     text = result.text.trim();
   }
   if (!text) throw new Error('Leeg onderdeel');
-  const segment = { kind: step.kind, heading, text };
+  const segment = {
+    kind: step.kind,
+    heading,
+    text,
+    ...(figure.id !== lecture.figureId ? { figureId: figure.id } : {}),
+  };
   addSegment(lectureId, segment);
   return segment;
 }

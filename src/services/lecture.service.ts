@@ -104,6 +104,25 @@ export function nextStep(lecture: Lecture): LectureStep {
   return { kind: 'conclusie' };
 }
 
+/**
+ * Welke gastdocent welk deel geeft (keuze 1c): één gast neemt deel 2, twee gasten nemen deel 2
+ * en 3. De docent van het college opent, geeft de overige delen, beantwoordt vragen en sluit af.
+ */
+export function guestParts(
+  lecture: Pick<Lecture, 'guestIds'>,
+): { part: number; figureId: string }[] {
+  return (lecture.guestIds ?? []).slice(0, 2).map((figureId, i) => ({ part: i + 2, figureId }));
+}
+
+/** Wie een onderdeel geeft: een gastdocent voor zijn deel, anders de docent van het college. */
+export function speakerOf(
+  lecture: Pick<Lecture, 'figureId' | 'guestIds'>,
+  step: LectureStep,
+): string {
+  if (step.kind !== 'deel') return lecture.figureId;
+  return guestParts(lecture).find((g) => g.part === step.part)?.figureId ?? lecture.figureId;
+}
+
 /** De kop van een onderdeel: 'Opening', de kop uit het plan, 'Antwoord op je vraag' of 'Conclusie'. */
 export function stepHeading(lecture: Pick<Lecture, 'plan'>, step: LectureStep): string {
   switch (step.kind) {
@@ -219,10 +238,12 @@ export interface LectureView {
   title: string;
   topic: string;
   mainQuestion: string;
-  segments: Pick<LectureSegment, 'index' | 'kind' | 'heading' | 'text'>[];
+  segments: Pick<LectureSegment, 'index' | 'kind' | 'heading' | 'text' | 'figureId'>[];
   questions: { afterSegment: number; text: string }[];
   furtherReading: number[];
   isExample: boolean;
+  /** Gastdocenten (een college uit een onderzoek). */
+  guestIds?: string[];
   /** Publicatie- of afrondingsdatum (ISO). */
   date: string;
 }
@@ -254,6 +275,7 @@ export function viewOfLecture(lecture: Lecture): LectureView {
     furtherReading: lecture.furtherReading ?? [],
     isExample: false,
     date: lecture.completedAt ?? lecture.createdAt,
+    ...(lecture.guestIds?.length ? { guestIds: lecture.guestIds } : {}),
   };
 }
 

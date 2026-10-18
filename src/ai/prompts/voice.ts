@@ -40,6 +40,8 @@ export interface CallContext {
   memory?: readonly string[];
   /** Wat er eerder in dit gesprek al gezegd is (bij opnieuw bellen of overstappen). */
   earlier?: readonly { role: 'user' | 'figure'; text: string }[];
+  /** Gebeld vanuit een onderzoek op aanvraag: de notitie (src/ai/prompts/research.ts). */
+  research?: string;
 }
 
 function contextBlock({
@@ -49,6 +51,7 @@ function contextBlock({
   topic,
   memory,
   earlier,
+  research,
 }: CallContext): string {
   const lines = [
     'GESPREKSCONTEXT',
@@ -76,6 +79,13 @@ function contextBlock({
     lines.push('- Voorbeelden van jouw afscheid (als stijl, niet woordelijk herhalen):');
     for (const farewell of figure.microcopy.farewells) lines.push(`  - ${farewell}`);
   }
+  if (research) {
+    lines.push(
+      '- De student liet een onderwerp uitzoeken en belt je om erover te praten. De onderzoeksnotitie hieronder is je achtergrond: breng de feiten in eigen woorden, kort en gesproken, en vraag wat de student zelf denkt. Letterlijk citeren mag ook uit de gecontroleerde citaten in de notitie, met de bron kort in een bijzin.',
+      '',
+      research,
+    );
+  }
   return lines.join('\n');
 }
 
@@ -94,6 +104,22 @@ export function buildFirstMessage(figure: Figure, spec: VoiceSpec): string {
   const match = /^(.+?[.!?])\s+(.*)$/s.exec(greeting);
   if (!match) return `${greeting} ${disclosure}`.trim();
   return `${match[1]} ${disclosure} ${match[2]}`;
+}
+
+/**
+ * De openingszin bij bellen over een onderzoek: een begroeting in de eigen stijl (als die er is),
+ * meteen de AI-melding, en het onderwerp.
+ */
+export function researchFirstMessage(
+  figure: Pick<Figure, 'name'>,
+  spec: Pick<VoiceSpec, 'greeting'> | undefined,
+  topic: string,
+): string {
+  const hello = spec
+    ? (/^(.+?[.!?])(\s|$)/s.exec(spec.greeting.trim())?.[1] ?? 'Goedendag.')
+    : 'Goedendag.';
+  const subject = topic.trim().replace(/[.?!]+$/, '');
+  return `${hello} Ik ben een AI-simulatie van ${figure.name}. Ik heb me verdiept in je onderwerp: ${subject}. Waar wil je beginnen?`;
 }
 
 /** Openingszin als het gesprek na een onderbreking verdergaat (met opnieuw de AI-melding). */

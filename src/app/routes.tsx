@@ -58,6 +58,18 @@ const EpisodePage = lazyPage(() =>
 const PodcastCallPage = lazyPage(() =>
   import('@/features/podcasts/PodcastCallPage').then((m) => m.PodcastCallPage),
 );
+const ResearchLibraryPage = lazyPage(() =>
+  import('@/features/research/ResearchLibraryPage').then((m) => m.ResearchLibraryPage),
+);
+const NewResearchPage = lazyPage(() =>
+  import('@/features/research/NewResearchPage').then((m) => m.NewResearchPage),
+);
+const ResearchPage = lazyPage(() =>
+  import('@/features/research/ResearchPage').then((m) => m.ResearchPage),
+);
+const ResearchCallPage = lazyPage(() =>
+  import('@/features/research/ResearchCallPage').then((m) => m.ResearchCallPage),
+);
 
 function page(path: string, Page: LazyPage): RouteObject {
   return { path, element: <Page />, handle: Page };
@@ -81,6 +93,10 @@ export const routes: RouteObject[] = [
       page('podcasts/nieuw', NewEpisodePage),
       page('podcasts/:id', EpisodePage),
       page('podcasts/:id/bellen', PodcastCallPage),
+      page('onderzoek', ResearchLibraryPage),
+      page('onderzoek/nieuw', NewResearchPage),
+      page('onderzoek/:id', ResearchPage),
+      page('onderzoek/:id/bellen/:figureId', ResearchCallPage),
       page('profiel', ProfilePage),
       page('profiel/stem', VoiceSettingsPage),
       page('bellen/:figureId', CallPage),

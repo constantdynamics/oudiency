@@ -19,6 +19,8 @@ import { usePodcastKeys } from './usePodcastKeys';
 const HostVoiceCard = lazy(() =>
   import('./HostVoiceCard').then((m) => ({ default: m.HostVoiceCard })),
 );
+const ModelCard = lazy(() => import('./ModelCard').then((m) => ({ default: m.ModelCard })));
+const VoicesCard = lazy(() => import('./VoicesCard').then((m) => ({ default: m.VoicesCard })));
 
 /** Podcasts: de speler, je wachtrij, je afleveringen en de instellingen. */
 export function PodcastsPage() {
@@ -87,6 +89,12 @@ export function PodcastsPage() {
         </div>
         <aside aria-label={tp.page.settings} className="min-w-0 space-y-6">
           <DailyCard />
+          {keys.elevenLabs && (
+            <Suspense fallback={null}>
+              <ModelCard />
+              <VoicesCard />
+            </Suspense>
+          )}
           <StorageCard />
           {keys.elevenLabs && (
             <Suspense fallback={null}>

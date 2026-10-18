@@ -6,8 +6,9 @@
 import { LIMITS, type Tier } from '@/config/limits';
 import { addDaysToKey } from '@/lib/dates';
 
-export type LimitKind = 'sessions' | 'lectures';
-export type UsageByDate = Record<string, { sessions: number; lectures: number }>;
+export type LimitKind = 'sessions' | 'lectures' | 'research';
+/** Per dag; `research` ontbreekt in tellerstanden van vóór het onderzoek (telt dan als 0). */
+export type UsageByDate = Record<string, { sessions: number; lectures: number; research?: number }>;
 
 export class LimitError extends Error {
   readonly kind: LimitKind;
@@ -19,8 +20,16 @@ export class LimitError extends Error {
 }
 
 export function dailyLimit(kind: LimitKind, tier: Tier): number {
-  return kind === 'sessions' ? LIMITS.session.perDay[tier] : LIMITS.lecture.perDay[tier];
+  if (kind === 'sessions') return LIMITS.session.perDay[tier];
+  if (kind === 'lectures') return LIMITS.lecture.perDay[tier];
+  return LIMITS.research.perDay[tier];
 }
+
+const LIMIT_REACHED: Record<LimitKind, string> = {
+  sessions: 'Je hebt voor die dag al het maximale aantal sessies gepland.',
+  lectures: 'Je hebt vandaag al het maximale aantal colleges aangevraagd.',
+  research: 'Je hebt vandaag al het maximale aantal onderwerpen laten uitzoeken.',
+};
 
 export function usedOn(usage: UsageByDate, kind: LimitKind, dateKey: string): number {
   return usage[dateKey]?.[kind] ?? 0;
@@ -46,23 +55,16 @@ export function consume(
   kind: LimitKind,
   dateKey: string,
 ): UsageByDate {
-  if (!canUse(usage, tier, kind, dateKey)) {
-    throw new LimitError(
-      kind,
-      kind === 'sessions'
-        ? 'Je hebt voor die dag al het maximale aantal sessies gepland.'
-        : 'Je hebt vandaag al het maximale aantal colleges aangevraagd.',
-    );
-  }
+  if (!canUse(usage, tier, kind, dateKey)) throw new LimitError(kind, LIMIT_REACHED[kind]);
   const day = usage[dateKey] ?? { sessions: 0, lectures: 0 };
-  return { ...usage, [dateKey]: { ...day, [kind]: day[kind] + 1 } };
+  return { ...usage, [dateKey]: { ...day, [kind]: (day[kind] ?? 0) + 1 } };
 }
 
 /** Geef een plek terug (annuleren, verzetten, gemiste afspraak). Nooit onder nul. */
 export function release(usage: UsageByDate, kind: LimitKind, dateKey: string): UsageByDate {
   const day = usage[dateKey];
   if (!day) return usage;
-  return { ...usage, [dateKey]: { ...day, [kind]: Math.max(0, day[kind] - 1) } };
+  return { ...usage, [dateKey]: { ...day, [kind]: Math.max(0, (day[kind] ?? 0) - 1) } };
 }
 
 /** Dev-paneel: daglimieten voor een dag terugzetten. */

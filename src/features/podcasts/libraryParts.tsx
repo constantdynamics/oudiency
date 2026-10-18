@@ -35,7 +35,7 @@ import { usePlayer } from '@/podcast/playerState';
 import { isWriting, startWriting } from '@/podcast/writingState';
 import { usePodcastStore } from '@/store/podcastStore';
 import type { PodcastEpisode } from '@/store/schemas';
-import { episodeFigures, formatBytes, listenState } from './format';
+import { episodeFigures, formatBytes, formatName, listenState } from './format';
 import { AvatarStack } from './playerParts';
 import { usePodcastKeys } from './usePodcastKeys';
 
@@ -184,7 +184,7 @@ function QueueRow({
           {playing ? (
             <span className="font-medium text-gold">{tp.status.playing}</span>
           ) : (
-            tp.formats[episode.format]
+            formatName(episode)
           )}{' '}
           · {tp.meta.minutes(episode.minutes)}
         </p>
@@ -347,7 +347,7 @@ export function EpisodeRow({
           {episode.title}
         </Link>
         <p className="text-sm text-ink-3">
-          {tp.formats[episode.format]} · {tp.meta.minutes(episode.minutes)} ·{' '}
+          {formatName(episode)} · {tp.meta.minutes(episode.minutes)} ·{' '}
           {formatShortDate(Date.parse(episode.createdAt))}
           {episode.source === 'dagelijks' && ` · ${tp.meta.daily}`}
         </p>

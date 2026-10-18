@@ -15,6 +15,8 @@ const count = () => z.int().check(z.minimum(0));
 export const UsageDaySchema = z.object({
   sessions: count(),
   lectures: count(),
+  /** Onderzoeken op aanvraag (later toegevoegd, dus optioneel). */
+  research: z.optional(count()),
 });
 
 export const UserProfileSchema = z.object({
@@ -117,6 +119,8 @@ export const LectureSegmentSchema = z.object({
   kind: z.enum(['opening', 'deel', 'antwoord', 'conclusie']),
   heading: z.string(),
   text: z.string(),
+  /** Gegeven door een gastdocent (id); zonder: de docent van het college. */
+  figureId: z.optional(z.string()),
 });
 export type LectureSegment = z.infer<typeof LectureSegmentSchema>;
 
@@ -153,6 +157,10 @@ export const LectureSchema = z.object({
   furtherReading: z.optional(z.array(count())),
   tags: z.optional(z.array(z.string())),
   provider: z.enum(['demo', 'anthropic-browser', 'proxy']),
+  /** Gastdocenten (een college uit een onderzoek): elk geeft één deel. */
+  guestIds: z.optional(z.array(z.string())),
+  /** Gemaakt uit een onderzoek op aanvraag: de notitie gaat mee als achtergrond. */
+  researchId: z.optional(z.string()),
 });
 export type Lecture = z.infer<typeof LectureSchema>;
 
@@ -333,6 +341,16 @@ export const VoiceStateSchema = z.object({
   ),
   /** Gekozen stem per denker (id in het ElevenLabs-account). */
   voices: z.record(z.string(), z.object({ voiceId: z.string(), createdAt: isoDate })),
+  /**
+   * Met "andere stem" gekozen stem per spreker (denker of Sophie): gaat overal voor, ook boven
+   * een ontworpen stem. Weg = weer automatisch.
+   */
+  overrides: z.optional(
+    z.record(
+      z.string(),
+      z.object({ voiceId: z.string(), name: z.optional(z.string()), updatedAt: isoDate }),
+    ),
+  ),
   trials: z.array(TrialCallSchema),
   /** Laatst opgevraagde accountgegevens (abonnement en tegoed). */
   account: z.optional(
@@ -378,6 +396,8 @@ export const PodcastEpisodeSchema = z.object({
   segments: z.array(PodcastSegmentSchema),
   /** Dag (JJJJ-MM-DD) van een dagaflevering. */
   day: z.optional(z.string()),
+  /** Gemaakt uit een onderzoek op aanvraag: de notitie gaat mee als achtergrond. */
+  researchId: z.optional(z.string()),
   /** Waar je gebleven was: fragment en seconden daarin. */
   position: z.optional(z.object({ segment: count(), seconds: z.number() })),
   finishedAt: z.optional(isoDate),
@@ -389,6 +409,8 @@ export const PodcastSettingsSchema = z.object({
   dailyMinutes: count(),
   speed: z.number(),
   autoplay: z.boolean(),
+  /** Gekozen stemmodel na het vergelijken; zonder keuze het goedkoopste. */
+  ttsModel: z.optional(z.string()),
 });
 export type PodcastSettings = z.infer<typeof PodcastSettingsSchema>;
 

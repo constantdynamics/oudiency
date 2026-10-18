@@ -89,10 +89,11 @@ describe('script controleren', () => {
     expect(resolveSpeaker('Hegel', ['kant'])).toBeUndefined();
   });
 
-  it('opmaak en regieaanwijzingen verdwijnen', () => {
-    expect(cleanSpokenText('**Moed** is [lacht] een *deugd*.\n- echt')).toBe(
-      'Moed is een deugd. echt',
+  it('opmaak en regieaanwijzingen verdwijnen; één emotie-aanwijzing blijft', () => {
+    expect(cleanSpokenText('**Moed** is [laughs] een *deugd* [noot: boek 3].\n- echt')).toBe(
+      'Moed is [laughs] een deugd. echt',
     );
+    expect(cleanSpokenText('[sighs] Tja. [laughs] Nou ja.')).toBe('[sighs] Tja. Nou ja.');
   });
 
   it('AI-melding vooraan, soorten fragmenten, en onbekende sprekers eruit', () => {

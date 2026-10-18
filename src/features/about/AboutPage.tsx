@@ -1,4 +1,12 @@
-import { HeartHandshake, KeyRound, Landmark, Lock, Podcast, Sparkles } from 'lucide-react';
+import {
+  FileSearch,
+  HeartHandshake,
+  KeyRound,
+  Landmark,
+  Lock,
+  Podcast,
+  Sparkles,
+} from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { AiLabel } from '@/components/Badges';
@@ -116,6 +124,23 @@ export function AboutPage() {
           op de Podcasts-pagina) en gaat niet mee in een export. ElevenLabs bewaart wat het
           voorleest in de geschiedenis van je eigen ElevenLabs-account; daar kun je het ook wissen.
           Inbellen werkt zoals bellen: geen opname, en het gesprek wordt direct gewist.
+        </p>
+      </Section>
+      <Section
+        id="onderzoek"
+        icon={<FileSearch aria-hidden className="size-5 text-gold" />}
+        title="Onderzoek op aanvraag"
+      >
+        <p>
+          Laat je iets uitzoeken, dan maakt Claude van je vraag een paar Engelse zoektermen. Alleen
+          die zoektermen en de titels van de gevonden pagina's gaan rechtstreeks naar de
+          Engelstalige Wikipedia en Wikisource; je naam en andere gegevens niet. Claude krijgt je
+          vraag, de gekozen denkers en de gevonden stukken, en schrijft daar een notitie van.
+        </p>
+        <p>
+          Die notitie zie je zelf niet; de denkers gebruiken hem voor de tekst, podcast, het college
+          of het gesprek. Letterlijke citaten blijven alleen staan als ze echt in de tekst op
+          Wikisource staan. Alles blijft op dit apparaat en gaat mee in een export.
         </p>
       </Section>
       <Section

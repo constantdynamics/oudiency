@@ -6,6 +6,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { tp } from '@/i18n/podcast';
 import { usePlayer } from '@/podcast/playerState';
 import { usePodcastStore } from '@/store/podcastStore';
+import { formatName } from './format';
 import { EpisodeStatus } from './libraryParts';
 import { BackToPodcasts, PlayerCard } from './playerParts';
 import { Transcript } from './Transcript';
@@ -37,7 +38,7 @@ export function EpisodePage() {
             <h1 className="text-3xl">{episode.title}</h1>
             <AiLabel />
           </div>
-          <p className="mt-1 text-ink-3">{tp.formats[episode.format]}</p>
+          <p className="mt-1 text-ink-3">{formatName(episode)}</p>
           <div className="mt-2">
             <EpisodeStatus episode={episode} />
           </div>

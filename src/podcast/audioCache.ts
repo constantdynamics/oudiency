@@ -4,7 +4,6 @@
  * Geen IndexedDB (privévenster, tests)? Dan alleen in het geheugen, zolang de pagina open is.
  * Gaat nooit mee in een export; "Alles wissen" wist ook dit.
  */
-import { PODCAST } from '@/config/podcast';
 
 const DB_NAME = 'oudiency-audio';
 const STORE = 'fragmenten';
@@ -39,8 +38,13 @@ function done<T>(request: IDBRequest<T>): Promise<T> {
 }
 
 /** Sleutel per fragment, stem en model: een andere stem of een ander model maakt een nieuw fragment. */
-export function audioKey(episodeId: string, segmentId: string, voiceId: string): string {
-  return `${episodeId}/${segmentId}/${voiceId}/${PODCAST.ttsModel}`;
+export function audioKey(
+  episodeId: string,
+  segmentId: string,
+  voiceId: string,
+  model: string,
+): string {
+  return `${episodeId}/${segmentId}/${voiceId}/${model}`;
 }
 
 function episodeRange(episodeId: string): IDBKeyRange {

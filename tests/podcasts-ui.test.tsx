@@ -13,6 +13,7 @@ import { initialPodcastState, usePodcastStore } from '@/store/podcastStore';
 import type { PodcastEpisode } from '@/store/schemas';
 import { initialProfile, useProfileStore } from '@/store/profileStore';
 import { apiKeyStorage, elevenLabsKeyStorage, useSettingsStore } from '@/store/settingsStore';
+import { initialVoiceState, useVoiceStore } from '@/store/voiceStore';
 
 const player = vi.hoisted(() => ({
   play: vi.fn(),
@@ -328,7 +329,11 @@ describe('nieuwe aflevering', () => {
     expect(screen.getByText('Je hebt er al twee. Haal eerst iemand weg.')).toBeInTheDocument();
     await user.type(screen.getByLabelText('Onderwerp'), 'Mag je liegen om iemand te redden?');
     await user.click(screen.getByRole('button', { name: '15 min' }));
-    expect(screen.getByText(/ongeveer 6\.750 ElevenLabs-credits/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /schrijven €\s?0,06 \(Claude\), voorlezen €\s?0,59 \(ElevenLabs, Flash v2\.5\)/,
+      ),
+    ).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Laat schrijven' }));
 
     const [created] = usePodcastStore.getState().episodes;
@@ -491,5 +496,102 @@ describe('inbellen', () => {
     expect(
       screen.getByText(/Inbellen kan met je eigen Claude- en ElevenLabs-sleutel/),
     ).toBeInTheDocument();
+  });
+});
+
+describe('stemmen en stemkwaliteit', () => {
+  const voicesJson = {
+    voices: [
+      {
+        voice_id: 'oud-1',
+        name: 'Arthur',
+        category: 'premade',
+        labels: { gender: 'male', age: 'old' },
+      },
+      {
+        voice_id: 'oud-2',
+        name: 'Bernard',
+        category: 'premade',
+        labels: { gender: 'male', age: 'old' },
+      },
+      {
+        voice_id: 'vrouw-1',
+        name: 'Daphne',
+        category: 'premade',
+        labels: { gender: 'female', age: 'middle_aged' },
+      },
+    ],
+  };
+  const tts: string[] = [];
+
+  beforeEach(() => {
+    tts.length = 0;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: URL | RequestInfo, init?: RequestInit) => {
+        const url = String(input);
+        if (url.includes('/v1/voices')) return new Response(JSON.stringify(voicesJson));
+        if (url.includes('/v1/text-to-speech/')) {
+          tts.push(JSON.parse(String(init?.body)).model_id);
+          return new Response(new Uint8Array([1, 2]), {
+            headers: { 'content-type': 'audio/mpeg' },
+          });
+        }
+        return new Response('{}', { status: 404 });
+      }),
+    );
+    URL.createObjectURL = vi.fn(() => 'blob:voorbeeld');
+    URL.revokeObjectURL = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    useVoiceStore.setState(initialVoiceState());
+  });
+
+  it("vergelijken: een voorbeeld per model met de kosten in euro's, en kiezen", async () => {
+    const user = userEvent.setup();
+    withKeys();
+    setEpisodes([episode('e1')], ['e1']);
+    renderAt('/podcasts');
+    const card = await screen.findByRole('region', { name: 'Stemkwaliteit' });
+    expect(
+      within(card).getByText(/Nu: Flash v2\.5 · ongeveer €\s?0,40 per 10 minuten/),
+    ).toBeInTheDocument();
+    expect(within(card).getByText(/10 minuten €\s?0,63/)).toBeInTheDocument();
+    await user.click(within(card).getByRole('button', { name: 'Maak voorbeeld met Eleven v4' }));
+    expect(await within(card).findByLabelText('Voorbeeld met Eleven v4')).toBeInTheDocument();
+    expect(tts).toEqual(['eleven_v4']);
+    await user.click(within(card).getByRole('button', { name: 'Kies dit model: Eleven v4' }));
+    expect(usePodcastStore.getState().settings.ttsModel).toBe('eleven_v4');
+  });
+
+  it('andere stem: in de lijst, en terug naar automatisch', async () => {
+    const user = userEvent.setup();
+    withKeys();
+    setEpisodes([episode('e1')], ['e1']);
+    renderAt('/podcasts');
+    const card = await screen.findByRole('region', { name: 'Stemmen' });
+    expect(await within(card).findByText('Automatisch · Arthur')).toBeInTheDocument();
+    await user.click(within(card).getByRole('button', { name: 'Andere stem voor Socrates' }));
+    await vi.waitFor(() =>
+      expect(useVoiceStore.getState().overrides?.socrates?.voiceId).toBe('oud-2'),
+    );
+    expect(await within(card).findByText('Zelf gekozen · Bernard')).toBeInTheDocument();
+    await user.click(
+      within(card).getByRole('button', { name: 'Stem van Socrates weer automatisch' }),
+    );
+    expect(useVoiceStore.getState().overrides?.socrates).toBeUndefined();
+  });
+
+  it('in de speler: andere stem voor wie er nu spreekt', async () => {
+    const user = userEvent.setup();
+    withKeys();
+    setEpisodes([episode('e1')], ['e1']);
+    usePlayer.setState({ episodeId: 'e1', segment: 1, seconds: 2, duration: 30, status: 'speelt' });
+    renderAt('/podcasts');
+    const playerCard = screen.getByRole('region', { name: 'Aflevering e1' });
+    await user.click(within(playerCard).getByRole('button', { name: 'Andere stem voor Socrates' }));
+    await vi.waitFor(() => expect(useVoiceStore.getState().overrides?.socrates).toBeDefined());
   });
 });
