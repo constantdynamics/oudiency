@@ -26,14 +26,15 @@ import {
   type ResearchProblem,
 } from '@/services/research.service';
 import { usePodcastStore } from '@/store/podcastStore';
-import type { Research, ResearchOutput } from '@/store/researchSchemas';
+import type { Research } from '@/store/researchSchemas';
 import { useResearchStore } from '@/store/researchStore';
 import { CostSummary, FormOptions } from './FormOptions';
-import { figureNames, outputPhaseOf, phaseOf } from './format';
-import { BackToResearch, EssayCard, FigureRow, WorkState } from './researchParts';
+import { figureNames, phaseOf } from './format';
+import { OutputView } from './outputParts';
+import { BackToResearch, FigureRow } from './researchParts';
 
 /** De vormen die je uit een afgerond onderzoek kunt maken. */
-const AVAILABLE_FORMS: readonly ResearchForm[] = ['tekst'];
+const AVAILABLE_FORMS: readonly ResearchForm[] = ['tekst', 'podcast', 'bellen'];
 
 /** De volledige profielen van de denkers (voor het thema en de leestips). */
 function useFigures(ids: readonly string[]): Figure[] {
@@ -52,36 +53,6 @@ function useFigures(ids: readonly string[]): Figure[] {
     };
   }, [key]);
   return figures;
-}
-
-function OutputView({
-  research,
-  output,
-  figures,
-}: {
-  research: Research;
-  output: ResearchOutput;
-  figures: readonly Figure[];
-}) {
-  const phase = outputPhaseOf(research, output);
-  const figure = figures.find((f) => f.id === output.figureIds[0]);
-  if (output.form === 'tekst') {
-    if (phase === 'klaar' && output.text && figure) {
-      return <EssayCard output={output} figure={figure} />;
-    }
-    if (phase === 'klaar') return null;
-    return (
-      <Card>
-        <WorkState
-          phase={phase}
-          busyText={tr.page.writing(figureNames(output.figureIds))}
-          error={output.error}
-          onRetry={() => startOutput(research.id, output.id)}
-        />
-      </Card>
-    );
-  }
-  return null;
 }
 
 /** "Maak er nog iets van" (keuze 6a): een extra vorm uit hetzelfde onderzoek. */

@@ -6,10 +6,11 @@
 import { APP, CRISIS_RESOURCES } from '@/config/app';
 import { HOST, HOST_NAME } from '@/data/podcastHost';
 import type { Figure } from '@/data/types';
+import { joinDutch } from '@/lib/text';
 import type { PodcastFormat } from '@/store/schemas';
 import { FRAME } from './frame';
 import { buildPersona } from './persona';
-import { FORMAT_LABELS, type HeardSegment, type ListenerMemory, memoryLines } from './podcast';
+import { formatLabel, type HeardSegment, type ListenerMemory, memoryLines } from './podcast';
 import { TIME_CUES, VOICE_RULES } from './voice';
 
 export interface PodcastCallContext {
@@ -42,7 +43,7 @@ function listenerLine(name: string | undefined): string[] {
 export function buildPodcastCallPrompt(ctx: PodcastCallContext & { figure: Figure }): string {
   const block = [
     'INBELLEN TIJDENS DE PODCAST (gaat voor de gesprekscontext van een sessie)',
-    `- De luisteraar belt live in tijdens een aflevering van de podcast van ${APP.name}: "${ctx.episode.title}", ${FORMAT_LABELS[ctx.episode.format]}. Onderwerp: ${ctx.episode.topic}.`,
+    `- De luisteraar belt live in tijdens een aflevering van de podcast van ${APP.name}: "${ctx.episode.title}", ${formatLabel(ctx.episode.format, ctx.figures.length)}. Onderwerp: ${ctx.episode.topic}.`,
     '- Je begroeting is al uitgesproken (het eerste bericht). Begin dus niet opnieuw met een begroeting.',
     `- Het gesprek duurt hooguit ${ctx.minutes} minuten. Houd je beurten kort: het is een telefoontje in een podcast, geen college.`,
     `- Bij ${TIME_CUES.voorbij} zeg je in één zin dat de aflevering verdergaat, en neem je afscheid. Je hoeft niet naar een andere student.`,
@@ -62,13 +63,13 @@ export function podcastCallFirstMessage(figure: Pick<Figure, 'name'>, topic: str
 
 /** Sophie aan de lijn: ze neemt de vraag aan en geeft hem door aan de denkers. */
 export function buildHostCallPrompt(ctx: PodcastCallContext): string {
-  const names = ctx.figures.map((f) => f.name).join(' en ');
+  const names = joinDutch(ctx.figures.map((f) => f.name));
   return [
     `Je bent ${HOST_NAME}, de AI-presentator van de podcast van ${APP.name}. Je bent geen mens en geen historische denker, maar een AI, en dat zeg je ook als iemand ernaar vraagt.`,
     HOST.persona,
     [
       'INBELLEN',
-      `- Een luisteraar belt live in tijdens de aflevering "${ctx.episode.title}": ${FORMAT_LABELS[ctx.episode.format]} met ${names}. Onderwerp: ${ctx.episode.topic}.`,
+      `- Een luisteraar belt live in tijdens de aflevering "${ctx.episode.title}": ${formatLabel(ctx.episode.format, ctx.figures.length)} met ${names}. Onderwerp: ${ctx.episode.topic}.`,
       '- Je begroeting is al uitgesproken: je vroeg wat de luisteraar de denkers wil vragen.',
       '- Help de luisteraar de vraag helder te krijgen, met hooguit één korte verduidelijkende vraag. Vat de vraag daarna in één zin samen en vraag of dat klopt.',
       `- Klopt het, zeg dan dat je de vraag doorgeeft aan ${names}, dat het antwoord zo in de aflevering te horen is, en neem kort afscheid.`,

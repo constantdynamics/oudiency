@@ -6,6 +6,7 @@ import { isActive } from '@/research/researchState';
 import { pageUrl, WikiError } from '@/research/wiki';
 import { newOutput, newResearch } from '@/services/research.service';
 import { useNotificationStore } from '@/store/miscStores';
+import { initialPodcastState, usePodcastStore } from '@/store/podcastStore';
 import { initialProfile, useProfileStore } from '@/store/profileStore';
 import { initialResearchState, useResearchStore } from '@/store/researchStore';
 import { apiKeyStorage, initialSettings, useSettingsStore } from '@/store/settingsStore';
@@ -15,6 +16,7 @@ const DAY = '2026-10-18';
 
 beforeEach(() => {
   useResearchStore.setState(initialResearchState());
+  usePodcastStore.setState(initialPodcastState());
   useNotificationStore.setState({ notifications: [] });
   useProfileStore.setState({
     profile: {
@@ -105,10 +107,25 @@ function stubClaude(overrides: { plan?: unknown; brief?: unknown; essay?: unknow
       if (system.includes('TAAK: ONDERZOEKSPLAN')) return messageResponse(overrides.plan ?? PLAN);
       if (system.includes('TAAK: ONDERZOEKSNOTITIE'))
         return messageResponse(overrides.brief ?? BRIEF);
+      if (system.includes('TAAK: PODCASTAFLEVERING')) return messageResponse(scriptFor(user));
       return messageResponse(overrides.essay ?? ESSAY);
     }),
   );
   return calls;
+}
+
+/** Een podcastscript met precies de sprekers die de opdracht noemt. */
+function scriptFor(user: string): unknown {
+  const line = user.split('\n').find((l) => l.startsWith('SPREKERS'))!;
+  const ids = [...line.matchAll(/(\w+) \(/g)].map((m) => m[1]!).filter((id) => id !== 'sophie');
+  return {
+    title: 'Drie stemmen over woede',
+    segments: [
+      { speaker: 'sophie', text: 'Welkom. Dit is een AI-simulatie.' },
+      ...ids.map((id) => ({ speaker: id, text: `Hier spreekt ${id} over woede.` })),
+      { speaker: 'sophie', text: 'Tot de volgende keer.' },
+    ],
+  };
 }
 
 const wiki: WikiClient = {
@@ -288,5 +305,107 @@ describe('onderzoek uitvoeren', () => {
       length: 'lang',
     });
     expect(useProfileStore.getState().profile.usageByDate[DAY]!.research).toBe(1);
+  });
+
+  it('een podcast met een panel van drie: aflevering in de wachtrij, met de notitie erbij', async () => {
+    useOwnKey('podcast');
+    const calls = stubClaude();
+    const research = newResearch(
+      {
+        question: 'Hoe ga je om met woede?',
+        figureIds: ['aurelius', 'socrates', 'kant'],
+        first: {
+          form: 'podcast',
+          figureIds: ['aurelius', 'socrates', 'kant'],
+          format: 'gesprek',
+          minutes: 10,
+        },
+      },
+      NOW,
+    );
+    useResearchStore.getState().add(research);
+    await runResearch(research.id, wiki);
+
+    const output = current(research.id).outputs[0]!;
+    expect(output).toMatchObject({
+      form: 'podcast',
+      status: 'klaar',
+      title: 'Drie stemmen over woede',
+    });
+    const episode = usePodcastStore.getState().episodes[0]!;
+    expect(output.refId).toBe(episode.id);
+    expect(episode).toMatchObject({
+      researchId: research.id,
+      format: 'gesprek',
+      figureIds: ['aurelius', 'socrates', 'kant'],
+      topic: 'Omgaan met woede',
+      status: 'klaar',
+    });
+    expect(usePodcastStore.getState().queue).toEqual([episode.id]);
+    expect(episode.segments.map((s) => s.speaker)).toEqual([
+      'sophie',
+      'aurelius',
+      'socrates',
+      'kant',
+      'sophie',
+    ]);
+    const script = calls.find((c) => c.system.includes('TAAK: PODCASTAFLEVERING'))!;
+    expect(script.user).toContain('VORM: gesprek tussen drie denkers');
+    expect(script.user).toContain('ONDERZOEK OP AANVRAAG');
+    expect(script.user).toContain('GECONTROLEERDE CITATEN');
+  });
+
+  it('een mislukte podcast probeert dezelfde aflevering opnieuw', async () => {
+    useOwnKey('podcast-fout');
+    stubClaude();
+    const research = addResearch();
+    await runResearch(research.id, wiki);
+    const extra = newOutput(
+      { form: 'podcast', figureIds: ['aurelius'], format: 'interview', minutes: 5 },
+      clock.iso(),
+    );
+    useResearchStore.getState().addOutput(research.id, extra);
+    useOwnKey('podcast-fout-tegoed');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              type: 'error',
+              error: { type: 'invalid_request_error', message: 'Your credit balance is too low' },
+            }),
+            { status: 400, headers: { 'content-type': 'application/json' } },
+          ),
+      ),
+    );
+    await makeOutput(research.id, extra.id);
+    const failed = current(research.id).outputs[1]!;
+    expect(failed.status).toBe('fout');
+    expect(failed.error).toContain('tegoed');
+    expect(usePodcastStore.getState().episodes).toHaveLength(1);
+
+    useOwnKey('podcast-fout-weer-goed');
+    stubClaude();
+    await makeOutput(research.id, extra.id);
+    expect(current(research.id).outputs[1]).toMatchObject({ status: 'klaar', refId: failed.refId });
+    expect(usePodcastStore.getState().episodes).toHaveLength(1);
+  });
+
+  it('een gesprek hoeft niet gemaakt te worden: klaar zodra het onderzoek klaar is', async () => {
+    useOwnKey('bellen');
+    const calls = stubClaude();
+    const research = newResearch(
+      {
+        question: 'Hoe ga je om met woede?',
+        figureIds: ['seneca'],
+        first: { form: 'bellen', figureId: 'seneca' },
+      },
+      NOW,
+    );
+    useResearchStore.getState().add(research);
+    await runResearch(research.id, wiki);
+    expect(current(research.id).outputs[0]).toMatchObject({ form: 'bellen', status: 'klaar' });
+    expect(calls).toHaveLength(2);
   });
 });

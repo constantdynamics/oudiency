@@ -92,7 +92,7 @@ export const tr = {
     writer: 'Wie schrijft?',
     length: 'Lengte',
     podcastFormat: 'Vorm',
-    panelPodcast: (names: string) => `Een gesprek tussen ${names}, met Sophie als presentator.`,
+    panelPodcast: (names: string) => `${names} gaan met elkaar in gesprek.`,
     lecturer: 'Wie geeft het college?',
     guests: (names: string) => `Gastdocent: ${names}.`,
     callee: 'Met wie bel je?',
@@ -124,6 +124,16 @@ export const tr = {
     essayBy: (name: string) => `Door ${name}`,
     furtherReading: 'Verder lezen',
     writing: (name: string) => `${name} schrijft je tekst …`,
+    podcastWriting: 'Sophie en de denkers schrijven je aflevering …',
+    listen: 'Luister',
+    toEpisode: 'Naar de aflevering',
+    listenNeedsKey:
+      'De tekst staat klaar; om te luisteren heb je nog een ElevenLabs-sleutel nodig (Profiel → Stem & bellen).',
+    episodeGone: 'Deze aflevering staat niet meer op dit apparaat.',
+    callTitle: (name: string) => `Gesprek met ${name}`,
+    callHint:
+      'Tien minuten bellen over je onderzoek, wanneer het jou uitkomt. Je kunt vaker bellen.',
+    call: (name: string) => `Bel ${name}`,
     outputInterrupted: 'Het maken is onderbroken.',
     outputFailed: 'Dit lukte niet.',
     makeMore: 'Maak er nog iets van',
@@ -138,5 +148,19 @@ export const tr = {
       'Dit onderzoek en de tekst eruit verwijderen? Podcasts en colleges die eruit zijn gemaakt, blijven bestaan.',
     removed: 'Onderzoek verwijderd.',
     notFound: 'Dit onderzoek bestaat niet (meer).',
+  },
+  call: {
+    eyebrow: 'Onderzoek · bellen',
+    subtitle: (minutes: number) => `Gesprek over je onderzoek · hooguit ${minutes} minuten`,
+    note: (name: string) =>
+      `Je praat met een AI-simulatie van ${name}: geen echt mens. Je stem gaat naar ElevenLabs om het gesprek mogelijk te maken.`,
+    back: 'Terug naar je onderzoek',
+    notFound: 'Dit onderzoek is er niet (meer), of deze denker hoort er niet bij.',
+    notReady: 'Het onderzoek is nog niet klaar; bellen kan zodra het is uitgezocht.',
+    needsKey:
+      'Bellen kan met je eigen ElevenLabs-sleutel (Profiel → Stem & bellen); de sleutel heeft ook toegang tot ElevenLabs Agents nodig.',
+    toSettings: 'Naar Stem & bellen',
+    noVoice: 'Er is geen passende stem gevonden in je ElevenLabs-account.',
+    thinking: (name: string) => `${name} denkt na …`,
   },
 };

@@ -33,11 +33,11 @@ ${HOST.persona}
 DE DENKERS
 - Spreek in karakter (zie de persona's): eigen methode, beelden en manier van spreken, met moderne kennis waar het past.
 - Citeer alleen letterlijk uit de geverifieerde citaten in de persona, en zeg dan waar het vandaan komt. Al het andere in eigen woorden.
-- Bij een gesprek tussen twee denkers: ze reageren echt op elkaar, zijn het oneens waar dat bij hun denken past, en vinden hooguit ergens elkaar.
+- Bij een gesprek tussen twee of drie denkers: ze reageren echt op elkaar, zijn het oneens waar dat bij hun denken past, en vinden hooguit ergens elkaar. Met z'n drieën komt iedereen ongeveer even vaak aan het woord.
 
 VORMEN
 - monoloog: de denker vertelt, in meerdere fragmenten achter elkaar. Sophie komt alleen aan het begin en het eind aan het woord, en hooguit één keer halverwege met een korte overgangsvraag.
-- gesprek: twee denkers wisselen elkaar af. Sophie opent, sluit af en stelt hooguit één keer een korte vraag.
+- gesprek: twee of drie denkers wisselen elkaar af. Sophie opent, sluit af en stelt hooguit één keer een korte vraag.
 - interview: Sophie stelt korte, scherpe vragen (één tot drie zinnen) en de denker antwoordt uitgebreider; ze wisselen elkaar af.`;
 
 export const FORMAT_LABELS: Record<PodcastFormat, string> = {
@@ -45,6 +45,13 @@ export const FORMAT_LABELS: Record<PodcastFormat, string> = {
   gesprek: 'gesprek tussen twee denkers',
   interview: 'interview (Sophie interviewt de denker)',
 };
+
+/** De vorm voor in een prompt; een gesprek kan ook met drie (een panel uit een onderzoek). */
+export function formatLabel(format: PodcastFormat, figures: number): string {
+  return format === 'gesprek' && figures >= 3
+    ? 'gesprek tussen drie denkers'
+    : FORMAT_LABELS[format];
+}
 
 /** Wat de denkers van de luisteraar weten (keuze 8c): eerdere sessies en de eigen timeline. */
 export interface ListenerMemory {
@@ -64,6 +71,19 @@ export interface PodcastContext {
   /** Bij een dagaflevering: waar de luisteraar zich mee bezighoudt (trefwoorden). */
   interests?: readonly string[];
   memory?: ListenerMemory;
+  /** Gemaakt uit een onderzoek: de notitie als achtergrond (src/ai/prompts/research.ts). */
+  research?: string;
+}
+
+/** De onderzoeksnotitie als achtergrond, met hoe de sprekers die gebruiken. */
+export function researchLines(research: string | undefined): string[] {
+  if (!research) return [];
+  return [
+    '',
+    research,
+    '',
+    'Gebruik de onderzoeksnotitie als basis: de feiten, de kanttekeningen en de invalshoeken per denker. Laat de sprekers de feiten in eigen woorden brengen, zoals in een gesprek. Letterlijk citeren mag alleen uit de geverifieerde citaten in de persona en de gecontroleerde citaten in de notitie, in het Nederlands, met "eigen vertaling" en de bron in een bijzin.',
+  ];
 }
 
 /** Het geheugen als regels voor de opdracht (leeg als er niets is). */
@@ -106,7 +126,7 @@ function speakerLine(ctx: PodcastContext): string {
 export function podcastInstruction(ctx: PodcastContext): string {
   const lines = [
     'Schrijf het script van deze aflevering.',
-    `VORM: ${FORMAT_LABELS[ctx.format]}`,
+    `VORM: ${formatLabel(ctx.format, ctx.figures.length)}`,
     `ONDERWERP: ${ctx.topic}`,
     `LENGTE: ongeveer ${ctx.minutes} minuten, dus rond ${targetWords(ctx.minutes)} woorden in totaal.`,
     speakerLine(ctx),
@@ -120,6 +140,7 @@ export function podcastInstruction(ctx: PodcastContext): string {
     );
   }
   lines.push(...memoryLines(ctx.memory, ctx.figures));
+  lines.push(...researchLines(ctx.research));
   return lines.join('\n');
 }
 
@@ -171,7 +192,7 @@ const clip = (text: string, max: number) => {
 export function listenerQuestionInstruction(ctx: ListenerQuestionContext): string {
   const lines = [
     'Schrijf de fragmenten voor deze luistervraag.',
-    `VORM: ${FORMAT_LABELS[ctx.format]}`,
+    `VORM: ${formatLabel(ctx.format, ctx.figures.length)}`,
     `ONDERWERP: ${ctx.topic}`,
     speakerLine(ctx),
   ];
@@ -194,6 +215,7 @@ export function listenerQuestionInstruction(ctx: ListenerQuestionContext): strin
     lines.push(`DE VRAAG: "${clip(ctx.question, 400)}"`);
   }
   lines.push(...memoryLines(ctx.memory, ctx.figures));
+  lines.push(...researchLines(ctx.research));
   lines.push('', LISTENER_RULES);
   return lines.join('\n');
 }

@@ -8,13 +8,16 @@ import {
   sourceBlock,
   type SourceText,
 } from '@/ai/prompts/research';
+import { buildCallPrompt, researchFirstMessage } from '@/ai/prompts/voice';
 import { RESEARCH } from '@/config/research';
 import { CORE_IDS, findMeta, type FigureMeta } from '@/data/figures';
 import { ALL_FIGURES } from '@/data/figures/all';
 import type { Figure } from '@/data/types';
+import { voiceSpecFor } from '@/data/voices';
 import { isVerbatim, matchable, toBrief } from '@/research/brief';
 import { costLines, essayEur, researchEur, totalEur } from '@/research/estimate';
 import { gatherSources, interleave, type WikiClient } from '@/research/gather';
+import { researchCallVoice } from '@/research/researchCall';
 import {
   clip,
   extractParagraphs,
@@ -43,6 +46,8 @@ import {
   researchProblem,
 } from '@/services/research.service';
 import type { ResearchBrief } from '@/store/researchSchemas';
+import { initialVoiceState, useVoiceStore } from '@/store/voiceStore';
+import type { ElevenLabsApi } from '@/voice/api';
 
 const meta = (id: string) => findMeta(id) as FigureMeta;
 const figure = (id: string) => ALL_FIGURES.find((f) => f.id === id) as Figure;
@@ -637,5 +642,70 @@ describe('aanvragen', () => {
     ]);
     const call = costLines({ form: 'bellen', figureId: 'seneca' }, undefined, false);
     expect(call[0]!.eur).toBeCloseTo(RESEARCH.callMinutes * RESEARCH.callUsdPerMinute * 0.88);
+  });
+});
+
+/* ---------- Bellen over een onderzoek ---------- */
+
+describe('bellen over een onderzoek', () => {
+  it('de rol krijgt de notitie mee; de opening noemt de AI-simulatie en de vraag', () => {
+    const block = researchBlock({
+      question: 'Woede',
+      brief: BRIEF,
+      sources: STORED_SOURCES,
+      names: { seneca: 'Seneca' },
+    });
+    const prompt = buildCallPrompt({ figure: figure('seneca'), minutes: 10, research: block });
+    expect(prompt).toContain('Vorm: een gesprek met de stem van 10 minuten.');
+    expect(prompt).toContain('De student liet een onderwerp uitzoeken');
+    expect(prompt).toContain('ONDERZOEK OP AANVRAAG');
+    expect(buildCallPrompt({ figure: figure('seneca'), minutes: 10 })).not.toContain(
+      'ONDERZOEK OP AANVRAAG',
+    );
+
+    // Een netwerkdenker zonder eigen stemontwerp: een neutrale begroeting.
+    expect(researchFirstMessage(figure('seneca'), undefined, 'Omgaan met woede')).toBe(
+      'Goedendag. Ik ben een AI-simulatie van Seneca. Ik heb me verdiept in je onderwerp: Omgaan met woede. Waar wil je beginnen?',
+    );
+    // Een kerndenker: de eerste zin van de eigen begroeting.
+    const spec = voiceSpecFor('socrates')!;
+    const first = researchFirstMessage(figure('socrates'), spec, 'Wat is moed?');
+    expect(first.startsWith(spec.greeting.split(/(?<=[.!?])\s/)[0]!)).toBe(true);
+    expect(first).toContain('Ik ben een AI-simulatie van Socrates.');
+  });
+
+  it('de stem: gekozen, anders ontworpen, anders een kant-en-klare bij het stemtype', async () => {
+    useVoiceStore.setState(initialVoiceState());
+    const api = {
+      voiceExists: vi.fn(async () => true),
+      libraryVoices: vi.fn(async () => [
+        { voice_id: 'vrouw-1', name: 'Daphne', category: 'premade', labels: { gender: 'female' } },
+        {
+          voice_id: 'man-oud',
+          name: 'Arthur',
+          category: 'premade',
+          labels: { gender: 'male', age: 'old' },
+        },
+      ]),
+    } as unknown as ElevenLabsApi;
+
+    // Seneca heeft geen eigen stem: een kant-en-klare mannenstem.
+    expect(await researchCallVoice(api, 'sk_test_onderzoek_1', 'seneca')).toMatchObject({
+      voiceId: 'man-oud',
+      source: 'type',
+    });
+    // Een ontworpen stem gaat daarvoor.
+    useVoiceStore.getState().setVoice('seneca', 'ontworpen-seneca');
+    expect(await researchCallVoice(api, 'sk_test_onderzoek_1', 'seneca')).toMatchObject({
+      voiceId: 'ontworpen-seneca',
+      source: 'eigen',
+    });
+    // En een met "andere stem" gekozen stem gaat overal voor.
+    useVoiceStore.getState().setOverride('seneca', 'vrouw-1', 'Daphne');
+    expect(await researchCallVoice(api, 'sk_test_onderzoek_1', 'seneca')).toMatchObject({
+      voiceId: 'vrouw-1',
+      source: 'gekozen',
+    });
+    useVoiceStore.setState(initialVoiceState());
   });
 });

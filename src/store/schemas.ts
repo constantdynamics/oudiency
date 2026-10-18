@@ -390,6 +390,8 @@ export const PodcastEpisodeSchema = z.object({
   segments: z.array(PodcastSegmentSchema),
   /** Dag (JJJJ-MM-DD) van een dagaflevering. */
   day: z.optional(z.string()),
+  /** Gemaakt uit een onderzoek op aanvraag: de notitie gaat mee als achtergrond. */
+  researchId: z.optional(z.string()),
   /** Waar je gebleven was: fragment en seconden daarin. */
   position: z.optional(z.object({ segment: count(), seconds: z.number() })),
   finishedAt: z.optional(isoDate),

@@ -435,7 +435,7 @@ export const nl = {
     researchWithThem: 'Laat dit uitzoeken met deze denkers',
     research: 'Laat het uitzoeken',
     researchIntro:
-      'Een onderwerp of vraag uitgezocht in Wikipedia en Wikisource, en daarna een tekst van een denker. Met je eigen Claude-sleutel.',
+      'Een onderwerp of vraag uitgezocht in Wikipedia en Wikisource; daarna maken denkers er een tekst, podcast of gesprek van. Met je eigen Claude-sleutel.',
     researchStart: 'Onderwerp aanvragen',
     researchLibrary: 'Je onderzoeken',
     planSession: 'Plan een sessie',

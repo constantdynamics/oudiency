@@ -6,6 +6,7 @@ import { ALL_FIGURES } from '@/data/figures/all';
 import type { Figure } from '@/data/types';
 import { ResearchTeaser } from '@/features/discover/discoverParts';
 import { NewResearchPage } from '@/features/research/NewResearchPage';
+import { ResearchCallPage } from '@/features/research/ResearchCallPage';
 import { ResearchLibraryPage } from '@/features/research/ResearchLibraryPage';
 import { ResearchPage } from '@/features/research/ResearchPage';
 import { clock } from '@/lib/clock';
@@ -13,13 +14,20 @@ import { markActive } from '@/research/researchState';
 import { initialProfile, useProfileStore } from '@/store/profileStore';
 import type { Research } from '@/store/researchSchemas';
 import { initialResearchState, useResearchStore } from '@/store/researchStore';
-import { apiKeyStorage, useSettingsStore } from '@/store/settingsStore';
+import { initialPodcastState, usePodcastStore } from '@/store/podcastStore';
+import { apiKeyStorage, elevenLabsKeyStorage, useSettingsStore } from '@/store/settingsStore';
 
 const ai = vi.hoisted(() => ({
   runResearch: vi.fn(async (_id: string) => {}),
   makeOutput: vi.fn(async (_id: string, _outputId: string) => {}),
 }));
 vi.mock('@/research/researchAi', () => ai);
+
+const player = vi.hoisted(() => ({ play: vi.fn() }));
+vi.mock('@/podcast/player', () => player);
+
+const calls = vi.hoisted(() => ({ createResearchCall: vi.fn((..._args: unknown[]) => null) }));
+vi.mock('@/research/researchCall', () => calls);
 
 const NOW = new Date(2026, 9, 18, 10, 0).getTime();
 const aurelius = ALL_FIGURES.find((f) => f.id === 'aurelius') as Figure;
@@ -73,6 +81,7 @@ function renderAt(path: string) {
         <Route path="/onderzoek" element={<ResearchLibraryPage />} />
         <Route path="/onderzoek/nieuw" element={<NewResearchPage />} />
         <Route path="/onderzoek/:id" element={<ResearchPage />} />
+        <Route path="/onderzoek/:id/bellen/:figureId" element={<ResearchCallPage />} />
         <Route path="*" element={<ResearchTeaser />} />
       </Routes>
       <Where />
@@ -89,12 +98,14 @@ beforeEach(() => {
   vi.clearAllMocks();
   clock.freeze(NOW);
   useResearchStore.setState(initialResearchState());
+  usePodcastStore.setState(initialPodcastState());
   useProfileStore.setState({ profile: { ...initialProfile(), displayName: 'Sanne' } });
   useSettingsStore.getState().update({ aiSource: 'demo' });
 });
 
 afterEach(() => {
   apiKeyStorage.clear();
+  elevenLabsKeyStorage.clear();
   clock.setOffset(0);
   markActive('o1', false);
 });
@@ -282,5 +293,136 @@ describe('je onderzoeken', () => {
     expect(links[0]).toHaveAttribute('href', '/onderzoek/o2');
     expect(within(links[0]!).getByText('Onderbroken')).toBeInTheDocument();
     expect(within(links[1]!).getByText(/Gemaakt als tekst · kort/)).toBeInTheDocument();
+  });
+});
+
+describe('podcast en gesprek uit een onderzoek', () => {
+  const podcast = {
+    id: 'v2',
+    form: 'podcast' as const,
+    createdAt: '2026-10-18T08:02:00.000Z',
+    status: 'klaar' as const,
+    figureIds: ['aurelius', 'socrates', 'kant'],
+    podcastFormat: 'gesprek' as const,
+    minutes: 10,
+    refId: 'e1',
+    title: 'Drie stemmen over woede',
+  };
+  const call = {
+    id: 'v3',
+    form: 'bellen' as const,
+    createdAt: '2026-10-18T08:03:00.000Z',
+    status: 'klaar' as const,
+    figureIds: ['seneca'],
+  };
+  const withResearch = () =>
+    useResearchStore.setState({
+      researches: [
+        research({
+          figureIds: ['aurelius', 'socrates', 'kant', 'seneca'],
+          outputs: [podcast, call],
+        }),
+      ],
+    });
+  const withEpisode = () =>
+    usePodcastStore.setState({
+      ...initialPodcastState(),
+      episodes: [
+        {
+          id: 'e1',
+          createdAt: '2026-10-18T08:02:00.000Z',
+          title: 'Drie stemmen over woede',
+          topic: 'Omgaan met woede',
+          format: 'gesprek',
+          figureIds: ['aurelius', 'socrates', 'kant'],
+          minutes: 10,
+          source: 'aanvraag',
+          status: 'klaar',
+          segments: [],
+          researchId: 'o1',
+        },
+      ],
+      queue: ['e1'],
+    });
+
+  it('de podcast: drie denkers in gesprek; luisteren kan met een ElevenLabs-sleutel', async () => {
+    withResearch();
+    withEpisode();
+    const { unmount } = renderAt('/onderzoek/o1');
+    const card = screen.getByRole('article', { name: 'Drie stemmen over woede' });
+    expect(
+      within(card).getByText(/Podcast · Drie denkers in gesprek · 10 min/),
+    ).toBeInTheDocument();
+    expect(within(card).getByRole('button', { name: 'Luister' })).toBeDisabled();
+    expect(
+      within(card).getByText(/om te luisteren heb je nog een ElevenLabs-sleutel/),
+    ).toBeInTheDocument();
+    unmount();
+
+    elevenLabsKeyStorage.set('sk_test');
+    const user = userEvent.setup();
+    renderAt('/onderzoek/o1');
+    await user.click(screen.getByRole('button', { name: 'Luister' }));
+    await vi.waitFor(() => expect(player.play).toHaveBeenCalledWith('e1'));
+    expect(screen.getByTestId('pad')).toHaveTextContent('/podcasts/e1');
+  });
+
+  it('de podcast wordt geschreven, of de aflevering is weg', () => {
+    withResearch();
+    useResearchStore.getState().updateOutput('o1', 'v2', { status: 'maken' });
+    markActive('o1/v2', true);
+    const { unmount } = renderAt('/onderzoek/o1');
+    expect(screen.getByText('Sophie en de denkers schrijven je aflevering …')).toBeInTheDocument();
+    unmount();
+    markActive('o1/v2', false);
+
+    useResearchStore.getState().updateOutput('o1', 'v2', { status: 'klaar' });
+    renderAt('/onderzoek/o1');
+    expect(
+      screen.getByText('Deze aflevering staat niet meer op dit apparaat.'),
+    ).toBeInTheDocument();
+  });
+
+  it('het gesprek: bellen kan met een ElevenLabs-sleutel, ook met een netwerkdenker', () => {
+    withResearch();
+    const { unmount } = renderAt('/onderzoek/o1');
+    const card = screen.getByRole('article', { name: 'Gesprek met Seneca' });
+    expect(
+      within(card).getByText(/Bellen kan met je eigen ElevenLabs-sleutel/),
+    ).toBeInTheDocument();
+    unmount();
+
+    elevenLabsKeyStorage.set('sk_test');
+    renderAt('/onderzoek/o1');
+    expect(screen.getByRole('link', { name: 'Bel Seneca' })).toHaveAttribute(
+      'href',
+      '/onderzoek/o1/bellen/seneca',
+    );
+  });
+
+  it('de belpagina: tien minuten over je onderzoek, en bellen begint pas na een tik', async () => {
+    withResearch();
+    elevenLabsKeyStorage.set('sk_test');
+    const user = userEvent.setup();
+    renderAt('/onderzoek/o1/bellen/seneca');
+    expect(
+      await screen.findByText('Gesprek over je onderzoek · hooguit 10 minuten'),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Terug naar je onderzoek' })).toHaveAttribute(
+      'href',
+      '/onderzoek/o1',
+    );
+    expect(calls.createResearchCall).not.toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: 'Bel Seneca' }));
+    expect(calls.createResearchCall).toHaveBeenCalledWith('o1', 'seneca', expect.anything());
+  });
+
+  it('de belpagina zonder sleutel, of voor iemand die niet bij het onderzoek hoort', () => {
+    withResearch();
+    const { unmount } = renderAt('/onderzoek/o1/bellen/seneca');
+    expect(screen.getByText(/Bellen kan met je eigen ElevenLabs-sleutel/)).toBeInTheDocument();
+    unmount();
+    renderAt('/onderzoek/o1/bellen/laozi');
+    expect(screen.getByText(/deze denker hoort er niet bij/)).toBeInTheDocument();
   });
 });

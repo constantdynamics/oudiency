@@ -42,7 +42,7 @@ import { CostSummary, FormOptions } from './FormOptions';
 import { BackToResearch, KeyNotice } from './researchParts';
 
 /** De vormen die je bij een nieuw onderzoek kunt kiezen. */
-const AVAILABLE_FORMS: readonly ResearchForm[] = ['tekst'];
+const AVAILABLE_FORMS: readonly ResearchForm[] = ['tekst', 'podcast', 'bellen'];
 
 type SuggestState =
   | { status: 'idle' }

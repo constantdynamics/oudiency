@@ -26,10 +26,11 @@ export const RESEARCH = {
   /** Een direct gesprek duurt tien minuten (keuze 2c). */
   callMinutes: 10,
   /**
-   * Indicatieve prijs van een gesprek bij ElevenLabs Agents, in dollars per minuut (oktober
-   * 2026, inclusief het brein; controleer https://elevenlabs.io/pricing).
+   * Indicatieve prijs van een gesprek bij ElevenLabs Agents, in dollars per minuut: ongeveer
+   * $0,08 voor de stem plus het brein (Claude). Oktober 2026; controleer
+   * https://elevenlabs.io/pricing. Na elk gesprek zie je wat het echt kostte.
    */
-  callUsdPerMinute: 0.1,
+  callUsdPerMinute: 0.12,
   sites: {
     wikipedia: 'https://en.wikipedia.org',
     wikisource: 'https://en.wikisource.org',

@@ -14,15 +14,20 @@ import {
 } from '@/ai/prompts/research';
 import { EssaySchema, ResearchBriefOutputSchema, ResearchPlanSchema } from '@/ai/schemas';
 import { findMeta, type FigureMeta, loadFigures } from '@/data/figures';
+import { PODCAST } from '@/config/podcast';
 import { tr } from '@/i18n/research';
 import { clock } from '@/lib/clock';
 import { uid } from '@/lib/ids';
+import { writeEpisode } from '@/podcast/podcastAi';
 import { readingIndexes } from '@/services/lecture.service';
+import { newEpisode, TOPIC_MAX } from '@/services/podcast.service';
 import { useNotificationStore } from '@/store/miscStores';
+import { usePodcastStore } from '@/store/podcastStore';
 import { useProfileStore } from '@/store/profileStore';
 import type { Research, ResearchOutput } from '@/store/researchSchemas';
 import { findResearch, useResearchStore } from '@/store/researchStore';
 import { toBrief } from './brief';
+import { researchContextOf } from './context';
 import { gatherSources, liveWiki, type WikiClient } from './gather';
 import { markActive, outputKey } from './researchState';
 
@@ -135,14 +140,10 @@ function notifyDone(researchId: string): void {
 
 /* ---------- De vormen ---------- */
 
-export function contextOf(research: Research): ResearchContext {
-  if (!research.brief) throw new AiError('invalid', tr.failed);
-  return {
-    question: research.question,
-    brief: research.brief,
-    sources: research.sources,
-    names: Object.fromEntries(metasOf(research.figureIds).map((meta) => [meta.id, meta.name])),
-  };
+function contextOf(research: Research): ResearchContext {
+  const context = researchContextOf(research);
+  if (!context) throw new AiError('invalid', tr.failed);
+  return context;
 }
 
 async function writeEssay(research: Research, output: ResearchOutput): Promise<void> {
@@ -177,6 +178,39 @@ async function writeEssay(research: Research, output: ResearchOutput): Promise<v
   });
 }
 
+/**
+ * Een podcast uit het onderzoek: een aflevering (achteraan in de wachtrij) met de notitie als
+ * achtergrond. Mislukte het schrijven eerder, dan probeert dezelfde aflevering het opnieuw.
+ */
+async function writePodcast(research: Research, output: ResearchOutput): Promise<void> {
+  const podcasts = usePodcastStore.getState();
+  let episode = podcasts.episodes.find((e) => e.id === output.refId);
+  if (!episode) {
+    episode = {
+      ...newEpisode(
+        {
+          format: output.podcastFormat ?? 'gesprek',
+          figureIds: output.figureIds,
+          topic: (research.title ?? research.question).slice(0, TOPIC_MAX),
+          minutes: output.minutes ?? PODCAST.defaultMinutes,
+        },
+        'aanvraag',
+        clock.iso(),
+      ),
+      researchId: research.id,
+    };
+    podcasts.addEpisode(episode);
+    podcasts.enqueue(episode.id, 'achteraan');
+    useResearchStore.getState().updateOutput(research.id, output.id, { refId: episode.id });
+  }
+  await writeEpisode(episode.id);
+  const written = usePodcastStore.getState().episodes.find((e) => e.id === episode.id);
+  if (written?.status !== 'klaar') throw new AiError('invalid', written?.error ?? tr.failed);
+  useResearchStore
+    .getState()
+    .updateOutput(research.id, output.id, { status: 'klaar', title: written.title });
+}
+
 const making = new Map<string, Promise<void>>();
 
 /** Maak één vorm uit een afgerond onderzoek; bij een fout staat de reden erbij (opnieuw kan). */
@@ -202,6 +236,7 @@ async function make(researchId: string, outputId: string): Promise<void> {
   try {
     requireKey();
     if (output.form === 'tekst') await writeEssay(research, output);
+    else if (output.form === 'podcast') await writePodcast(research, output);
     else store.updateOutput(researchId, outputId, { status: 'klaar' });
   } catch (error) {
     useResearchStore.getState().updateOutput(researchId, outputId, {

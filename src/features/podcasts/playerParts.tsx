@@ -29,7 +29,7 @@ import { usePlayer } from '@/podcast/playerState';
 import { usePodcastStore } from '@/store/podcastStore';
 import type { PodcastEpisode } from '@/store/schemas';
 import { formatDuration } from '@/voice/format';
-import { episodeFigures, formatSpeed } from './format';
+import { episodeFigures, formatName, formatSpeed } from './format';
 import { usePodcastKeys } from './usePodcastKeys';
 import { QuestionPanel } from './QuestionPanel';
 
@@ -193,7 +193,7 @@ export function PlayerCard({
         <AvatarStack figures={episodeFigures(episode)} size={48} />
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1">
           <p className="text-sm text-ink-3">
-            {tp.formats[episode.format]} · {tp.meta.minutes(episode.minutes)}
+            {formatName(episode)} · {tp.meta.minutes(episode.minutes)}
           </p>
           <AiLabel />
         </div>

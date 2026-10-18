@@ -67,6 +67,9 @@ const NewResearchPage = lazyPage(() =>
 const ResearchPage = lazyPage(() =>
   import('@/features/research/ResearchPage').then((m) => m.ResearchPage),
 );
+const ResearchCallPage = lazyPage(() =>
+  import('@/features/research/ResearchCallPage').then((m) => m.ResearchCallPage),
+);
 
 function page(path: string, Page: LazyPage): RouteObject {
   return { path, element: <Page />, handle: Page };
@@ -93,6 +96,7 @@ export const routes: RouteObject[] = [
       page('onderzoek', ResearchLibraryPage),
       page('onderzoek/nieuw', NewResearchPage),
       page('onderzoek/:id', ResearchPage),
+      page('onderzoek/:id/bellen/:figureId', ResearchCallPage),
       page('profiel', ProfilePage),
       page('profiel/stem', VoiceSettingsPage),
       page('bellen/:figureId', CallPage),
