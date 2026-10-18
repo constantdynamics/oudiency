@@ -14,6 +14,10 @@ een college over een onderwerp naar keuze en zie Spinoza reageren op je timeline
 - **Timeline:** schrijf je gedachten (ook n.a.v. een dagelijkse vraag); denkers uit het netwerk
   reageren met vertraging, en zo ontdek je nieuwe denkers.
 - **Ontdekken:** topcolleges, trending, denker van de dag en "Wie kan mij helpen?".
+- **Podcasts:** één denker vertelt, twee of drie gaan in gesprek, of Sophie interviewt er een; met
+  je eigen sleutels, inclusief inbellen en luistervragen.
+- **Onderzoek op aanvraag:** laat een onderwerp uitzoeken in Wikipedia en Wikisource; daarna maken
+  denkers er een tekst, podcast, college (met gastdocenten) of gesprek van.
 
 Live (na de eenmalige stap hieronder): <https://constantdynamics.github.io/oudiency/>
 
@@ -130,12 +134,34 @@ waar je bij de starttijd kiest tussen **Bellen** en **Typen**.
 bewaartermijn 0); het transcript staat alleen lokaal. Indicatie: ongeveer $0,08 per minuut plus
 Claude, zo'n $1,50–2 per gesprek van 15 minuten; na elk gesprek toont de app de echte kosten.
 
+## Onderzoek op aanvraag
+
+Op **Ontdekken → Laat het uitzoeken** (of vanuit "Wie kan mij helpen?") vraag je een onderwerp aan,
+kies je één tot drie denkers en de vorm: een tekst (essay, kort of lang), een podcast, een college
+of een gesprek van tien minuten. Alleen met je eigen Claude-sleutel; voor luisteren en bellen ook
+ElevenLabs.
+
+1. **Claude Haiku** maakt van je vraag een paar Engelse zoektermen (en weigert schadelijke vragen;
+   die tellen dan niet mee).
+2. De app leest de **Engelstalige Wikipedia** en **Wikisource** (teksten van de denkers zelf) en
+   kiest de stukken die bij je vraag passen.
+3. **Claude Sonnet** schrijft daar een notitie van. Die zie je niet; de denkers gebruiken hem voor de
+   vorm die je koos. Letterlijke citaten blijven alleen staan als ze echt in de Wikisource-tekst
+   staan. Zijn de wiki's niet bereikbaar, dan werkt Claude met eigen kennis.
+
+Je kunt 1 onderwerp per dag laten uitzoeken (Premium 3). Een extra vorm uit hetzelfde onderzoek
+("Maak er nog iets van") telt niet mee. Vóór het uitzoeken zie je een kostenschatting in euro's en
+bevestig je. Wikipedia is sterk in geschiedenis, ideeën en wetenschap, minder in het nieuws van deze
+week of lokale Nederlandse onderwerpen; de mening van een denker blijft een simulatie.
+
 ## Privacy
 
 In Fase 1 blijft alles op je eigen apparaat (localStorage). Er is geen account, geen tracking en geen
 analytics; lettertypen en afbeeldingen komen van dezelfde site. Onder **Profiel → Mijn data** kun je
 alles exporteren (JSON), importeren en wissen. Alleen als je zelf een key instelt, gaan je berichten
-naar Anthropic om een antwoord te maken; bij bellen gaat je stem via ElevenLabs (zie hierboven).
+naar Anthropic om een antwoord te maken; bij bellen gaat je stem via ElevenLabs (zie hierboven). Bij
+onderzoek op aanvraag gaan alleen de zoektermen (afgeleid van je vraag) en paginatitels naar
+Wikipedia en Wikisource, zonder sleutel of persoonsgegevens.
 
 ## Projectstructuur
 
@@ -150,6 +176,8 @@ src/data/figures/              één bestand per denker (core/ en network/) + ge
 src/data/demo/                 demomodus-fragmenten per kerndenker
 src/ai/                        providerlaag (demo, eigen key, proxy-stub) en prompts
 src/voice/                     bellen: ElevenLabs-API, agentconfig, gesprek, resampler
+src/podcast/                   podcasts: script, stemmen, speler, inbellen, kosten
+src/research/                  onderzoek: Wikipedia/Wikisource, citaatcontrole, notitie, vormen
 src/features/                  pagina's per onderdeel
 src/store/                     Zustand-stores, persistentie, migraties, repositories
 src/services/                  limieten, boekingen, sessietimer, achtergrondtaken
@@ -169,7 +197,8 @@ tests/                         unit-tests
     overal dezelfde uitvoer en scheelt ~7 kB;
   - de Anthropic SDK, extra lettertypen en volledige denkersprofielen laden pas wanneer nodig.
 - **Content-Security-Policy** via een `<meta>` in de productie-`index.html`: alleen eigen scripts en
-  verbindingen met `api.anthropic.com`.
+  verbindingen met `api.anthropic.com`, `api.elevenlabs.io` (bellen, podcasts) en
+  `en.wikipedia.org`/`en.wikisource.org` (onderzoek op aanvraag).
 
 Meer context: `BRIEFING.md` (de oorspronkelijke opdracht), `CLAUDE.md` (projectregels) en
 `CREDITS.md` (licenties en bronnen).

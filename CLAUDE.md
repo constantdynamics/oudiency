@@ -99,7 +99,7 @@ GitHub Pages.
 ## Podcasts
 
 - Alleen met eigen sleutels (geen demomodus): Claude schrijft het script (`src/ai/prompts/podcast.ts`,
-  structured output), ElevenLabs leest voor (`eleven_flash_v2_5`, één MP3 per fragment). Logica in
+  structured output), ElevenLabs leest voor (één MP3 per fragment). Logica in
   `src/podcast` en `src/services/podcast.service.ts` (getest), UI in `src/features/podcasts`.
 - **Sophie** (`src/data/podcastHost.ts`) is de AI-presentator en zegt in het eerste fragment dat het
   een AI-simulatie is; ontbreekt dat, dan zet `toSegments` `FIXED_INTRO` vooraan. Geen aflevering
@@ -116,6 +116,27 @@ GitHub Pages.
   vraag doorgeeft (`podcastCall.ts`, zelfde agent als bellen). Crisissignalen geven de hulpkaart,
   nooit een luistervraag.
 - De denkers kennen je eerdere sessies en recente timelineberichten (`memory.ts`).
+- Stemmodel: standaard `eleven_flash_v2_5`; na het vergelijken op de Podcasts-pagina kies je Eleven
+  v4 (Turbo) (`TTS_MODELS` in `config/podcast.ts`). Alleen v4 krijgt emotie-aanwijzingen (hooguit
+  één Engelse tag per fragment, `audioTags.ts`); in het transcript zijn ze onzichtbaar.
+- "Andere stem" (`voiceChoice.ts`) bewaart per spreker een gekozen stem (`overrides` in de
+  voicestore); die gaat overal voor (podcast, inbellen, bellen) en geldt meteen.
+
+## Onderzoek op aanvraag
+
+- Alleen met je eigen Claude-sleutel (geen demomodus). Daglimiet 1 (Premium 3) via
+  `limits.service` (`research`); een extra vorm uit hetzelfde onderzoek telt niet mee, en een college
+  uit een onderzoek telt niet voor de collegelimiet.
+- Keten in `src/research` (getest): Haiku maakt Engelse zoektermen (`researchPlan`; een ongeschikte
+  vraag geeft de dagplek terug), `wiki.ts` leest en.wikipedia/en.wikisource anoniem (`origin=*`, CSP
+  `connect-src`), `passages.ts` kiest de stukken, Sonnet schrijft de notitie (`research`).
+- **Citaten:** alleen wat `isVerbatim` letterlijk terugvindt in het Wikisource-fragment dat Claude
+  zag; nooit uit Wikipedia of uit het geheugen. Bronteksten worden niet bewaard (alleen titel en url).
+- De notitie is onzichtbaar voor de gebruiker (keuze 7c) en gaat via `researchBlock` mee naar elke
+  vorm: essay (`researchText`, leestips alleen uit `keyWorks`), podcast (`researchId` op de
+  aflevering; een gesprek kan met drie), college (`guestIds`: gastdocenten geven deel 2 en 3, elk in
+  eigen persona; `segment.figureId`) en bellen (tien minuten, ook met een kant-en-klare stem).
+- Wikisource-HTML gaat pas na `withoutInlineStyles` door DOMParser (ook daar geldt de CSP).
 
 ## Werkwijze
 
