@@ -36,6 +36,10 @@ export const LIMITS = {
     /** Leestempo voor de afspeelmodus (woorden per minuut). */
     playbackWordsPerMinute: 220,
   },
+  /** Onderwerpen laten uitzoeken; een extra vorm uit hetzelfde onderzoek telt niet mee. */
+  research: {
+    perDay: { basis: 1, premium: 3 },
+  },
   timeline: {
     postMaxLength: 500,
     maxReactions: 3,

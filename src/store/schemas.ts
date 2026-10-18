@@ -15,6 +15,8 @@ const count = () => z.int().check(z.minimum(0));
 export const UsageDaySchema = z.object({
   sessions: count(),
   lectures: count(),
+  /** Onderzoeken op aanvraag (later toegevoegd, dus optioneel). */
+  research: z.optional(count()),
 });
 
 export const UserProfileSchema = z.object({

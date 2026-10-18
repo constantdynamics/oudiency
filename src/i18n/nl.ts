@@ -432,6 +432,12 @@ export const nl = {
     helpMeResults: 'Deze denkers kunnen meedenken',
     helpMeSearching: 'Even in de bibliotheek zoeken …',
     helpMeError: 'Dat lukte even niet. Probeer het opnieuw.',
+    researchWithThem: 'Laat dit uitzoeken met deze denkers',
+    research: 'Laat het uitzoeken',
+    researchIntro:
+      'Een onderwerp of vraag uitgezocht in Wikipedia en Wikisource, en daarna een tekst van een denker. Met je eigen Claude-sleutel.',
+    researchStart: 'Onderwerp aanvragen',
+    researchLibrary: 'Je onderzoeken',
     planSession: 'Plan een sessie',
     requestLecture: 'Vraag een college aan',
     viewProfile: 'Bekijk profiel',
@@ -526,6 +532,7 @@ export const nl = {
     creditsHint: 'Met een credit verleng je een sessie met 5 minuten.',
     todaySessions: (used: number, max: number) => `Sessies: ${used} van ${max}`,
     todayLectures: (used: number, max: number) => `Colleges: ${used} van ${max}`,
+    todayResearch: (used: number, max: number) => `Onderzoeken: ${used} van ${max}`,
     resetsAtMidnight: 'Telt opnieuw vanaf 00:00.',
     stats: {
       sessions: 'Gesprekken',

@@ -34,6 +34,7 @@ import {
   HelpMe,
   LectureCard,
   QuestionList,
+  ResearchTeaser,
   SearchPanel,
   TopicChips,
 } from './discoverParts';
@@ -111,6 +112,7 @@ export function DiscoverPage() {
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="min-w-0 space-y-10">
           <HelpMe />
+          <ResearchTeaser />
 
           <FigureOfTheDayCard
             meta={ofTheDay}

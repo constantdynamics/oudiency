@@ -13,7 +13,10 @@ export type AiTask =
   | 'thoughtOfTheDay'
   | 'dailyQuestion'
   | 'podcast'
-  | 'podcastQuestion';
+  | 'podcastQuestion'
+  | 'researchPlan'
+  | 'research'
+  | 'researchText';
 
 export type Effort = 'low' | 'medium' | 'high';
 
@@ -37,6 +40,12 @@ export const DEFAULT_TASK_MODELS: Record<AiTask, TaskModelConfig> = {
   podcast: { model: 'claude-sonnet-5-5', effort: 'medium', maxTokens: 16_000 },
   // Een luistervraag moet snel klinken: kort antwoord, weinig denken.
   podcastQuestion: { model: 'claude-sonnet-5-5', effort: 'low', maxTokens: 6_000 },
+  // Zoektermen bedenken is licht werk.
+  researchPlan: { model: 'claude-haiku-5-5', effort: 'low', maxTokens: 2_000 },
+  // De onderzoeksnotitie: bronnen wegen en feiten scheiden van twijfel.
+  research: { model: 'claude-sonnet-5-5', effort: 'medium', maxTokens: 12_000 },
+  // Een essay tot ±1500 woorden in één antwoord.
+  researchText: { model: 'claude-sonnet-5-5', effort: 'medium', maxTokens: 12_000 },
 };
 
 export const TASK_LABELS: Record<AiTask, string> = {
@@ -50,6 +59,9 @@ export const TASK_LABELS: Record<AiTask, string> = {
   dailyQuestion: 'Dagvraag in stijl',
   podcast: 'Podcasts',
   podcastQuestion: 'Luistervragen (podcasts)',
+  researchPlan: 'Onderzoek: zoektermen',
+  research: 'Onderzoek: notitie',
+  researchText: 'Onderzoek: tekst',
 };
 
 /** Modellen die in de instellingen te kiezen zijn. */

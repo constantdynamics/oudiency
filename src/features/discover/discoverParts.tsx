@@ -2,6 +2,7 @@ import {
   BookOpenText,
   CalendarPlus,
   Clock,
+  FileSearch,
   Heart,
   Search,
   Sparkles,
@@ -206,8 +207,57 @@ export function HelpMe() {
               />
             ))}
           </ul>
+          <p className="mt-3">
+            <ButtonLink
+              to={researchLink(
+                query,
+                state.suggestions.map((s) => s.figureId),
+              )}
+              variant="secondary"
+              size="sm"
+              icon={<FileSearch aria-hidden className="size-4" />}
+            >
+              {t.discover.researchWithThem}
+            </ButtonLink>
+          </p>
         </div>
       )}
+    </section>
+  );
+}
+
+/** Naar een nieuw onderzoek, met de vraag en (eventueel) de denkers al ingevuld. */
+function researchLink(question: string, figureIds: readonly string[] = []): string {
+  const params = new URLSearchParams();
+  if (question.trim()) params.set('vraag', question.trim());
+  if (figureIds.length > 0) params.set('denkers', figureIds.join(','));
+  const query = params.toString();
+  return query ? `/onderzoek/nieuw?${query}` : '/onderzoek/nieuw';
+}
+
+/** "Laat het uitzoeken" (keuze 9b): onderzoek op aanvraag, klein naast "Wie kan mij helpen?". */
+export function ResearchTeaser() {
+  const id = useId();
+  return (
+    <section
+      aria-labelledby={id}
+      className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-3xl border border-line bg-card p-5 shadow-card sm:p-6"
+    >
+      <div className="min-w-0 flex-1 basis-72">
+        <h2 id={id} className="flex items-center gap-2 text-2xl">
+          <FileSearch aria-hidden className="size-5 text-gold" />
+          {t.discover.research}
+        </h2>
+        <p className="mt-1 text-ink-2">{t.discover.researchIntro}</p>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <ButtonLink to="/onderzoek/nieuw" icon={<Search aria-hidden className="size-4" />}>
+          {t.discover.researchStart}
+        </ButtonLink>
+        <ButtonLink to="/onderzoek" variant="ghost">
+          {t.discover.researchLibrary}
+        </ButtonLink>
+      </div>
     </section>
   );
 }

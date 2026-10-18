@@ -8,7 +8,8 @@ import { defineConfig, type Plugin } from 'vite';
  * headers, dus de CSP gaat als <meta http-equiv> in index.html. In dev laten we hem weg,
  * omdat HMR inline scripts gebruikt.
  *
- * - connect-src: Anthropic (eigen key) en ElevenLabs (bellen: REST en de gespreks-WebSocket).
+ * - connect-src: Anthropic (eigen key), ElevenLabs (bellen: REST en de gespreks-WebSocket) en
+ *   de Engelstalige Wikipedia en Wikisource (onderzoek op aanvraag).
  * - media-src data: voor de stemvoorbeelden, blob: voor de podcastfragmenten (op het apparaat
  *   bewaard); de audio-worklets en resampler komen van 'self'.
  *
@@ -20,7 +21,7 @@ export const CONTENT_SECURITY_POLICY = [
   "style-src 'self'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self' https://api.anthropic.com https://api.elevenlabs.io wss://api.elevenlabs.io",
+  "connect-src 'self' https://api.anthropic.com https://api.elevenlabs.io wss://api.elevenlabs.io https://en.wikipedia.org https://en.wikisource.org",
   "manifest-src 'self'",
   "worker-src 'self'",
   "media-src 'self' data: blob:",

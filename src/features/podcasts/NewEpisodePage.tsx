@@ -1,7 +1,6 @@
-import { Lightbulb, PenLine, X } from 'lucide-react';
-import { useDeferredValue, useState } from 'react';
+import { Lightbulb, PenLine } from 'lucide-react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { ChoiceChips } from '@/components/Chips';
 import { CrisisCard } from '@/components/CrisisCard';
@@ -9,13 +8,13 @@ import { TextField } from '@/components/Field';
 import { PageHeader } from '@/components/PageHeader';
 import { toast } from '@/components/toastStore';
 import { PODCAST, ttsModelInfo } from '@/config/podcast';
-import { FIGURES_META, findMeta } from '@/data/figures';
+import { findMeta } from '@/data/figures';
+import { FigureChooser } from '@/features/figures/FigureChooser';
 import { useDiscovered } from '@/features/figures/discovery';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { tp } from '@/i18n/podcast';
 import { clock } from '@/lib/clock';
-import { cx } from '@/lib/cx';
-import { capitalize, normalize } from '@/lib/text';
+import { capitalize } from '@/lib/text';
 import { startWriting } from '@/podcast/writingState';
 import {
   type EpisodeProblem,
@@ -32,110 +31,6 @@ import { BackToPodcasts } from './playerParts';
 import { usePodcastKeys } from './usePodcastKeys';
 
 const FORMATS: readonly PodcastFormat[] = ['monoloog', 'gesprek', 'interview'];
-const VISIBLE_FIGURES = 12;
-
-/** Kies één denker, of twee voor een gesprek (alleen wie je al kent). */
-function FigureChooser({
-  count,
-  value,
-  onChange,
-}: {
-  count: number;
-  value: string[];
-  onChange: (ids: string[]) => void;
-}) {
-  const known = useDiscovered();
-  const [query, setQuery] = useState('');
-  const [showAll, setShowAll] = useState(false);
-  const q = normalize(useDeferredValue(query));
-  const matches = FIGURES_META.filter(
-    (meta) =>
-      known.has(meta.id) &&
-      (!q || normalize(`${meta.name} ${meta.epithet} ${meta.tags.join(' ')}`).includes(q)),
-  );
-  const visible = q || showAll ? matches : matches.slice(0, VISIBLE_FIGURES);
-  const full = count > 1 && value.length >= count;
-
-  const toggle = (id: string) => {
-    if (value.includes(id)) onChange(value.filter((other) => other !== id));
-    else if (count === 1) onChange([id]);
-    else if (!full) onChange([...value, id]);
-  };
-
-  return (
-    <fieldset>
-      <legend className="font-medium">{count > 1 ? tp.form.figuresTwo : tp.form.figuresOne}</legend>
-      <p className="text-sm text-ink-3">{tp.form.figuresHint}</p>
-      {value.length > 0 && (
-        <ul aria-label={tp.form.chosen} className="mt-2 flex flex-wrap gap-2">
-          {value.map((id) => {
-            const meta = findMeta(id);
-            if (!meta) return null;
-            return (
-              <li
-                key={id}
-                className="inline-flex items-center gap-2 rounded-full border border-ink bg-ink py-1 pr-1 pl-1 text-paper"
-              >
-                <Avatar figure={meta} size={28} />
-                <span className="font-medium">{meta.shortName ?? meta.name}</span>
-                <button
-                  type="button"
-                  aria-label={tp.form.unpick(meta.name)}
-                  onClick={() => toggle(id)}
-                  className="inline-flex size-8 items-center justify-center rounded-full hover:bg-white/15"
-                >
-                  <X aria-hidden className="size-4" />
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-      <TextField
-        className="mt-3 sm:w-80"
-        label={tp.form.search}
-        type="search"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
-      {full && <p className="mt-2 text-sm text-ink-3">{tp.form.full}</p>}
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-        {visible.map((meta) => {
-          const selected = value.includes(meta.id);
-          const blocked = full && !selected;
-          return (
-            <li key={meta.id}>
-              <button
-                type="button"
-                aria-pressed={selected}
-                aria-disabled={blocked || undefined}
-                onClick={() => toggle(meta.id)}
-                className={cx(
-                  'flex w-full items-center gap-3 rounded-xl border p-2 text-left transition-colors',
-                  selected ? 'border-ink bg-paper-2' : 'border-line bg-card hover:bg-paper-2',
-                  blocked && 'opacity-50',
-                )}
-              >
-                <Avatar figure={meta} size={36} />
-                <span className="min-w-0">
-                  <span className="block truncate font-medium">{meta.name}</span>
-                  <span className="block truncate text-sm text-ink-3">{meta.epithet}</span>
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-      {visible.length === 0 && <p className="mt-2 text-ink-3">{tp.form.noMatch}</p>}
-      {!q && !showAll && matches.length > VISIBLE_FIGURES && (
-        <Button className="mt-2" variant="ghost" size="sm" onClick={() => setShowAll(true)}>
-          {tp.form.showAll(matches.length)}
-        </Button>
-      )}
-    </fieldset>
-  );
-}
-
 /** Een nieuwe aflevering aanvragen: vorm, denker(s), onderwerp en lengte. */
 export function NewEpisodePage() {
   useDocumentTitle(tp.form.title);
@@ -201,11 +96,21 @@ export function NewEpisodePage() {
         </div>
 
         <FigureChooser
-          count={count}
+          max={count}
           value={figureIds}
           onChange={(ids) => {
             setFigureIds(ids);
             setProblem(undefined);
+          }}
+          labels={{
+            legend: count > 1 ? tp.form.figuresTwo : tp.form.figuresOne,
+            hint: tp.form.figuresHint,
+            search: tp.form.search,
+            chosen: tp.form.chosen,
+            unpick: tp.form.unpick,
+            full: tp.form.full,
+            noMatch: tp.form.noMatch,
+            showAll: tp.form.showAll,
           }}
         />
 

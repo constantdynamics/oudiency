@@ -1,0 +1,212 @@
+/**
+ * De AI-kant van het onderzoek (lazy geladen; alleen met je eigen Claude-sleutel):
+ * 1. Haiku bedenkt Engelse zoektermen (en weigert een schadelijke vraag);
+ * 2. de app leest Wikipedia en Wikisource en kiest de passende stukken;
+ * 3. Sonnet schrijft de onderzoeksnotitie; citaten blijven alleen staan als ze letterlijk kloppen;
+ * 4. daarna de gekozen vorm(en).
+ */
+import { activeProviderId, AiError, describeAiError, getProvider } from '@/ai';
+import {
+  essayRequest,
+  researchBriefRequest,
+  researchPlanRequest,
+  type ResearchContext,
+} from '@/ai/prompts/research';
+import { EssaySchema, ResearchBriefOutputSchema, ResearchPlanSchema } from '@/ai/schemas';
+import { findMeta, type FigureMeta, loadFigures } from '@/data/figures';
+import { tr } from '@/i18n/research';
+import { clock } from '@/lib/clock';
+import { uid } from '@/lib/ids';
+import { readingIndexes } from '@/services/lecture.service';
+import { useNotificationStore } from '@/store/miscStores';
+import { useProfileStore } from '@/store/profileStore';
+import type { Research, ResearchOutput } from '@/store/researchSchemas';
+import { findResearch, useResearchStore } from '@/store/researchStore';
+import { toBrief } from './brief';
+import { gatherSources, liveWiki, type WikiClient } from './gather';
+import { markActive, outputKey } from './researchState';
+
+function requireKey(): void {
+  if (activeProviderId() !== 'anthropic-browser') throw new AiError('auth', tr.problems.sleutel);
+}
+
+function metasOf(ids: readonly string[]): FigureMeta[] {
+  return ids.map((id) => findMeta(id)).filter((meta) => meta !== undefined);
+}
+
+/** Geweigerd: geen onderzoek, en de dagplek komt terug. */
+function refuse(research: Research, reason: string): void {
+  useResearchStore.getState().update(research.id, {
+    status: 'fout',
+    refused: true,
+    error: reason,
+    updatedAt: clock.iso(),
+    outputs: research.outputs.map((o) => ({ ...o, status: 'fout' as const })),
+  });
+  useProfileStore.getState().releaseUsage('research', research.day);
+}
+
+const running = new Map<string, Promise<void>>();
+
+/** Zoek het onderwerp uit (als dat nog niet gebeurd is) en maak de vormen die nog wachten. */
+export function runResearch(researchId: string, client: WikiClient = liveWiki): Promise<void> {
+  const pending = running.get(researchId);
+  if (pending) return pending;
+  markActive(researchId, true);
+  const promise = investigate(researchId, client).finally(() => {
+    running.delete(researchId);
+    markActive(researchId, false);
+  });
+  running.set(researchId, promise);
+  return promise;
+}
+
+async function investigate(researchId: string, client: WikiClient): Promise<void> {
+  const research = findResearch(researchId);
+  if (!research || research.refused) return;
+  const store = useResearchStore.getState();
+  if (research.status !== 'klaar' || !research.brief) {
+    store.update(researchId, { status: 'zoeken', error: undefined, updatedAt: clock.iso() });
+    try {
+      requireKey();
+      const figures = metasOf(research.figureIds);
+      const plan = await getProvider().structured({
+        ...researchPlanRequest(research.question, figures, researchId),
+        schema: ResearchPlanSchema,
+      });
+      if (!plan.suitable) {
+        refuse(research, plan.reason.trim() || tr.refused);
+        return;
+      }
+      const sources = await gatherSources(
+        plan,
+        figures.map((f) => f.name),
+        client,
+      );
+      const output = await getProvider().structured({
+        ...researchBriefRequest(research.question, figures, sources, researchId),
+        schema: ResearchBriefOutputSchema,
+      });
+      const brief = toBrief(output, sources, research.figureIds);
+      if (!brief.summary) throw new AiError('invalid', tr.failed);
+      useResearchStore.getState().update(researchId, {
+        status: 'klaar',
+        title:
+          plan.title
+            .trim()
+            .replace(/^["“”]+|["“”]+$/g, '')
+            .slice(0, 80) || undefined,
+        brief,
+        sources: sources.map(({ text: _text, ...source }) => source),
+        updatedAt: clock.iso(),
+      });
+    } catch (error) {
+      if (error instanceof AiError && error.kind === 'refusal') {
+        refuse(research, tr.refused);
+        return;
+      }
+      useResearchStore.getState().update(researchId, {
+        status: 'fout',
+        error: describeAiError(error).message,
+        updatedAt: clock.iso(),
+      });
+      return;
+    }
+  }
+  const waiting = findResearch(researchId)?.outputs.filter((o) => o.status !== 'klaar') ?? [];
+  for (const output of waiting) await makeOutput(researchId, output.id);
+  notifyDone(researchId);
+}
+
+function notifyDone(researchId: string): void {
+  const research = findResearch(researchId);
+  if (!research || research.status !== 'klaar') return;
+  useNotificationStore.getState().add({
+    id: uid('melding'),
+    kind: 'systeem',
+    text: tr.ready(research.title ?? research.question),
+    link: `/onderzoek/${research.id}`,
+    figureId: research.figureIds[0],
+    visibleAt: clock.iso(),
+    read: false,
+    sourceId: `onderzoek:${research.id}`,
+  });
+}
+
+/* ---------- De vormen ---------- */
+
+export function contextOf(research: Research): ResearchContext {
+  if (!research.brief) throw new AiError('invalid', tr.failed);
+  return {
+    question: research.question,
+    brief: research.brief,
+    sources: research.sources,
+    names: Object.fromEntries(metasOf(research.figureIds).map((meta) => [meta.id, meta.name])),
+  };
+}
+
+async function writeEssay(research: Research, output: ResearchOutput): Promise<void> {
+  const figureId = output.figureIds[0];
+  const [figure] = await loadFigures(figureId ? [figureId] : []);
+  if (!figure) throw new AiError('invalid', tr.failed);
+  const context = contextOf(research);
+  const others = research.figureIds
+    .filter((id) => id !== figure.id)
+    .map((id) => context.names[id])
+    .filter((name) => name !== undefined);
+  const essay = await getProvider().structured({
+    ...essayRequest(
+      {
+        ...context,
+        figure,
+        length: output.length ?? 'kort',
+        others,
+        readerName: useProfileStore.getState().profile.displayName,
+      },
+      research.id,
+    ),
+    schema: EssaySchema,
+  });
+  const text = essay.text.trim();
+  if (!text) throw new AiError('invalid', tr.failed);
+  useResearchStore.getState().updateOutput(research.id, output.id, {
+    status: 'klaar',
+    title: essay.title.trim().slice(0, 90) || research.title,
+    text,
+    furtherReading: readingIndexes(essay.furtherReading, figure.keyWorks.length),
+  });
+}
+
+const making = new Map<string, Promise<void>>();
+
+/** Maak één vorm uit een afgerond onderzoek; bij een fout staat de reden erbij (opnieuw kan). */
+export function makeOutput(researchId: string, outputId: string): Promise<void> {
+  const key = outputKey(researchId, outputId);
+  const pending = making.get(key);
+  if (pending) return pending;
+  markActive(key, true);
+  const promise = make(researchId, outputId).finally(() => {
+    making.delete(key);
+    markActive(key, false);
+  });
+  making.set(key, promise);
+  return promise;
+}
+
+async function make(researchId: string, outputId: string): Promise<void> {
+  const research = findResearch(researchId);
+  const output = research?.outputs.find((o) => o.id === outputId);
+  if (!research || !output || output.status === 'klaar') return;
+  const store = useResearchStore.getState();
+  store.updateOutput(researchId, outputId, { status: 'maken', error: undefined });
+  try {
+    requireKey();
+    if (output.form === 'tekst') await writeEssay(research, output);
+    else store.updateOutput(researchId, outputId, { status: 'klaar' });
+  } catch (error) {
+    useResearchStore.getState().updateOutput(researchId, outputId, {
+      status: 'fout',
+      error: describeAiError(error).message,
+    });
+  }
+}

@@ -79,4 +79,6 @@ export type DemoContext =
   | { kind: 'daily-question'; figureId: string; questionId: string; question: string }
   /** Podcasts werken alleen met je eigen sleutels; de demomodus heeft hier geen tekst voor. */
   | { kind: 'podcast'; episodeId: string }
+  /** Onderzoek op aanvraag ook: alleen met je eigen Claude-sleutel. */
+  | { kind: 'research'; researchId: string }
   | { kind: 'test' };
