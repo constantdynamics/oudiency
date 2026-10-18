@@ -119,6 +119,8 @@ export const LectureSegmentSchema = z.object({
   kind: z.enum(['opening', 'deel', 'antwoord', 'conclusie']),
   heading: z.string(),
   text: z.string(),
+  /** Gegeven door een gastdocent (id); zonder: de docent van het college. */
+  figureId: z.optional(z.string()),
 });
 export type LectureSegment = z.infer<typeof LectureSegmentSchema>;
 
@@ -155,6 +157,10 @@ export const LectureSchema = z.object({
   furtherReading: z.optional(z.array(count())),
   tags: z.optional(z.array(z.string())),
   provider: z.enum(['demo', 'anthropic-browser', 'proxy']),
+  /** Gastdocenten (een college uit een onderzoek): elk geeft één deel. */
+  guestIds: z.optional(z.array(z.string())),
+  /** Gemaakt uit een onderzoek op aanvraag: de notitie gaat mee als achtergrond. */
+  researchId: z.optional(z.string()),
 });
 export type Lecture = z.infer<typeof LectureSchema>;
 

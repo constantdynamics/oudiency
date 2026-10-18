@@ -94,7 +94,10 @@ export const tr = {
     podcastFormat: 'Vorm',
     panelPodcast: (names: string) => `${names} gaan met elkaar in gesprek.`,
     lecturer: 'Wie geeft het college?',
-    guests: (names: string) => `Gastdocent: ${names}.`,
+    guests: (names: string, count: number) =>
+      count === 1
+        ? `Gastdocent: ${names}. Die geeft deel 2.`
+        : `Gastdocenten: ${names}. Zij geven deel 2 en 3.`,
     callee: 'Met wie bel je?',
     estimate: 'Kosten ongeveer',
     costLine: (label: string, amount: string, service: string) =>
@@ -131,6 +134,15 @@ export const tr = {
       'De tekst staat klaar; om te luisteren heb je nog een ElevenLabs-sleutel nodig (Profiel → Stem & bellen).',
     episodeGone: 'Deze aflevering staat niet meer op dit apparaat.',
     callTitle: (name: string) => `Gesprek met ${name}`,
+    lectureWithGuests: (host: string, guests: string, count: number) =>
+      `${host}, met ${count === 1 ? 'gastdocent' : 'gastdocenten'} ${guests}`,
+    lecturePreparing: 'Het college wordt klaargezet …',
+    lectureHint:
+      'Het college ontstaat deel voor deel terwijl je leest; tussendoor kun je vragen stellen.',
+    lectureDone: 'Je hebt dit college gevolgd. Je kunt het altijd teruglezen.',
+    lectureStart: 'Begin het college',
+    lectureContinue: 'Naar het college',
+    lectureGone: 'Dit college staat niet meer op dit apparaat.',
     callHint:
       'Tien minuten bellen over je onderzoek, wanneer het jou uitkomt. Je kunt vaker bellen.',
     call: (name: string) => `Bel ${name}`,

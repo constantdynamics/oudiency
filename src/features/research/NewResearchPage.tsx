@@ -12,7 +12,7 @@ import { Thinking } from '@/components/Thinking';
 import { toast } from '@/components/toastStore';
 import { LIMITS } from '@/config/limits';
 import { PODCAST } from '@/config/podcast';
-import { RESEARCH, type ResearchForm } from '@/config/research';
+import { RESEARCH, RESEARCH_FORMS } from '@/config/research';
 import { CORE_IDS, findMeta } from '@/data/figures';
 import { useDiscovered } from '@/features/figures/discovery';
 import { FigureChooser } from '@/features/figures/FigureChooser';
@@ -40,9 +40,6 @@ import { useProfileStore } from '@/store/profileStore';
 import { useResearchStore } from '@/store/researchStore';
 import { CostSummary, FormOptions } from './FormOptions';
 import { BackToResearch, KeyNotice } from './researchParts';
-
-/** De vormen die je bij een nieuw onderzoek kunt kiezen. */
-const AVAILABLE_FORMS: readonly ResearchForm[] = ['tekst', 'podcast', 'bellen'];
 
 type SuggestState =
   | { status: 'idle' }
@@ -276,7 +273,7 @@ export function NewResearchPage() {
             figureIds={chosen}
             draft={draft}
             onChange={(next) => change(() => setDraft(next))}
-            forms={AVAILABLE_FORMS}
+            forms={RESEARCH_FORMS}
             hasVoiceKey={keys.elevenLabs}
           />
         </section>

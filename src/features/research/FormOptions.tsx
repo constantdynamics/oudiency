@@ -137,7 +137,10 @@ export function FormOptions({
           />
           {figureIds.length > 1 && (
             <p className="text-sm text-ink-3">
-              {tr.form.guests(figureNames(figureIds.filter((id) => id !== who)))}
+              {tr.form.guests(
+                figureNames(figureIds.filter((id) => id !== who)),
+                figureIds.length - 1,
+              )}
             </p>
           )}
         </>

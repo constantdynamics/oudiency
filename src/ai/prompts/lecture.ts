@@ -6,6 +6,7 @@
  */
 import { LIMITS } from '@/config/limits';
 import type { Figure } from '@/data/types';
+import { joinDutch } from '@/lib/text';
 import type { LecturePlan, LectureSegment } from '@/store/schemas';
 import type { DemoContext } from '../demoContext';
 import type { SystemBlock, TextRequest } from '../provider';
@@ -21,11 +22,30 @@ export const LECTURE_RULES = `COLLEGE
 - Een bericht tussen vierkante haken dat met "App:" begint, komt van de app en zegt wat je nu schrijft. Citeer het niet.`;
 
 export interface LectureContext {
+  /** Wie dit onderdeel geeft: de docent of een gastdocent (diens persona). */
   figure: Figure;
   topic: string;
   mainQuestion: string;
   plan?: LecturePlan;
   studentName?: string;
+  /** Gastdocenten en het deel dat ze geven (een college uit een onderzoek). */
+  guests?: readonly { part: number; name: string }[];
+  /** Geeft een gastdocent dit onderdeel: de naam van de docent van het college. */
+  hostName?: string;
+  /** Uit een onderzoek: de onderzoeksnotitie (src/ai/prompts/research.ts). */
+  research?: string;
+}
+
+function guestLines({ guests, hostName }: LectureContext): string[] {
+  if (!guests?.length) return [];
+  const list = joinDutch(guests.map((g) => `${g.name} (deel ${g.part})`));
+  return hostName
+    ? [
+        `- Je bent gastdocent in het college van ${hostName}. De gastdocenten: ${list}. Je geeft alleen je eigen deel. Begin met een korte overgang, alsof ${hostName} je net het woord gaf, en spreek vanuit je eigen denken; het oneens zijn met ${hostName} mag.`,
+      ]
+    : [
+        `- Gastdocenten: ${list}. Zij geven dat deel zelf. Kondig ze in de opening kort aan, beantwoord vragen van de student zelf en reageer in de conclusie kort op wat zij zeiden.`,
+      ];
 }
 
 /** Doellengte per onderdeel, afgeleid van de totale leestijd (12–15 minuten). */
@@ -48,12 +68,8 @@ function planText(plan: LecturePlan): string {
   ].join('\n');
 }
 
-export function lectureContextBlock({
-  topic,
-  mainQuestion,
-  plan,
-  studentName,
-}: LectureContext): string {
+export function lectureContextBlock(context: LectureContext): string {
+  const { topic, mainQuestion, plan, studentName, research } = context;
   const lines = [
     'AANVRAAG',
     `- Onderwerp: ${topic.trim()}`,
@@ -62,6 +78,15 @@ export function lectureContextBlock({
   ];
   const name = studentName?.trim();
   if (name) lines.push(`- De student heet ${name}; noem de naam hooguit een keer of twee.`);
+  lines.push(...guestLines(context));
+  if (research) {
+    lines.push(
+      '',
+      research,
+      '',
+      'Gebruik de onderzoeksnotitie als basis voor de feiten en de kanttekeningen. Letterlijk citeren mag ook uit de gecontroleerde citaten in de notitie, in het Nederlands, met "eigen vertaling" en de bron.',
+    );
+  }
   return plan ? `${lines.join('\n')}\n\n${planText(plan)}` : lines.join('\n');
 }
 
@@ -80,9 +105,15 @@ export function readingList(figure: Figure): string {
     .join('\n');
 }
 
-export function planInstruction(figure: Figure): string {
+export function planInstruction(
+  figure: Figure,
+  guests: readonly { part: number; name: string }[] = [],
+): string {
+  const byGuests = guests.length
+    ? ` ${guests.map((g) => `Deel ${g.part} geeft gastdocent ${g.name}`).join('; ')}: kies die delen zo dat ze bij hun denken passen.`
+    : '';
   return [
-    '[App: Maak eerst het plan voor dit college. Geef een pakkende titel (hooguit 70 tekens) en precies drie delen, elk met een korte kop (hooguit 50 tekens) en twee tot vier kernpunten. De delen bouwen op naar een antwoord op de hoofdvraag.',
+    `[App: Maak eerst het plan voor dit college. Geef een pakkende titel (hooguit 70 tekens) en precies drie delen, elk met een korte kop (hooguit 50 tekens) en twee tot vier kernpunten. De delen bouwen op naar een antwoord op de hoofdvraag.${byGuests}`,
     `Kies daarnaast één tot drie leestips uit deze lijst en geef hun nummers:\nLEESTIPS\n${readingList(figure)}`,
     'Geef ook twee tot vier korte trefwoorden.]',
   ].join('\n\n');
@@ -95,7 +126,7 @@ export function lecturePlanRequest(
   return {
     task: 'lecture',
     system: lectureSystem({ ...context, plan: undefined }),
-    messages: [{ role: 'user', content: planInstruction(context.figure) }],
+    messages: [{ role: 'user', content: planInstruction(context.figure, context.guests) }],
     demo,
   };
 }

@@ -2,7 +2,7 @@
  * Wat er van een onderzoek gemaakt is: een essay (hier te lezen), een podcast (in je wachtrij) of
  * een gesprek (bellen wanneer je wilt). Per vorm een kaart met de stand van zaken.
  */
-import { Headphones, Phone, Podcast } from 'lucide-react';
+import { BookOpenText, Headphones, Phone, Podcast } from 'lucide-react';
 import { type ReactNode, useId } from 'react';
 import { useNavigate } from 'react-router';
 import { AiLabel } from '@/components/Badges';
@@ -17,6 +17,7 @@ import { tp } from '@/i18n/podcast';
 import { tr } from '@/i18n/research';
 import { withPlayer } from '@/podcast/playerActions';
 import { startOutput } from '@/research/researchState';
+import { useLectureStore } from '@/store/lectureStore';
 import { usePodcastStore } from '@/store/podcastStore';
 import type { Research, ResearchOutput } from '@/store/researchSchemas';
 import { figureNames, outputPhaseOf } from './format';
@@ -105,6 +106,48 @@ function PodcastOutput({ research, output }: { research: Research; output: Resea
   );
 }
 
+function LectureOutput({ research, output }: { research: Research; output: ResearchOutput }) {
+  const lecture = useLectureStore((s) => s.lectures.find((l) => l.id === output.refId));
+  const phase = outputPhaseOf(research, output);
+  const [hostId, ...guestIds] = output.figureIds;
+  const host = findMeta(hostId);
+  return (
+    <OutputCard
+      icon={<BookOpenText aria-hidden className="size-4" />}
+      label={
+        guestIds.length > 0
+          ? `${tr.forms.college} · ${tr.page.lectureWithGuests(host?.name ?? '', figureNames(guestIds), guestIds.length)}`
+          : `${tr.forms.college} · ${host?.name ?? ''}`
+      }
+      title={lecture?.plan?.title ?? output.title ?? research.title ?? research.question}
+      figureIds={output.figureIds}
+    >
+      {phase !== 'klaar' ? (
+        <WorkState
+          phase={phase}
+          busyText={tr.page.lecturePreparing}
+          error={output.error}
+          onRetry={() => startOutput(research.id, output.id)}
+        />
+      ) : lecture ? (
+        <div className="space-y-2">
+          <p className="text-ink-2">
+            {lecture.status === 'afgerond' ? tr.page.lectureDone : tr.page.lectureHint}
+          </p>
+          <ButtonLink
+            to={`/colleges/${lecture.id}`}
+            icon={<BookOpenText aria-hidden className="size-4" />}
+          >
+            {lecture.segments.length > 0 ? tr.page.lectureContinue : tr.page.lectureStart}
+          </ButtonLink>
+        </div>
+      ) : (
+        <p className="text-ink-2">{tr.page.lectureGone}</p>
+      )}
+    </OutputCard>
+  );
+}
+
 function CallOutput({ research, output }: { research: Research; output: ResearchOutput }) {
   const keys = usePodcastKeys();
   const figureId = output.figureIds[0] ?? '';
@@ -146,6 +189,7 @@ export function OutputView({
 }) {
   if (output.form === 'podcast') return <PodcastOutput research={research} output={output} />;
   if (output.form === 'bellen') return <CallOutput research={research} output={output} />;
+  if (output.form === 'college') return <LectureOutput research={research} output={output} />;
   if (output.form !== 'tekst') return null;
   const phase = outputPhaseOf(research, output);
   const figure = figures.find((f) => f.id === output.figureIds[0]);

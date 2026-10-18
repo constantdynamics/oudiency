@@ -193,3 +193,67 @@ describe('overzicht', () => {
     );
   });
 });
+
+describe('een college met een gastdocent (uit een onderzoek)', () => {
+  const lecture = {
+    id: 'college-gast',
+    figureId: 'socrates',
+    guestIds: ['kant'],
+    researchId: 'o1',
+    topic: 'Liegen',
+    mainQuestion: 'Mag je ooit liegen?',
+    plan: {
+      title: 'Liegen en de waarheid',
+      segments: [
+        { heading: 'Wat is liegen?', keyPoints: ['Definitie'] },
+        { heading: 'De plicht tot waarheid', keyPoints: ['Kant'] },
+        { heading: 'Wat nu?', keyPoints: ['Praktijk'] },
+      ],
+    },
+    segments: [
+      { index: 0, kind: 'opening' as const, heading: 'Opening', text: 'Welkom bij dit college.' },
+      { index: 1, kind: 'deel' as const, heading: 'Wat is liegen?', text: 'Laten we beginnen.' },
+      {
+        index: 2,
+        kind: 'deel' as const,
+        heading: 'De plicht tot waarheid',
+        text: 'Liegen is nooit toegestaan.',
+        figureId: 'kant',
+      },
+    ],
+    questions: [],
+    status: 'bezig' as const,
+    share: 'privé' as const,
+    likedByMe: false,
+    createdAt: '2026-10-19T08:00:00.000Z',
+    provider: 'anthropic-browser' as const,
+  };
+
+  it('de gast staat in de collegezaal en boven zijn deel, ook bij het teruglezen', async () => {
+    useLectureStore.setState({ lectures: [lecture] });
+    const { unmount } = renderAt('/colleges/college-gast');
+    expect(await screen.findByText('Met gastdocent Immanuel Kant')).toBeInTheDocument();
+    const part = screen.getByRole('region', { name: 'De plicht tot waarheid' });
+    expect(within(part).getByText('Gastdocent: Immanuel Kant')).toBeInTheDocument();
+    expect(screen.getAllByText(/Gastdocent: /)).toHaveLength(1);
+    unmount();
+
+    useLectureStore.setState({
+      lectures: [
+        {
+          ...lecture,
+          status: 'afgerond',
+          completedAt: '2026-10-19T08:30:00.000Z',
+          segments: [
+            ...lecture.segments,
+            { index: 3, kind: 'deel', heading: 'Wat nu?', text: 'Zo doe je het.' },
+            { index: 4, kind: 'conclusie', heading: 'Conclusie', text: 'Tot slot.' },
+          ],
+        },
+      ],
+    });
+    renderAt('/colleges/college-gast');
+    expect(await screen.findByText('Met gastdocent Immanuel Kant')).toBeInTheDocument();
+    expect(screen.getAllByText('Gastdocent: Immanuel Kant')).toHaveLength(1);
+  });
+});

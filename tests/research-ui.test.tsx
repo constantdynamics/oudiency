@@ -14,6 +14,7 @@ import { markActive } from '@/research/researchState';
 import { initialProfile, useProfileStore } from '@/store/profileStore';
 import type { Research } from '@/store/researchSchemas';
 import { initialResearchState, useResearchStore } from '@/store/researchStore';
+import { useLectureStore } from '@/store/lectureStore';
 import { initialPodcastState, usePodcastStore } from '@/store/podcastStore';
 import { apiKeyStorage, elevenLabsKeyStorage, useSettingsStore } from '@/store/settingsStore';
 
@@ -424,5 +425,63 @@ describe('podcast en gesprek uit een onderzoek', () => {
     unmount();
     renderAt('/onderzoek/o1/bellen/laozi');
     expect(screen.getByText(/deze denker hoort er niet bij/)).toBeInTheDocument();
+  });
+});
+
+describe('college uit een onderzoek', () => {
+  it('de kaart: docent en gastdocenten, en een knop naar het college', () => {
+    useResearchStore.setState({
+      researches: [
+        research({
+          figureIds: ['aurelius', 'socrates', 'kant'],
+          outputs: [
+            {
+              id: 'v4',
+              form: 'college',
+              createdAt: '2026-10-18T08:04:00.000Z',
+              status: 'klaar',
+              figureIds: ['aurelius', 'socrates', 'kant'],
+              refId: 'c1',
+              title: 'Omgaan met woede',
+            },
+          ],
+        }),
+      ],
+    });
+    useLectureStore.setState({
+      lectures: [
+        {
+          id: 'c1',
+          figureId: 'aurelius',
+          guestIds: ['socrates', 'kant'],
+          researchId: 'o1',
+          topic: 'Omgaan met woede',
+          mainQuestion: 'Hoe ga je om met woede?',
+          segments: [],
+          questions: [],
+          status: 'bezig',
+          share: 'privé',
+          likedByMe: false,
+          createdAt: '2026-10-18T08:04:00.000Z',
+          provider: 'anthropic-browser',
+        },
+      ],
+    });
+    const { unmount } = renderAt('/onderzoek/o1');
+    const card = screen.getByRole('article', { name: 'Omgaan met woede' });
+    expect(
+      within(card).getByText(
+        /College · Marcus Aurelius, met gastdocenten Socrates en Immanuel Kant/,
+      ),
+    ).toBeInTheDocument();
+    expect(within(card).getByRole('link', { name: 'Begin het college' })).toHaveAttribute(
+      'href',
+      '/colleges/c1',
+    );
+    unmount();
+
+    useLectureStore.setState({ lectures: [] });
+    renderAt('/onderzoek/o1');
+    expect(screen.getByText('Dit college staat niet meer op dit apparaat.')).toBeInTheDocument();
   });
 });

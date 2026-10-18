@@ -14,6 +14,7 @@ import {
 } from '@/ai/prompts/research';
 import { EssaySchema, ResearchBriefOutputSchema, ResearchPlanSchema } from '@/ai/schemas';
 import { findMeta, type FigureMeta, loadFigures } from '@/data/figures';
+import { LIMITS } from '@/config/limits';
 import { PODCAST } from '@/config/podcast';
 import { tr } from '@/i18n/research';
 import { clock } from '@/lib/clock';
@@ -21,10 +22,12 @@ import { uid } from '@/lib/ids';
 import { writeEpisode } from '@/podcast/podcastAi';
 import { readingIndexes } from '@/services/lecture.service';
 import { newEpisode, TOPIC_MAX } from '@/services/podcast.service';
+import { useLectureStore } from '@/store/lectureStore';
 import { useNotificationStore } from '@/store/miscStores';
 import { usePodcastStore } from '@/store/podcastStore';
 import { useProfileStore } from '@/store/profileStore';
 import type { Research, ResearchOutput } from '@/store/researchSchemas';
+import type { Lecture } from '@/store/schemas';
 import { findResearch, useResearchStore } from '@/store/researchStore';
 import { toBrief } from './brief';
 import { researchContextOf } from './context';
@@ -211,6 +214,37 @@ async function writePodcast(research: Research, output: ResearchOutput): Promise
     .updateOutput(research.id, output.id, { status: 'klaar', title: written.title });
 }
 
+/**
+ * Een college uit het onderzoek (keuze 1c): de eerste denker is de docent, de anderen zijn
+ * gastdocent en geven elk een deel. Het college zelf ontstaat op de collegepagina, deel voor deel
+ * terwijl je leest; het telt niet mee voor de daglimiet van colleges.
+ */
+function createLecture(research: Research, output: ResearchOutput): void {
+  const [figureId, ...guestIds] = output.figureIds;
+  if (!figureId) throw new AiError('invalid', tr.failed);
+  const lecture: Lecture = {
+    id: uid('college'),
+    figureId,
+    ...(guestIds.length > 0 ? { guestIds } : {}),
+    researchId: research.id,
+    topic: (research.title ?? research.question).slice(0, LIMITS.lecture.topicMaxLength),
+    mainQuestion: research.question.slice(0, LIMITS.lecture.mainQuestionMaxLength),
+    segments: [],
+    questions: [],
+    status: 'bezig',
+    share: 'privé',
+    likedByMe: false,
+    createdAt: clock.iso(),
+    provider: 'anthropic-browser',
+  };
+  useLectureStore.getState().add(lecture);
+  useResearchStore.getState().updateOutput(research.id, output.id, {
+    status: 'klaar',
+    refId: lecture.id,
+    title: lecture.topic,
+  });
+}
+
 const making = new Map<string, Promise<void>>();
 
 /** Maak één vorm uit een afgerond onderzoek; bij een fout staat de reden erbij (opnieuw kan). */
@@ -237,6 +271,7 @@ async function make(researchId: string, outputId: string): Promise<void> {
     requireKey();
     if (output.form === 'tekst') await writeEssay(research, output);
     else if (output.form === 'podcast') await writePodcast(research, output);
+    else if (output.form === 'college') createLecture(research, output);
     else store.updateOutput(researchId, outputId, { status: 'klaar' });
   } catch (error) {
     useResearchStore.getState().updateOutput(researchId, outputId, {

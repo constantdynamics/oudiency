@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { Thinking } from '@/components/Thinking';
 import { toast } from '@/components/toastStore';
 import { PODCAST } from '@/config/podcast';
-import type { ResearchForm } from '@/config/research';
+import { RESEARCH_FORMS } from '@/config/research';
 import { loadFigures } from '@/data/figures';
 import type { Figure } from '@/data/types';
 import { usePodcastKeys } from '@/features/podcasts/usePodcastKeys';
@@ -32,9 +32,6 @@ import { CostSummary, FormOptions } from './FormOptions';
 import { figureNames, phaseOf } from './format';
 import { OutputView } from './outputParts';
 import { BackToResearch, FigureRow } from './researchParts';
-
-/** De vormen die je uit een afgerond onderzoek kunt maken. */
-const AVAILABLE_FORMS: readonly ResearchForm[] = ['tekst', 'podcast', 'bellen'];
 
 /** De volledige profielen van de denkers (voor het thema en de leestips). */
 function useFigures(ids: readonly string[]): Figure[] {
@@ -91,7 +88,7 @@ function MakeMore({ research }: { research: Research }) {
             setDraft(next);
             setProblem(undefined);
           }}
-          forms={AVAILABLE_FORMS}
+          forms={RESEARCH_FORMS}
           hasVoiceKey={keys.elevenLabs}
         />
         <CostSummary lines={costLines(request, ttsModel, false)} />

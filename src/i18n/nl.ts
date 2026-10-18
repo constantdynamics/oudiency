@@ -334,6 +334,10 @@ export const nl = {
     notFoundBody: 'Misschien is de link verouderd. Bij Colleges zie je alle colleges.',
     toLectures: 'Naar colleges',
     hall: (name: string) => `College van ${name}`,
+    guests: (names: string, count: number) =>
+      count === 1 ? `Met gastdocent ${names}` : `Met gastdocenten ${names}`,
+    guestPart: (name: string) => `Gastdocent: ${name}`,
+    guestPreparing: (name: string) => `${name} neemt het woord …`,
     exampleHall: (name: string) => `Voorbeeldcollege van ${name}`,
     progress: (done: number, total: number) => `${done} van ${total} onderdelen`,
     progressLabel: 'Voortgang van het college',
@@ -435,7 +439,7 @@ export const nl = {
     researchWithThem: 'Laat dit uitzoeken met deze denkers',
     research: 'Laat het uitzoeken',
     researchIntro:
-      'Een onderwerp of vraag uitgezocht in Wikipedia en Wikisource; daarna maken denkers er een tekst, podcast of gesprek van. Met je eigen Claude-sleutel.',
+      'Een onderwerp of vraag uitgezocht in Wikipedia en Wikisource; daarna maken denkers er een tekst, podcast, college of gesprek van. Met je eigen Claude-sleutel.',
     researchStart: 'Onderwerp aanvragen',
     researchLibrary: 'Je onderzoeken',
     planSession: 'Plan een sessie',
